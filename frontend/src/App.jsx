@@ -1,24 +1,23 @@
 import Header from './components/Header'
+import Sidebar from './components/Sidebar'
 import ChatWindow from './components/ChatWindow'
-import SuggestedQuestions from './components/SuggestedQuestions'
 import InputArea from './components/InputArea'
 import { useChat } from './hooks/useChat'
 
 export default function App() {
   const { messages, loading, send, reset } = useChat()
 
-  // Only show suggested questions when the conversation only has the welcome message
-  const showSuggestions = messages.length === 1
-
   return (
-    <div className="flex flex-col h-full max-w-2xl mx-auto bg-white shadow-xl">
-      <Header onReset={reset} />
+    <div className="flex h-full min-h-screen bg-slate-100">
+      <Sidebar onSelectQuestion={send} disabled={loading} />
 
-      <ChatWindow messages={messages} loading={loading} onSuggest={send} />
+      <div className="flex flex-col flex-1 min-w-0">
+        <Header onReset={reset} />
 
-      {showSuggestions && <SuggestedQuestions onSelect={send} />}
+        <ChatWindow messages={messages} loading={loading} />
 
-      <InputArea onSend={send} disabled={loading} />
+        <InputArea onSend={send} disabled={loading} />
+      </div>
     </div>
   )
 }
