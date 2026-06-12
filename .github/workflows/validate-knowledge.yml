@@ -1,0 +1,28 @@
+name: Validate FAQ Knowledge
+
+on:
+  pull_request:
+    paths:
+      - "knowledge/**"
+      - "scripts/validate_faq.py"
+  push:
+    branches:
+      - main
+    paths:
+      - "knowledge/**"
+      - "scripts/validate_faq.py"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Validate FAQ JSON
+        run: python3 scripts/validate_faq.py knowledge/faq.json

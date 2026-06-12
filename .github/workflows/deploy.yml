@@ -1,0 +1,79 @@
+name: Deploy to AgentBase
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "knowledge/**"
+      - "main.py"
+      - "frontend/**"
+      - "Dockerfile"
+      - "requirements.txt"
+      - "nginx.conf"
+      - "start.sh"
+      - "scripts/**"
+      - "agentbase.config.json"
+      - ".github/workflows/deploy.yml"
+
+concurrency:
+  group: agentbase-deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Validate FAQ JSON
+        run: python3 scripts/validate_faq.py knowledge/faq.json
+
+  deploy:
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Create runtime env file
+        env:
+          MEMORY_ID: ${{ secrets.MEMORY_ID }}
+          MEMORY_STRATEGY_ID: ${{ secrets.MEMORY_STRATEGY_ID }}
+          LLM_BASE_URL: ${{ secrets.LLM_BASE_URL }}
+          LLM_MODEL: ${{ secrets.LLM_MODEL }}
+          LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+        run: |
+          test -n "$MEMORY_ID" || (echo "Missing secret: MEMORY_ID" && exit 1)
+          test -n "$MEMORY_STRATEGY_ID" || (echo "Missing secret: MEMORY_STRATEGY_ID" && exit 1)
+          test -n "$LLM_BASE_URL" || (echo "Missing secret: LLM_BASE_URL" && exit 1)
+          test -n "$LLM_MODEL" || (echo "Missing secret: LLM_MODEL" && exit 1)
+          test -n "$LLM_API_KEY" || (echo "Missing secret: LLM_API_KEY" && exit 1)
+
+          {
+            echo "MEMORY_ID=${MEMORY_ID}"
+            echo "MEMORY_STRATEGY_ID=${MEMORY_STRATEGY_ID}"
+            echo "LLM_BASE_URL=${LLM_BASE_URL}"
+            echo "LLM_MODEL=${LLM_MODEL}"
+            echo "LLM_API_KEY=${LLM_API_KEY}"
+          } > .env.deploy
+
+      - name: Deploy to AgentBase
+        env:
+          GREENNODE_CLIENT_ID: ${{ secrets.GREENNODE_CLIENT_ID }}
+          GREENNODE_CLIENT_SECRET: ${{ secrets.GREENNODE_CLIENT_SECRET }}
+          AGENTBASE_RUNTIME_ID: ${{ secrets.AGENTBASE_RUNTIME_ID }}
+          AGENTBASE_ENV_FILE: .env.deploy
+        run: |
+          test -n "$GREENNODE_CLIENT_ID" || (echo "Missing secret: GREENNODE_CLIENT_ID" && exit 1)
+          test -n "$GREENNODE_CLIENT_SECRET" || (echo "Missing secret: GREENNODE_CLIENT_SECRET" && exit 1)
+          bash scripts/deploy_agentbase.sh

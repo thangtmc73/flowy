@@ -1,0 +1,6 @@
+greennode-agentbase>=0.1.37
+greennode-agent-bridge>=0.1.7
+langchain>=0.3.0
+langchain-openai>=0.2.0
+langgraph>=0.2.0
+python-dotenv>=1.0.0
