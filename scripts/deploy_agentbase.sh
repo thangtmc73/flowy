@@ -6,7 +6,6 @@ ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT_DIR"
 
 SCRIPTS=".claude/skills/agentbase/scripts"
-CONFIG_FILE="${AGENTBASE_CONFIG_FILE:-agentbase.config.json}"
 ENV_FILE="${AGENTBASE_ENV_FILE:-.env.deploy}"
 
 require_cmd() {
@@ -25,23 +24,49 @@ if [ -z "${GREENNODE_CLIENT_ID:-}" ] || [ -z "${GREENNODE_CLIENT_SECRET:-}" ]; t
   exit 1
 fi
 
-if [ ! -f "$CONFIG_FILE" ]; then
-  echo "ERROR: Config file not found: $CONFIG_FILE" >&2
-  exit 1
-fi
-
 if [ ! -f "$ENV_FILE" ]; then
   echo "ERROR: Runtime env file not found: $ENV_FILE" >&2
   exit 1
 fi
 
-RUNTIME_ID="${AGENTBASE_RUNTIME_ID:-$(jq -r '.runtime_id // empty' "$CONFIG_FILE")}"
-IMAGE_NAME="${AGENTBASE_IMAGE_NAME:-$(jq -r '.image_name // empty' "$CONFIG_FILE")}"
-FLAVOR="${AGENTBASE_FLAVOR:-$(jq -r '.flavor // empty' "$CONFIG_FILE")}"
-DESCRIPTION="${AGENTBASE_DESCRIPTION:-$(jq -r '.description // empty' "$CONFIG_FILE")}"
+CONFIG_FILE="${AGENTBASE_CONFIG_FILE:-}"
+if [ -z "$CONFIG_FILE" ]; then
+  if [ -f "agentbase.config.json" ]; then
+    CONFIG_FILE="agentbase.config.json"
+  elif [ -f "agentbase.config.example.json" ]; then
+    CONFIG_FILE="agentbase.config.example.json"
+  fi
+fi
+
+if [ -z "$CONFIG_FILE" ] || [ ! -f "$CONFIG_FILE" ]; then
+  if [ -z "${AGENTBASE_RUNTIME_ID:-}" ] || [ -z "${AGENTBASE_IMAGE_NAME:-}" ] || [ -z "${AGENTBASE_FLAVOR:-}" ]; then
+    echo "ERROR: Provide agentbase.config.json or set AGENTBASE_RUNTIME_ID, AGENTBASE_IMAGE_NAME, AGENTBASE_FLAVOR." >&2
+    exit 1
+  fi
+fi
+
+RUNTIME_ID="${AGENTBASE_RUNTIME_ID:-}"
+IMAGE_NAME="${AGENTBASE_IMAGE_NAME:-}"
+FLAVOR="${AGENTBASE_FLAVOR:-}"
+DESCRIPTION="${AGENTBASE_DESCRIPTION:-}"
+
+if [ -n "$CONFIG_FILE" ] && [ -f "$CONFIG_FILE" ]; then
+  if [ -z "$RUNTIME_ID" ]; then
+    RUNTIME_ID="$(jq -r '.runtime_id // empty' "$CONFIG_FILE")"
+  fi
+  if [ -z "$IMAGE_NAME" ]; then
+    IMAGE_NAME="$(jq -r '.image_name // empty' "$CONFIG_FILE")"
+  fi
+  if [ -z "$FLAVOR" ]; then
+    FLAVOR="$(jq -r '.flavor // empty' "$CONFIG_FILE")"
+  fi
+  if [ -z "$DESCRIPTION" ]; then
+    DESCRIPTION="$(jq -r '.description // empty' "$CONFIG_FILE")"
+  fi
+fi
 
 if [ -z "$RUNTIME_ID" ] || [ -z "$IMAGE_NAME" ] || [ -z "$FLAVOR" ]; then
-  echo "ERROR: runtime_id, image_name, and flavor are required in $CONFIG_FILE or env vars." >&2
+  echo "ERROR: runtime_id, image_name, and flavor are required." >&2
   exit 1
 fi
 

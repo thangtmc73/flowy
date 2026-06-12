@@ -7,7 +7,7 @@ on:
       - "scripts/validate_faq.py"
   push:
     branches:
-      - main
+      - master
     paths:
       - "knowledge/**"
       - "scripts/validate_faq.py"

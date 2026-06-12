@@ -3,7 +3,7 @@ name: Deploy to AgentBase
 on:
   push:
     branches:
-      - main
+      - master
     paths:
       - "knowledge/**"
       - "main.py"
@@ -13,7 +13,7 @@ on:
       - "nginx.conf"
       - "start.sh"
       - "scripts/**"
-      - "agentbase.config.json"
+      - "agentbase.config.example.json"
       - ".github/workflows/deploy.yml"
 
 concurrency:
@@ -72,8 +72,11 @@ jobs:
           GREENNODE_CLIENT_ID: ${{ secrets.GREENNODE_CLIENT_ID }}
           GREENNODE_CLIENT_SECRET: ${{ secrets.GREENNODE_CLIENT_SECRET }}
           AGENTBASE_RUNTIME_ID: ${{ secrets.AGENTBASE_RUNTIME_ID }}
+          AGENTBASE_IMAGE_NAME: faq-support-agent
+          AGENTBASE_FLAVOR: runtime-s2-general-2x4
           AGENTBASE_ENV_FILE: .env.deploy
         run: |
           test -n "$GREENNODE_CLIENT_ID" || (echo "Missing secret: GREENNODE_CLIENT_ID" && exit 1)
           test -n "$GREENNODE_CLIENT_SECRET" || (echo "Missing secret: GREENNODE_CLIENT_SECRET" && exit 1)
+          test -n "$AGENTBASE_RUNTIME_ID" || (echo "Missing secret: AGENTBASE_RUNTIME_ID" && exit 1)
           bash scripts/deploy_agentbase.sh
