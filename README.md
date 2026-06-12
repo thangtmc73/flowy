@@ -19,7 +19,7 @@ Monorepo gồm agent tư vấn FAQ (Python/LangChain) và giao diện chat (Reac
 ## Prerequisites
 
 - Python 3.10+
-- Node.js 20+ (chỉ khi phát triển frontend local)
+- Node.js 24+ (chỉ khi phát triển frontend local)
 - Docker (deploy)
 - GreenNode IAM Service Account — [tạo tại đây](https://iam.console.vngcloud.vn/service-accounts)
 
