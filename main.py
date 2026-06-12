@@ -165,7 +165,10 @@ async def recall(query: str) -> str:
     logger.info("[tool:recall] found %d results (%.2fs)", len(results), time.monotonic() - t0)
     if not results:
         return "No relevant memories found."
-    return "\n".join(f"- {r.memory} (score: {r.score:.2f})" for r in results)
+    # SDK 1.0.3 returns dicts; older versions return model objects — handle both
+    def _get(r, key, default=""):
+        return r[key] if isinstance(r, dict) else getattr(r, key, default)
+    return "\n".join(f"- {_get(r, 'memory')} (score: {_get(r, 'score', 0):.2f})" for r in results)
 
 
 @tool
