@@ -1,8 +1,11 @@
 __pycache__/
 *.py[cod]
 .env
+.env.*
+!.env.example
 .env.deploy
 .greennode.json
+agentbase.config.json
 .agentbase/
 .agentbase-state.json
 *.credentials.json

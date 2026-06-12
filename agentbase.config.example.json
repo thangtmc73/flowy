@@ -1,0 +1,6 @@
+{
+  "runtime_id": "runtime-your-runtime-id",
+  "image_name": "faq-support-agent",
+  "flavor": "runtime-s2-general-2x4",
+  "description": "FAQ support agent"
+}
