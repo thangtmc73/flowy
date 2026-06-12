@@ -1,9 +1,12 @@
 import os
 import json
+import logging
+import time
 from datetime import datetime
 from difflib import SequenceMatcher
 
 from dotenv import load_dotenv
+from greennode_agentbase.core.logging import configure_logger
 from langchain_openai import ChatOpenAI
 from langchain.agents import create_agent
 from langchain_core.tools import tool
@@ -14,11 +17,14 @@ from greennode_agentbase import (
     PingStatus,
 )
 from greennode_agentbase.memory import MemoryClient
-from greennode_agentbase.memory.models import MemoryRecordSearchRequest
+from greennode_agentbase.memory.models import MemoryRecordSearchRequest, MemoryRecordInsertDirectlyRequest
 from greennode_agent_bridge import AgentBaseMemoryEvents
 from langgraph.config import get_config
 
 load_dotenv()
+
+logger = logging.getLogger("faq_agent")
+configure_logger(logger)
 
 app = GreenNodeAgentBaseApp()
 
@@ -128,12 +134,15 @@ async def remember(fact: str) -> str:
     Args:
         fact: The fact or information to remember.
     """
-    namespace = _build_namespace(_get_actor_id())
+    actor_id = _get_actor_id()
+    namespace = _build_namespace(actor_id)
+    logger.info("[tool:remember] actor=%s fact=%r", actor_id, fact[:80])
     await memory_client.insert_memory_records_directly_async(
         id=MEMORY_ID,
         namespace=namespace,
-        request=[fact],
+        request=MemoryRecordInsertDirectlyRequest(memory_records=[fact]),
     )
+    logger.info("[tool:remember] stored OK")
     return f"Remembered: {fact}"
 
 
@@ -144,12 +153,16 @@ async def recall(query: str) -> str:
     Args:
         query: Natural language search query.
     """
-    namespace = _build_namespace(_get_actor_id())
+    actor_id = _get_actor_id()
+    namespace = _build_namespace(actor_id)
+    logger.info("[tool:recall] actor=%s query=%r", actor_id, query[:80])
+    t0 = time.monotonic()
     results = await memory_client.search_memory_records_async(
         id=MEMORY_ID,
         namespace=namespace,
         request=MemoryRecordSearchRequest(query=query, limit=10),
     )
+    logger.info("[tool:recall] found %d results (%.2fs)", len(results), time.monotonic() - t0)
     if not results:
         return "No relevant memories found."
     return "\n".join(f"- {r.memory} (score: {r.score:.2f})" for r in results)
@@ -162,12 +175,14 @@ def search_faq_docs(query: str) -> str:
     Args:
         query: The user's question or topic to search for in the FAQ docs.
     """
+    logger.info("[tool:search_faq] query=%r", query[:80])
     if not FAQ_VARIANTS:
         return f"FAQ database is not loaded. Please check if {FAQ_DATA_PATH} exists."
-    
-    # Search with fuzzy matching (threshold 0.4 for better recall with LLM)
+
+    t0 = time.monotonic()
     results = search_faq_fuzzy(query, threshold=0.4, top_k=5)
-    
+    logger.info("[tool:search_faq] matched %d results (%.2fs)", len(results), time.monotonic() - t0)
+
     if not results:
         return (
             "Không tìm thấy thông tin phù hợp trong FAQ về Bảo hiểm Sức khỏe 24/7.\n"
@@ -178,15 +193,14 @@ def search_faq_docs(query: str) -> str:
             "- Quy trình bồi thường\n"
             "- Thời hạn bảo hiểm"
         )
-    
-    # Format results for LLM
+
     response = f"Tìm thấy {len(results)} kết quả liên quan:\n\n"
     for i, result in enumerate(results, 1):
         confidence_pct = int(result['score'] * 100)
         response += f"[{i}] Câu hỏi: {result['question']}\n"
         response += f"Trả lời: {result['answer']}\n"
         response += f"Danh mục: {result['category']} | Độ tương đồng: {confidence_pct}%\n\n"
-    
+
     return response
 
 
@@ -237,6 +251,12 @@ async def handler(payload: dict, context: RequestContext) -> dict:
         }
 
     message = payload.get("message", "Hello")
+    t_start = time.monotonic()
+
+    logger.info(
+        "[handler] user=%s session=%s msg=%r",
+        context.user_id, context.session_id, message[:100],
+    )
 
     # Map AgentBase context to LangGraph config
     # thread_id -> session persistence, actor_id -> per-user memory
@@ -253,6 +273,18 @@ async def handler(payload: dict, context: RequestContext) -> dict:
         config=config,
     )
     ai_message = result["messages"][-1]
+
+    # Count tool calls made during this invocation for observability
+    tool_calls = sum(
+        1 for m in result["messages"]
+        if hasattr(m, "type") and m.type == "tool"
+    )
+    elapsed = time.monotonic() - t_start
+    logger.info(
+        "[handler] done user=%s tool_calls=%d elapsed=%.2fs",
+        context.user_id, tool_calls, elapsed,
+    )
+
     return {
         "status": "success",
         "response": ai_message.content,
