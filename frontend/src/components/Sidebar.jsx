@@ -22,7 +22,9 @@ const HIGHLIGHTS = [
   },
 ]
 
-const SUGGESTIONS = [
+import { useEffect } from 'react'
+
+export const SUGGESTIONS = [
   'Bảo hiểm Sức khỏe 24/7 là gì?',
   'Quyền lợi nội trú gồm những gì?',
   'Làm thế nào để mua bảo hiểm?',
@@ -31,12 +33,48 @@ const SUGGESTIONS = [
   'Khám ngoại trú có được bồi thường không?',
 ]
 
-export default function Sidebar({ onSelectQuestion, disabled }) {
+export default function Sidebar({ onSelectQuestion, disabled, isOpen, onClose }) {
+  useEffect(() => {
+    if (!isOpen) return
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [isOpen])
+
   return (
-    <aside className="w-80 xl:w-96 flex-shrink-0 flex flex-col bg-brand text-white h-full border-r border-brand-hover/30">
+    <>
+      {isOpen && (
+        <button
+          type="button"
+          aria-label="Đóng menu"
+          className="fixed inset-0 z-30 bg-black/50 lg:hidden"
+          onClick={onClose}
+        />
+      )}
+
+      <aside
+        className={`
+          fixed lg:static inset-y-0 left-0 z-40
+          w-[min(100vw,20rem)] xl:w-96 flex-shrink-0 flex flex-col
+          bg-brand text-white h-full border-r border-brand-hover/30
+          transition-transform duration-300 ease-in-out
+          ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+        `}
+      >
       {/* Brand */}
-      <div className="px-6 pt-8 pb-6 border-b border-white/10">
-        <div className="flex items-center gap-4">
+      <div className="px-5 sm:px-6 pt-6 sm:pt-8 pb-5 sm:pb-6 border-b border-white/10">
+        <div className="flex items-center gap-3 sm:gap-4">
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Đóng menu"
+            className="lg:hidden w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center flex-shrink-0 transition-colors"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
           <div className="w-12 h-12 bg-white/15 rounded-2xl flex items-center justify-center flex-shrink-0 ring-1 ring-white/20">
             <svg className="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
               <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 4l5 2.18V11c0 3.5-2.33 6.79-5 7.93-2.67-1.14-5-4.43-5-7.93V7.18L12 5z" />
@@ -86,9 +124,10 @@ export default function Sidebar({ onSelectQuestion, disabled }) {
       </div>
 
       {/* Footer */}
-      <div className="px-6 py-4 border-t border-white/10 text-xs text-white/50">
+      <div className="px-5 sm:px-6 py-4 border-t border-white/10 text-xs text-white/50">
         Thông tin chỉ mang tính tham khảo. Vui lòng tham khảo hợp đồng bảo hiểm chính thức.
       </div>
     </aside>
+    </>
   )
 }

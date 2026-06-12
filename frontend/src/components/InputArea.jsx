@@ -29,25 +29,26 @@ export default function InputArea({ onSend, disabled }) {
   }
 
   return (
-    <div className="border-t border-slate-200 bg-white px-8 py-5 flex-shrink-0">
+    <div className="border-t border-slate-200 bg-white px-4 sm:px-6 lg:px-8 py-3 sm:py-5 flex-shrink-0 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
       <div className="max-w-4xl mx-auto">
-        <div className="flex items-end gap-3 bg-slate-50 border border-slate-300 rounded-2xl px-5 py-3 focus-within:border-brand focus-within:ring-2 focus-within:ring-brand/15 transition-all">
+        <div className="flex items-end gap-2 sm:gap-3 bg-slate-50 border border-slate-300 rounded-2xl px-3 sm:px-5 py-2.5 sm:py-3 focus-within:border-brand focus-within:ring-2 focus-within:ring-brand/15 transition-all">
           <textarea
             ref={textareaRef}
             value={value}
             onChange={(e) => setValue(e.target.value)}
             onKeyDown={handleKeyDown}
             disabled={disabled}
-            placeholder="Nhập câu hỏi về bảo hiểm sức khỏe, quyền lợi, mua bảo hiểm, bồi thường..."
+            placeholder="Nhập câu hỏi về bảo hiểm..."
             rows={1}
-            className="flex-1 bg-transparent resize-none outline-none text-base text-slate-800 placeholder-slate-400 leading-relaxed disabled:opacity-50"
+            className="flex-1 min-w-0 bg-transparent resize-none outline-none text-base text-slate-800 placeholder-slate-400 leading-relaxed disabled:opacity-50"
             style={{ minHeight: '28px', maxHeight: '160px' }}
           />
 
           <button
             onClick={handleSubmit}
             disabled={disabled || !value.trim()}
-            className={`flex-shrink-0 h-10 px-5 rounded-xl flex items-center justify-center gap-2 transition-all text-sm font-medium ${
+            aria-label={disabled ? 'Đang trả lời' : 'Gửi tin nhắn'}
+            className={`flex-shrink-0 h-10 px-3 sm:px-5 rounded-xl flex items-center justify-center gap-2 transition-all text-sm font-medium ${
               value.trim() && !disabled
                 ? 'bg-brand hover:bg-brand-hover text-white shadow-sm shadow-brand/25'
                 : 'bg-slate-200 text-slate-400 cursor-not-allowed'
@@ -59,11 +60,11 @@ export default function InputArea({ onSend, disabled }) {
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
                 </svg>
-                Đang trả lời
+                <span className="hidden sm:inline">Đang trả lời</span>
               </>
             ) : (
               <>
-                Gửi
+                <span className="hidden sm:inline">Gửi</span>
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
                 </svg>
@@ -72,7 +73,7 @@ export default function InputArea({ onSend, disabled }) {
           </button>
         </div>
 
-        <p className="text-xs text-slate-400 mt-2.5">
+        <p className="hidden sm:block text-xs text-slate-400 mt-2.5">
           Nhấn Enter để gửi · Shift+Enter để xuống dòng
         </p>
       </div>
