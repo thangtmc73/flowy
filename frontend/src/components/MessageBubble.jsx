@@ -1,5 +1,27 @@
 import zlpLogoSquare from '../assets/zlp_logo_square.webp'
 
+function parseBoldText(content) {
+  const parts = []
+  let partKey = 0
+  const boldRegex = /\*\*(.*?)\*\*/g
+  let lastIndex = 0
+  let match
+
+  while ((match = boldRegex.exec(content)) !== null) {
+    if (match.index > lastIndex) {
+      parts.push(<span key={partKey++}>{content.slice(lastIndex, match.index)}</span>)
+    }
+    parts.push(<strong key={partKey++} className="font-semibold">{match[1]}</strong>)
+    lastIndex = boldRegex.lastIndex
+  }
+  
+  if (lastIndex < content.length) {
+    parts.push(<span key={partKey}>{content.slice(lastIndex)}</span>)
+  }
+
+  return parts.length > 0 ? parts : [content]
+}
+
 function formatContent(text) {
   const lines = text.split('\n')
   const elements = []
@@ -22,30 +44,14 @@ function formatContent(text) {
         : 'text-base font-semibold text-slate-800 mt-2 mb-1'
       
       elements.push(
-        <div key={key++} className={className}>{text}</div>
+        <div key={key++} className={className}>{parseBoldText(text)}</div>
       )
       continue
     }
 
     const isBullet = line.trim().startsWith('•') || line.trim().startsWith('-') || line.trim().startsWith('*')
     const content = isBullet ? line.replace(/^[\s•\-*]+/, '') : line
-
-    const parts = []
-    let partKey = 0
-
-    const boldRegex = /\*\*(.*?)\*\*/g
-    let lastIndex = 0
-    let match
-    while ((match = boldRegex.exec(content)) !== null) {
-      if (match.index > lastIndex) {
-        parts.push(<span key={partKey++}>{content.slice(lastIndex, match.index)}</span>)
-      }
-      parts.push(<strong key={partKey++} className="font-semibold">{match[1]}</strong>)
-      lastIndex = boldRegex.lastIndex
-    }
-    if (lastIndex < content.length) {
-      parts.push(<span key={partKey}>{content.slice(lastIndex)}</span>)
-    }
+    const parts = parseBoldText(content)
 
     if (isBullet) {
       elements.push(
