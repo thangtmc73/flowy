@@ -226,10 +226,14 @@ llm = ChatOpenAI(
 # Neither should be exposed as tool parameters to avoid LLM hallucination
 
 
-def _get_actor_id() -> str:
+def _get_actor_id():
     """Get actor_id from LangGraph configurable (set during graph.invoke)."""
-    config = get_config()
-    return config["configurable"].get("actor_id", "default")
+    try:
+        config = get_config()
+        return config["configurable"].get("actor_id", "default")
+    except RuntimeError:
+        # Called outside runnable context - return default
+        return "default"
 
 
 def _build_namespace(actor_id: str) -> str:

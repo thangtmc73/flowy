@@ -15,6 +15,8 @@ export default function App() {
     setSidebarOpen(false)
   }
 
+  const showSuggestions = messages.length === 1 && messages[0].id === 'welcome'
+
   return (
     <div className="flex h-dvh min-h-dvh bg-slate-100 overflow-hidden">
       <Sidebar
@@ -34,7 +36,9 @@ export default function App() {
           disabled={loading}
         />
 
-        <SuggestedQuestions onSelectQuestion={handleSend} disabled={loading} />
+        {showSuggestions && (
+          <SuggestedQuestions onSelectQuestion={handleSend} disabled={loading} />
+        )}
 
         <InputArea onSend={handleSend} disabled={loading} />
       </div>
