@@ -27,8 +27,8 @@ import zlpLogoHorizontalWhite from '../assets/zlp_logo_horizontal_white.webp'
 
 export const SUGGESTIONS = [
   'Chi phí bảo hiểm trên Zalopay là bao nhiêu?',
-  'Bảo hiểm Sức khỏe 24/7 (MSIG) là gì?',
-  'Bảo hiểm Cyber (VBI) bảo vệ gì?',
+  'Có những gói bảo hiểm nào?',
+  'Bảo hiểm Cyber bảo vệ gì?',
   'Độ tuổi nào được mua bảo hiểm?',
   'Thời gian chờ bảo hiểm là gì?',
   'Trường hợp nào không được bồi thường?',

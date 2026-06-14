@@ -70,7 +70,7 @@ curl -X POST http://127.0.0.1:8080/invocations \
   -H "Content-Type: application/json" \
   -H "X-GreenNode-AgentBase-User-Id: test-user" \
   -H "X-GreenNode-AgentBase-Session-Id: test-session-1" \
-  -d '{"message": "Bảo hiểm Sức khỏe 24/7 là gì?"}'
+  -d '{"message": "So sánh các gói bảo hiểm sức khỏe?"}'
 ```
 
 Health check:
@@ -88,24 +88,26 @@ Khi bật memory, bắt buộc có cả hai header:
 
 ## FAQ knowledge
 
-Chỉnh sửa file `knowledge/faq.json` (schema cố định):
+File `knowledge/_index.json` định nghĩa cấu trúc multi-partner. Mỗi đối tác có file JSON riêng trong `knowledge/partners/{partner_id}/{product_id}.json`.
 
-```json
-[
-  {
-    "id": "faq_001",
-    "category": "Câu hỏi chung",
-    "instruction": "Câu hỏi",
-    "input": "",
-    "output": "Câu trả lời"
-  }
-]
-```
+Xem chi tiết schema và hướng dẫn trong `knowledge/README.md` và `knowledge/QUICKSTART.md`.
 
-Validate trước khi push:
+**Validate trước khi deploy:**
 
 ```bash
-python3 scripts/validate_faq.py knowledge/faq.json
+python3 scripts/validate_faq.py knowledge/
+```
+
+**Thêm đối tác mới:**
+
+Xem `knowledge/QUICKSTART.md` hoặc dùng script import:
+
+```bash
+python3 scripts/import_partner_docs.py path/to/document.pdf \
+  --partner-id new_partner \
+  --partner-name "Partner Name" \
+  --product-id product_id \
+  --product-name "Product Name"
 ```
 
 ## Deploy
@@ -148,10 +150,14 @@ npm run dev
 
 ```
 ├── main.py                 # Agent entrypoint
-├── knowledge/faq.json      # FAQ knowledge (JSON)
+├── knowledge/              # Multi-partner knowledge base
+│   ├── _index.json         # Partner & product index
+│   ├── partners/           # Partner-specific FAQs
+│   └── cross_product/      # Cross-partner comparisons
 ├── frontend/               # React chat UI
 ├── scripts/
 │   ├── validate_faq.py     # Validate FAQ JSON
+│   ├── import_partner_docs.py  # Import from PDF/DOCX
 │   └── deploy_agentbase.sh # Build + deploy script
 ├── Dockerfile
 ├── agentbase.config.example.json

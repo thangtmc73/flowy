@@ -5,7 +5,7 @@ const INITIAL_WELCOME = {
   id: 'welcome',
   role: 'agent',
   content:
-    'Xin chào! 👋 Mình là trợ lý tư vấn **Bảo hiểm Sức khỏe 24/7** trên Zalopay, được cung cấp bởi **MSIG Việt Nam**.\n\nMình có thể giúp bạn:\n• Tìm hiểu về sản phẩm và quyền lợi bảo hiểm\n• Quy trình mua bảo hiểm và thanh toán\n• Hướng dẫn bồi thường và sử dụng\n• Giải đáp mọi thắc mắc về hợp đồng\n\nBạn cần tư vấn điều gì hôm nay? 😊',
+    'Xin chào! 👋 Mình là trợ lý tư vấn **Bảo hiểm** trên Zalopay.\n\nMình có thể giúp bạn:\n• Tìm hiểu về các sản phẩm và quyền lợi bảo hiểm\n• So sánh chi phí và điều kiện giữa các gói\n• Quy trình mua bảo hiểm và thanh toán\n• Hướng dẫn bồi thường và sử dụng\n• Giải đáp mọi thắc mắc về hợp đồng\n\nBạn cần tư vấn điều gì hôm nay? 😊',
   timestamp: new Date().toISOString(),
 }
 

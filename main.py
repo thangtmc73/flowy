@@ -129,8 +129,8 @@ def load_legacy_format(faq_path):
                 "canonical": item.get("instruction", ""),
                 "answer": item.get("output", ""),
                 "category": item.get("category", "General"),
-                "partner": "MSIG Việt Nam",
-                "product": "Sức khỏe 24/7",
+                "partner": "Legacy Partner",
+                "product": "Legacy Product",
                 "priority": 5
             })
         
@@ -289,7 +289,7 @@ async def recall(query: str) -> str:
 def search_faq_docs(query: str) -> str:
     """Search FAQ documentation for answers to user questions about insurance products on Zalopay.
 
-    Supports multiple partners (MSIG, PVI, etc.) and product types (health, car, travel).
+    Supports multiple partners and product types (health, car, travel, cyber, etc.).
     Automatically detects partner and product context from the query.
 
     Args:
@@ -303,11 +303,17 @@ def search_faq_docs(query: str) -> str:
     partner_filter = None
     query_lower = query.lower()
     
-    if "msig" in query_lower or "sức khỏe 24/7" in query_lower:
-        partner_filter = "msig"
-    # Add more partners as needed:
-    # elif "pvi" in query_lower:
-    #     partner_filter = "pvi"
+    # Detect specific partner mentions in query
+    partner_patterns = {
+        "msig": ["msig", "sức khỏe 24/7"],
+        "gic": ["gic", "credit topup"],
+        "vbi": ["vbi", "cyber"],
+    }
+    
+    for partner_id, patterns in partner_patterns.items():
+        if any(pattern in query_lower for pattern in patterns):
+            partner_filter = partner_id
+            break
 
     t0 = time.monotonic()
     results = search_faq_fuzzy(query, threshold=0.4, top_k=5, partner_filter=partner_filter)
@@ -317,10 +323,11 @@ def search_faq_docs(query: str) -> str:
         return (
             "Không tìm thấy thông tin phù hợp trong FAQ về sản phẩm bảo hiểm trên Zalopay.\n"
             "Có thể hỏi về:\n"
-            "- Bảo hiểm Sức khỏe 24/7 (MSIG)\n"
-            "- Quyền lợi bảo hiểm (Nội trú, Ngoại trú, Khám từ xa)\n"
-            "- Quy trình mua và sử dụng\n"
-            "- Quy trình bồi thường"
+            "- Các gói bảo hiểm sức khỏe\n"
+            "- Bảo hiểm an ninh mạng (Cyber)\n"
+            "- Bảo hiểm tài chính (Credit Topup)\n"
+            "- Quyền lợi, chi phí, độ tuổi áp dụng\n"
+            "- Quy trình mua và bồi thường"
         )
 
     response = f"Tìm thấy {len(results)} kết quả liên quan:\n\n"
@@ -344,15 +351,13 @@ agent = create_agent(
     system_prompt=(
         "Bạn là trợ lý tư vấn bảo hiểm trên nền tảng Zalopay.\n\n"
         "Vai trò của bạn:\n"
-        "- Trả lời câu hỏi về các sản phẩm bảo hiểm từ nhiều đối tác (MSIG, PVI, v.v.) bằng cách tìm kiếm trong FAQ với tool 'search_faq_docs'\n"
+        "- Trả lời câu hỏi về các sản phẩm bảo hiểm từ nhiều đối tác bằng cách tìm kiếm trong FAQ với tool 'search_faq_docs'\n"
         "- Nhớ thông tin quan trọng về người dùng với tool 'remember'\n"
         "- Tra cứu lại các tương tác và thông tin đã học với tool 'recall'\n"
         "- Cung cấp câu trả lời chính xác, rõ ràng dựa trên tài liệu FAQ\n"
+        "- So sánh khách quan giữa các gói bảo hiểm khi được hỏi\n"
         "- Nếu không tìm thấy câu trả lời trong tài liệu, hãy nói thẳng thắn\n"
         "- Giao tiếp thân thiện, giữ ngữ cảnh xuyên suốt cuộc trò chuyện\n\n"
-        "Sản phẩm hiện có:\n"
-        "- Bảo hiểm Sức khỏe 24/7 (MSIG Việt Nam): Nội trú, Ngoại trú, Telemed, Pharmacity\n"
-        "- (Các đối tác khác sẽ được bổ sung dần)\n\n"
         "Quy trình trả lời:\n"
         "1. Tìm kiếm thông tin trong FAQ bằng 'search_faq_docs'\n"
         "2. Kiểm tra memory xem có thông tin liên quan về người dùng này không\n"
