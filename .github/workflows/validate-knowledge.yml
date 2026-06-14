@@ -24,5 +24,5 @@ jobs:
         with:
           python-version: "3.13"
 
-      - name: Validate FAQ JSON
-        run: python3 scripts/validate_faq.py knowledge/faq.json
+      - name: Validate Knowledge Base
+        run: python3 scripts/validate_faq.py knowledge/
