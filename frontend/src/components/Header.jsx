@@ -1,3 +1,5 @@
+import zlpLogoSquare from '../assets/zlp_logo_square.webp'
+
 export default function Header({ onReset, onMenuClick }) {
   return (
     <header className="bg-white border-b border-slate-200 px-4 sm:px-6 lg:px-8 py-3 sm:py-4 flex items-center justify-between gap-2 sm:gap-3 flex-shrink-0">
@@ -12,6 +14,12 @@ export default function Header({ onReset, onMenuClick }) {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </button>
+
+        <img
+          src={zlpLogoSquare}
+          alt="Zalopay"
+          className="lg:hidden w-8 h-8 shrink-0 rounded-lg object-contain"
+        />
 
         <div className="min-w-0">
           <h2 className="font-semibold text-slate-900 text-base sm:text-lg leading-tight">
