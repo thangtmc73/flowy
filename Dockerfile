@@ -17,7 +17,7 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY knowledge/faq.json ./knowledge/faq.json
+COPY knowledge/ ./knowledge/
 COPY main.py .
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY start.sh .
