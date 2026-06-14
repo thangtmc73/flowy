@@ -2,6 +2,7 @@ import { useState } from 'react'
 import Header from './components/Header'
 import Sidebar from './components/Sidebar'
 import ChatWindow from './components/ChatWindow'
+import SuggestedQuestions from './components/SuggestedQuestions'
 import InputArea from './components/InputArea'
 import { useChat } from './hooks/useChat'
 
@@ -32,6 +33,8 @@ export default function App() {
           onSelectQuestion={handleSend}
           disabled={loading}
         />
+
+        <SuggestedQuestions onSelectQuestion={handleSend} disabled={loading} />
 
         <InputArea onSend={handleSend} disabled={loading} />
       </div>

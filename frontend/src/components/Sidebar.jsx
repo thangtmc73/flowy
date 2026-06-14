@@ -90,7 +90,7 @@ export default function Sidebar({ onSelectQuestion, disabled, isOpen, onClose })
       </div>
 
       {/* Highlights */}
-      <div className="px-6 py-6 space-y-4 border-b border-white/10">
+      <div className="flex-1 overflow-y-auto chat-scroll px-6 py-6 space-y-4 min-h-0">
         {HIGHLIGHTS.map((item) => (
           <div key={item.title} className="flex gap-3">
             <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0">
@@ -104,25 +104,6 @@ export default function Sidebar({ onSelectQuestion, disabled, isOpen, onClose })
             </div>
           </div>
         ))}
-      </div>
-
-      {/* Suggested questions */}
-      <div className="flex-1 overflow-y-auto chat-scroll px-6 py-6 min-h-0">
-        <p className="text-xs font-semibold uppercase tracking-wider text-white/50 mb-4">
-          Câu hỏi thường gặp
-        </p>
-        <div className="space-y-2">
-          {SUGGESTIONS.map((q) => (
-            <button
-              key={q}
-              onClick={() => onSelectQuestion(q)}
-              disabled={disabled}
-              className="w-full text-left text-sm bg-white/10 hover:bg-white/20 disabled:opacity-50 disabled:cursor-not-allowed border border-white/10 rounded-xl px-4 py-3 transition-colors leading-snug"
-            >
-              {q}
-            </button>
-          ))}
-        </div>
       </div>
 
       {/* Footer */}

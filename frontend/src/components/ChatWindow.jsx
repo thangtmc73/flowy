@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react'
 import MessageBubble from './MessageBubble'
 import TypingIndicator from './TypingIndicator'
-import { SUGGESTIONS } from './Sidebar'
 import zlpLogoSquare from '../assets/zlp_logo_square.webp'
 
 export default function ChatWindow({ messages, loading, onSelectQuestion, disabled }) {
@@ -35,24 +34,6 @@ export default function ChatWindow({ messages, loading, onSelectQuestion, disabl
               </div>
             </div>
 
-            <div className="lg:hidden mb-5 sm:mb-6">
-              <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">
-                Câu hỏi thường gặp
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {SUGGESTIONS.map((q) => (
-                  <button
-                    key={q}
-                    type="button"
-                    onClick={() => onSelectQuestion(q)}
-                    disabled={disabled}
-                    className="text-left text-sm bg-white hover:bg-brand-light disabled:opacity-50 disabled:cursor-not-allowed border border-slate-200 hover:border-brand/30 rounded-xl px-3.5 py-2.5 transition-colors leading-snug text-slate-700"
-                  >
-                    {q}
-                  </button>
-                ))}
-              </div>
-            </div>
           </>
         )}
 
