@@ -798,6 +798,38 @@
       "related_faq_ids": [],
       "source": "migrated",
       "priority": 5
+    },
+    {
+      "id": "msig_health_247_faq_035",
+      "canonical_question": "Tổng đài MSIG là số nào?",
+      "user_questions": [
+        "Tổng đài MSIG là số nào?",
+        "Hotline MSIG là gì?",
+        "Số điện thoại liên hệ MSIG?",
+        "Liên hệ MSIG qua số nào?",
+        "Gọi MSIG số mấy?",
+        "MSIG hotline bao nhiêu?",
+        "Cho tôi số điện thoại MSIG",
+        "Muốn gọi MSIG thì gọi số nào?",
+        "Số tổng đài của MSIG Việt Nam?",
+        "Liên hệ bảo hiểm MSIG số điện thoại nào?",
+        "MSIG customer service số mấy?",
+        "Cần liên hệ MSIG gọi số nào?"
+      ],
+      "answer": "Tổng đài MSIG Việt Nam: 0888 176 198\n\nQuý khách có thể liên hệ trực tiếp với MSIG để được tư vấn và hỗ trợ về các vấn đề liên quan đến bảo hiểm Sức khỏe 24/7.",
+      "category": "Liên hệ & Hỗ trợ",
+      "tags": [
+        "msig",
+        "liên hệ",
+        "hotline",
+        "tổng đài"
+      ],
+      "related_faq_ids": [
+        "msig_health_247_faq_017",
+        "msig_health_247_faq_021"
+      ],
+      "source": "manual",
+      "priority": 8
     }
   ]
 }
