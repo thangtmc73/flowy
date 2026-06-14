@@ -11,6 +11,22 @@ function formatContent(text) {
       continue
     }
 
+    const headerMatch = line.match(/^(#{1,3})\s+(.+)$/)
+    if (headerMatch) {
+      const level = headerMatch[1].length
+      const text = headerMatch[2]
+      const className = level === 1 
+        ? 'text-xl font-bold text-slate-900 mt-4 mb-2'
+        : level === 2
+        ? 'text-lg font-semibold text-slate-800 mt-3 mb-1.5'
+        : 'text-base font-semibold text-slate-800 mt-2 mb-1'
+      
+      elements.push(
+        <div key={key++} className={className}>{text}</div>
+      )
+      continue
+    }
+
     const isBullet = line.trim().startsWith('•') || line.trim().startsWith('-') || line.trim().startsWith('*')
     const content = isBullet ? line.replace(/^[\s•\-*]+/, '') : line
 
