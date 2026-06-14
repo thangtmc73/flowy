@@ -70,8 +70,8 @@ if [ -z "$RUNTIME_ID" ] || [ -z "$IMAGE_NAME" ] || [ -z "$FLAVOR" ]; then
   exit 1
 fi
 
-echo "==> Validating FAQ knowledge"
-python3 scripts/validate_faq.py knowledge/faq.json
+echo "==> Validating knowledge base"
+python3 scripts/validate_knowledge.py
 
 echo "==> Fetching Container Registry info"
 REPO_JSON="$(bash "$SCRIPTS/cr.sh" repo get)"
