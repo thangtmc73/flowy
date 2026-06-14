@@ -28,47 +28,157 @@ configure_logger(logger)
 
 app = GreenNodeAgentBaseApp()
 
-# --- FAQ Data Loading ---
-FAQ_DATA_PATH = os.environ.get("FAQ_DATA_PATH", "knowledge/faq.json")
-FAQ_VARIANTS = []
+# --- FAQ Data Loading (Multi-Partner Support) ---
+FAQ_DATA_PATH = os.environ.get("FAQ_DATA_PATH", "knowledge")
+FAQ_ALL_ENTRIES = []
+FAQ_INDEX = {}
 
-def load_faq_data():
-    """Load FAQ question variants from JSON file."""
-    global FAQ_VARIANTS
+def load_knowledge_base():
+    """Load multi-partner FAQ structure from knowledge base."""
+    global FAQ_ALL_ENTRIES, FAQ_INDEX
+    
+    from pathlib import Path
+    
+    knowledge_dir = Path(FAQ_DATA_PATH)
+    index_path = knowledge_dir / "_index.json"
+    
+    # Fallback: try old single-file format
+    if not index_path.exists():
+        old_faq_path = knowledge_dir / "faq.json"
+        if old_faq_path.exists():
+            print(f"Warning: Using old FAQ format from {old_faq_path}. Consider migrating with scripts/migrate_faq.py")
+            load_legacy_format(old_faq_path)
+            return
+        else:
+            print(f"Error: Neither {index_path} nor {old_faq_path} found")
+            FAQ_ALL_ENTRIES = []
+            return
+    
     try:
-        with open(FAQ_DATA_PATH, "r", encoding="utf-8") as f:
-            FAQ_VARIANTS = json.load(f)
-        print(f"✓ Loaded {len(FAQ_VARIANTS)} FAQ entries from {FAQ_DATA_PATH}")
+        with open(index_path, "r", encoding="utf-8") as f:
+            FAQ_INDEX = json.load(f)
+        
+        # Load each product file
+        for partner in FAQ_INDEX.get("partners", []):
+            if not partner.get("active", True):
+                continue
+            
+            for product in partner.get("products", []):
+                product_file = knowledge_dir / product["file"]
+                if not product_file.exists():
+                    print(f"Warning: Product file not found: {product_file}")
+                    continue
+                
+                with open(product_file, "r", encoding="utf-8") as f:
+                    product_data = json.load(f)
+                
+                # Flatten user_questions into searchable entries
+                for faq in product_data.get("faqs", []):
+                    for user_question in faq.get("user_questions", []):
+                        FAQ_ALL_ENTRIES.append({
+                            "question": user_question,
+                            "canonical": faq.get("canonical_question", user_question),
+                            "answer": faq.get("answer", ""),
+                            "category": faq.get("category", "General"),
+                            "partner": partner.get("partner_name", "Unknown"),
+                            "partner_id": partner.get("partner_id", ""),
+                            "product": product.get("product_name", "Unknown"),
+                            "product_id": product.get("product_id", ""),
+                            "tags": faq.get("tags", []),
+                            "priority": faq.get("priority", 5),
+                            "id": faq.get("id", "")
+                        })
+        
+        # Load cross-product FAQs if exists
+        cross_dir = knowledge_dir / "cross_product"
+        if cross_dir.exists():
+            for cross_file in cross_dir.glob("*.json"):
+                with open(cross_file, "r", encoding="utf-8") as f:
+                    cross_data = json.load(f)
+                    for faq in cross_data.get("faqs", []):
+                        for user_question in faq.get("user_questions", []):
+                            FAQ_ALL_ENTRIES.append({
+                                "question": user_question,
+                                "canonical": faq.get("canonical_question", user_question),
+                                "answer": faq.get("answer", ""),
+                                "category": faq.get("category", "So sánh / Chung"),
+                                "partner": "Zalopay",
+                                "product": "Cross-product",
+                                "priority": faq.get("priority", 8),
+                                "id": faq.get("id", "")
+                            })
+        
+        partner_count = len([p for p in FAQ_INDEX.get("partners", []) if p.get("active", True)])
+        print(f"✓ Loaded {len(FAQ_ALL_ENTRIES)} FAQ entries from {partner_count} partner(s)")
+    
     except Exception as e:
-        print(f"Warning: Could not load FAQ data from {FAQ_DATA_PATH}: {e}")
-        FAQ_VARIANTS = []
+        print(f"Error loading knowledge base: {e}")
+        FAQ_ALL_ENTRIES = []
+
+
+def load_legacy_format(faq_path):
+    """Fallback loader for old single-file format."""
+    global FAQ_ALL_ENTRIES
+    try:
+        with open(faq_path, "r", encoding="utf-8") as f:
+            old_data = json.load(f)
+        
+        for item in old_data:
+            FAQ_ALL_ENTRIES.append({
+                "question": item.get("instruction", ""),
+                "canonical": item.get("instruction", ""),
+                "answer": item.get("output", ""),
+                "category": item.get("category", "General"),
+                "partner": "MSIG Việt Nam",
+                "product": "Sức khỏe 24/7",
+                "priority": 5
+            })
+        
+        print(f"✓ Loaded {len(FAQ_ALL_ENTRIES)} FAQ entries (legacy format)")
+    except Exception as e:
+        print(f"Error loading legacy FAQ: {e}")
+        FAQ_ALL_ENTRIES = []
 
 def similarity_score(str1: str, str2: str) -> float:
     """Calculate similarity between two strings (0-1)"""
     return SequenceMatcher(None, str1.lower(), str2.lower()).ratio()
 
-def search_faq_fuzzy(question: str, threshold: float = 0.4, top_k: int = 3) -> list:
+def search_faq_fuzzy(query, threshold=0.4, top_k=3, partner_filter=None, category_filter=None):
     """
-    Search FAQ using fuzzy matching
-    Returns top_k most similar Q&A pairs
+    Search FAQ using fuzzy matching with multi-partner support.
+    
+    Args:
+        query: User question
+        threshold: Minimum similarity score (0-1)
+        top_k: Number of results to return
+        partner_filter: Filter by partner_id (e.g., "msig")
+        category_filter: Filter by category (e.g., "health")
+    
+    Returns:
+        List of matching FAQ entries with scores
     """
     results = []
     
-    for item in FAQ_VARIANTS:
-        score = similarity_score(question, item['instruction'])
+    for entry in FAQ_ALL_ENTRIES:
+        # Apply filters
+        if partner_filter and entry.get("partner_id") != partner_filter:
+            continue
+        if category_filter and entry.get("product_category") != category_filter:
+            continue
+        
+        score = similarity_score(query, entry["question"])
         if score >= threshold:
             results.append({
-                'question': item['instruction'],
-                'answer': item['output'],
-                'category': item.get('category', 'General'),
-                'score': score
+                **entry,
+                "score": score
             })
     
-    results.sort(key=lambda x: x['score'], reverse=True)
+    # Rank by: score * priority
+    results.sort(key=lambda x: (x["score"] * x.get("priority", 5)), reverse=True)
     return results[:top_k]
 
 # Load FAQ data on startup
-load_faq_data()
+load_knowledge_base()
 
 # --- Memory Configuration ---
 # Create a memory with: /agentbase-memory
@@ -173,34 +283,47 @@ async def recall(query: str) -> str:
 
 @tool
 def search_faq_docs(query: str) -> str:
-    """Search FAQ documentation for answers to user questions about Bảo hiểm Sức khỏe 24/7.
+    """Search FAQ documentation for answers to user questions about insurance products on Zalopay.
+
+    Supports multiple partners (MSIG, PVI, etc.) and product types (health, car, travel).
+    Automatically detects partner and product context from the query.
 
     Args:
         query: The user's question or topic to search for in the FAQ docs.
     """
     logger.info("[tool:search_faq] query=%r", query[:80])
-    if not FAQ_VARIANTS:
+    if not FAQ_ALL_ENTRIES:
         return f"FAQ database is not loaded. Please check if {FAQ_DATA_PATH} exists."
 
+    # Smart context detection
+    partner_filter = None
+    query_lower = query.lower()
+    
+    if "msig" in query_lower or "sức khỏe 24/7" in query_lower:
+        partner_filter = "msig"
+    # Add more partners as needed:
+    # elif "pvi" in query_lower:
+    #     partner_filter = "pvi"
+
     t0 = time.monotonic()
-    results = search_faq_fuzzy(query, threshold=0.4, top_k=5)
+    results = search_faq_fuzzy(query, threshold=0.4, top_k=5, partner_filter=partner_filter)
     logger.info("[tool:search_faq] matched %d results (%.2fs)", len(results), time.monotonic() - t0)
 
     if not results:
         return (
-            "Không tìm thấy thông tin phù hợp trong FAQ về Bảo hiểm Sức khỏe 24/7.\n"
+            "Không tìm thấy thông tin phù hợp trong FAQ về sản phẩm bảo hiểm trên Zalopay.\n"
             "Có thể hỏi về:\n"
-            "- Bảo hiểm Sức khỏe 24/7 là gì?\n"
+            "- Bảo hiểm Sức khỏe 24/7 (MSIG)\n"
             "- Quyền lợi bảo hiểm (Nội trú, Ngoại trú, Khám từ xa)\n"
             "- Quy trình mua và sử dụng\n"
-            "- Quy trình bồi thường\n"
-            "- Thời hạn bảo hiểm"
+            "- Quy trình bồi thường"
         )
 
     response = f"Tìm thấy {len(results)} kết quả liên quan:\n\n"
     for i, result in enumerate(results, 1):
         confidence_pct = int(result['score'] * 100)
-        response += f"[{i}] Câu hỏi: {result['question']}\n"
+        response += f"[{i}] {result['partner']} - {result['product']}\n"
+        response += f"Câu hỏi: {result['canonical']}\n"
         response += f"Trả lời: {result['answer']}\n"
         response += f"Danh mục: {result['category']} | Độ tương đồng: {confidence_pct}%\n\n"
 
@@ -215,14 +338,17 @@ agent = create_agent(
     llm,
     tools=[remember, recall, search_faq_docs],
     system_prompt=(
-        "Bạn là trợ lý tư vấn Bảo hiểm Sức khỏe 24/7 trên Zalopay, được cung cấp bởi MSIG Việt Nam.\n\n"
+        "Bạn là trợ lý tư vấn bảo hiểm trên nền tảng Zalopay.\n\n"
         "Vai trò của bạn:\n"
-        "- Trả lời câu hỏi về Bảo hiểm Sức khỏe 24/7 bằng cách tìm kiếm trong FAQ với tool 'search_faq_docs'\n"
+        "- Trả lời câu hỏi về các sản phẩm bảo hiểm từ nhiều đối tác (MSIG, PVI, v.v.) bằng cách tìm kiếm trong FAQ với tool 'search_faq_docs'\n"
         "- Nhớ thông tin quan trọng về người dùng với tool 'remember'\n"
         "- Tra cứu lại các tương tác và thông tin đã học với tool 'recall'\n"
         "- Cung cấp câu trả lời chính xác, rõ ràng dựa trên tài liệu FAQ\n"
         "- Nếu không tìm thấy câu trả lời trong tài liệu, hãy nói thẳng thắn\n"
         "- Giao tiếp thân thiện, giữ ngữ cảnh xuyên suốt cuộc trò chuyện\n\n"
+        "Sản phẩm hiện có:\n"
+        "- Bảo hiểm Sức khỏe 24/7 (MSIG Việt Nam): Nội trú, Ngoại trú, Telemed, Pharmacity\n"
+        "- (Các đối tác khác sẽ được bổ sung dần)\n\n"
         "Quy trình trả lời:\n"
         "1. Tìm kiếm thông tin trong FAQ bằng 'search_faq_docs'\n"
         "2. Kiểm tra memory xem có thông tin liên quan về người dùng này không\n"
@@ -231,7 +357,8 @@ agent = create_agent(
         "Lưu ý:\n"
         "- Luôn trả lời bằng tiếng Việt\n"
         "- Thân thiện, nhiệt tình, chuyên nghiệp\n"
-        "- Nếu người dùng chào hỏi, hãy giới thiệu bản thân và dịch vụ"
+        "- Nếu người dùng chào hỏi, hãy giới thiệu bản thân và dịch vụ\n"
+        "- Khi so sánh giữa các đối tác, trình bày khách quan, không thiên vị"
     ),
     checkpointer=checkpointer,
 )

@@ -1,0 +1,88 @@
+{
+  "version": "2.0",
+  "last_updated": "2026-06-14",
+  "partners": [
+    {
+      "partner_id": "msig",
+      "partner_name": "MSIG Việt Nam",
+      "active": true,
+      "products": [
+        {
+          "product_id": "health_247",
+          "product_name": "Bảo hiểm Sức khỏe 24/7",
+          "category": "health",
+          "file": "partners/msig/health_247.json",
+          "priority": 10,
+          "keywords": [
+            "sức khỏe",
+            "nội trú",
+            "ngoại trú",
+            "telemed",
+            "pharmacity",
+            "whitecoat"
+          ]
+        }
+      ]
+    },
+    {
+      "partner_id": "gic",
+      "partner_name": "GIC Insurance",
+      "active": true,
+      "products": [
+        {
+          "product_id": "credit_topup",
+          "product_name": "Credit Topup Insurance",
+          "category": "financial",
+          "file": "partners/gic/credit_topup.json",
+          "priority": 8,
+          "keywords": [
+            "gic",
+            "financial",
+            "imported"
+          ]
+        }
+      ]
+    },
+    {
+      "partner_id": "vbi",
+      "partner_name": "VBI Insurance",
+      "active": true,
+      "products": [
+        {
+          "product_id": "cyber",
+          "product_name": "Bảo hiểm Cyber",
+          "category": "cyber",
+          "file": "partners/vbi/cyber.json",
+          "priority": 8,
+          "keywords": [
+            "vbi",
+            "cyber",
+            "imported"
+          ]
+        }
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "id": "health",
+      "name": "Bảo hiểm sức khỏe"
+    },
+    {
+      "id": "car",
+      "name": "Bảo hiểm xe cơ giới"
+    },
+    {
+      "id": "travel",
+      "name": "Bảo hiểm du lịch"
+    },
+    {
+      "id": "home",
+      "name": "Bảo hiểm nhà ở"
+    },
+    {
+      "id": "life",
+      "name": "Bảo hiểm nhân thọ"
+    }
+  ]
+}

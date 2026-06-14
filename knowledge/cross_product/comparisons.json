@@ -1,0 +1,20 @@
+{
+  "faqs": [
+    {
+      "id": "compare_001",
+      "canonical_question": "So sánh bảo hiểm sức khỏe các hãng trên Zalopay?",
+      "user_questions": [
+        "So sánh bảo hiểm sức khỏe các hãng trên Zalopay?",
+        "Nên mua bảo hiểm sức khỏe của hãng nào?",
+        "Khác biệt giữa các gói bảo hiểm sức khỏe?",
+        "Bảo hiểm sức khỏe nào tốt nhất trên Zalopay?"
+      ],
+      "answer": "Hiện tại Zalopay đang phân phối sản phẩm bảo hiểm sức khỏe từ **MSIG Việt Nam**:\n\n**Bảo hiểm Sức khỏe 24/7 (MSIG)**:\n- Quyền lợi: Nội trú + Ngoại trú + Telemed\n- Đặc biệt: Bảo lãnh thuốc tại Pharmacity, khám từ xa qua WhiteCoat\n- Phù hợp: Người cần bảo vệ toàn diện, sử dụng dịch vụ y tế thường xuyên\n\nZalopay đang mở rộng thêm đối tác để mang đến nhiều lựa chọn hơn cho bạn. Bạn có thể liên hệ để được tư vấn chi tiết về gói phù hợp với nhu cầu của mình.",
+      "category": "So sánh sản phẩm",
+      "tags": ["so sánh", "zalopay", "multi-partner"],
+      "priority": 9,
+      "source": "cross_product",
+      "scope": "all_partners"
+    }
+  ]
+}

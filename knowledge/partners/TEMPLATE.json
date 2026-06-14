@@ -1,0 +1,47 @@
+{
+  "product_id": "example_product",
+  "partner_id": "new_partner",
+  "product_name": "Tên sản phẩm bảo hiểm",
+  "partner_name": "Tên đối tác",
+  "version": "1.0",
+  "last_updated": "2026-06-14",
+  "faqs": [
+    {
+      "id": "new_partner_example_product_001",
+      "canonical_question": "Câu hỏi chính (dùng làm tiêu đề)",
+      "user_questions": [
+        "Câu hỏi chính (dùng làm tiêu đề)",
+        "Variant 1: Cách hỏi khác của user",
+        "Variant 2: Viết tắt hoặc casual",
+        "Variant 3: Có typo hoặc context",
+        "Thêm càng nhiều variants càng tốt (5-10 variants/FAQ)"
+      ],
+      "answer": "Câu trả lời chi tiết.\n\nCó thể dùng markdown:\n- Bullet points\n- **Bold text**\n- Multiple paragraphs\n\nNên trả lời đầy đủ, rõ ràng.",
+      "category": "Nhóm câu hỏi (ví dụ: Giới thiệu, Quyền lợi, Bồi thường)",
+      "tags": [
+        "keyword1",
+        "keyword2",
+        "partner_name"
+      ],
+      "related_faq_ids": [
+        "new_partner_example_product_002"
+      ],
+      "source": "Tên file gốc (ví dụ: FAQ_Partner_2026.docx)",
+      "priority": 10
+    },
+    {
+      "id": "new_partner_example_product_002",
+      "canonical_question": "Câu hỏi thứ 2",
+      "user_questions": [
+        "Câu hỏi thứ 2",
+        "Variant của câu 2"
+      ],
+      "answer": "Trả lời câu 2",
+      "category": "Nhóm câu hỏi",
+      "tags": [],
+      "related_faq_ids": [],
+      "source": "FAQ_Partner_2026.docx",
+      "priority": 8
+    }
+  ]
+}

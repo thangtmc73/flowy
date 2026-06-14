@@ -1,0 +1,145 @@
+{
+  "faqs": [
+    {
+      "id": "general_cost_001",
+      "canonical_question": "Chi phí bảo hiểm trên Zalopay là bao nhiêu?",
+      "user_questions": [
+        "Chi phí bảo hiểm trên Zalopay là bao nhiêu?",
+        "Phí bảo hiểm trên Zalopay giá bao nhiêu?",
+        "Mua bảo hiểm trên Zalopay tốn bao nhiêu tiền?",
+        "Giá bảo hiểm trên Zalopay như thế nào?",
+        "Bảo hiểm Zalopay có đắt không?",
+        "Chi phí mua bảo hiểm sức khỏe trên Zalopay?",
+        "Phí bảo hiểm xe trên Zalopay là bao nhiêu?",
+        "Gia bao hiem tren Zalopay bao nhieu?",
+        "Chi phí bảo hiểm các gói có khác nhau không?"
+      ],
+      "answer": "Chi phí bảo hiểm trên Zalopay phụ thuộc vào từng sản phẩm và đối tác:\n\n**Bảo hiểm Sức khỏe 24/7 (MSIG)**:\n- Phí bảo hiểm: Từ 2-10 triệu/năm tùy gói\n- Thời hạn: 1 năm\n- Quyền lợi: Nội trú + Ngoại trú + Telemed\n\n**Bảo hiểm Cyber (VBI)**:\n- Gói tháng: 3.000 VND/tháng\n- Gói năm: 5.000 VND/tháng (60.000 VND/năm)\n- Quyền lợi: An ninh mạng + Tai nạn cá nhân\n- Số tiền bảo hiểm: Lên tới 50 triệu VND\n\n**Credit Topup Insurance (GIC)**:\n- Phí bảo hiểm: Tùy theo gói và số tiền bảo hiểm\n- Liên hệ: +84 28 7300 8803\n\n*Lưu ý*: \n- Giá có thể thay đổi theo chính sách của từng đối tác\n- Xem chi tiết trong mục sản phẩm trên ứng dụng Zalopay\n- Thanh toán dễ dàng qua ví Zalopay",
+      "category": "Chi phí & Giá cả",
+      "tags": ["chi phí", "giá", "phí bảo hiểm", "pricing"],
+      "priority": 9,
+      "source": "cross_product_generated",
+      "scope": "all_partners"
+    },
+    {
+      "id": "general_cost_002",
+      "canonical_question": "Có thể trả phí bảo hiểm theo tháng không?",
+      "user_questions": [
+        "Có thể trả phí bảo hiểm theo tháng không?",
+        "Bảo hiểm có thanh toán góp theo tháng không?",
+        "Có gói bảo hiểm trả phí hàng tháng không?",
+        "Mua bảo hiểm có thể trả dần được không?",
+        "Thanh toán bảo hiểm theo tháng hay theo năm?",
+        "Co the tra phi hang thang khong?",
+        "Zalopay có hỗ trợ thanh toán góp bảo hiểm không?"
+      ],
+      "answer": "Tùy theo sản phẩm:\n\n**Có thanh toán theo tháng**:\n- **Bảo hiểm Cyber (VBI)**: Có gói tháng 3.000 VND/tháng\n- Thanh toán tự động qua ví Zalopay hàng tháng\n\n**Thanh toán 1 lần/năm**:\n- **Bảo hiểm Sức khỏe 24/7 (MSIG)**: Thanh toán phí 1 lần cho cả năm\n- Không hỗ trợ trả góp theo tháng\n\n**Credit Topup Insurance (GIC)**:\n- Chi tiết liên hệ: +84 28 7300 8803\n\n*Tips*: \n- Gói năm thường có giá ưu đãi hơn gói tháng\n- Ví dụ: VBI Cyber gói năm chỉ 5.000đ/tháng thay vì 3.000đ/tháng",
+      "category": "Chi phí & Giá cả",
+      "tags": ["chi phí", "thanh toán", "trả góp", "theo tháng"],
+      "priority": 8,
+      "source": "cross_product_generated",
+      "scope": "all_partners"
+    },
+    {
+      "id": "general_age_001",
+      "canonical_question": "Độ tuổi nào được mua bảo hiểm trên Zalopay?",
+      "user_questions": [
+        "Độ tuổi nào được mua bảo hiểm trên Zalopay?",
+        "Bao nhiêu tuổi thì mua được bảo hiểm?",
+        "Người cao tuổi có mua được bảo hiểm không?",
+        "Trẻ em có thể tham gia bảo hiểm không?",
+        "Giới hạn độ tuổi bảo hiểm là bao nhiêu?",
+        "Từ mấy tuổi được mua bảo hiểm?",
+        "Do tuoi ap dung bao hiem la bao nhieu?",
+        "60 tuổi có mua được bảo hiểm không?",
+        "Mua bảo hiểm cho bé 5 tuổi được không?"
+      ],
+      "answer": "Độ tuổi tham gia bảo hiểm khác nhau tùy sản phẩm:\n\n**Bảo hiểm Sức khỏe 24/7 (MSIG)**:\n- Độ tuổi: **1 - 60 tuổi**\n- Tái tục: Đến 65 tuổi\n- Trẻ em: Từ 1 tuổi trở lên\n- Người lớn tuổi: Tối đa 60 tuổi khi tham gia mới\n\n**Bảo hiểm Cyber (VBI)**:\n- Độ tuổi: **18 - 65 tuổi**\n- Chỉ dành cho người trưởng thành\n- Phải là chủ tài khoản Zalopay\n\n**Credit Topup Insurance (GIC)**:\n- Liên hệ để biết chi tiết: +84 28 7300 8803\n\n*Lưu ý*:\n- Mỗi sản phẩm có quy định độ tuổi riêng\n- Có thể mua bảo hiểm cho người thân (nếu đủ điều kiện)\n- Kiểm tra điều kiện cụ thể trong mô tả sản phẩm",
+      "category": "Điều kiện tham gia",
+      "tags": ["độ tuổi", "age", "trẻ em", "người cao tuổi"],
+      "priority": 9,
+      "source": "cross_product_generated",
+      "scope": "all_partners"
+    },
+    {
+      "id": "general_age_002",
+      "canonical_question": "Có thể mua bảo hiểm cho người thân không?",
+      "user_questions": [
+        "Có thể mua bảo hiểm cho người thân không?",
+        "Mua bảo hiểm cho bố mẹ được không?",
+        "Có thể mua bảo hiểm cho con được không?",
+        "Mua bảo hiểm hộ người khác được không?",
+        "Tôi có thể mua cho vợ/chồng không?",
+        "Co mua bao hiem cho ba me duoc khong?",
+        "Mua bảo hiểm cho người thân như thế nào?",
+        "Điều kiện mua bảo hiểm cho người khác?"
+      ],
+      "answer": "**Có thể mua bảo hiểm cho người thân**, miễn họ đáp ứng điều kiện:\n\n**Bảo hiểm Sức khỏe 24/7 (MSIG)**:\n✅ Hoàn toàn được mua cho:\n- Bố mẹ (1-60 tuổi)\n- Vợ/chồng\n- Con cái (từ 1 tuổi)\n- Người thân khác\n\n*Điều kiện*:\n- Đủ độ tuổi (1-60 tuổi)\n- Không mắc bệnh nặng\n- Tình trạng sức khỏe hợp lệ\n\n**Bảo hiểm Cyber (VBI)**:\n❌ Chỉ dành cho chủ tài khoản Zalopay\n- Không thể mua hộ người khác\n- Người được bảo hiểm phải là người đăng ký\n\n**Lưu ý khi mua cho người thân**:\n1. Cung cấp thông tin chính xác của người được bảo hiểm\n2. Người đó phải đồng ý tham gia\n3. Giấy chứng nhận sẽ gửi về tài khoản người mua\n4. Quyền lợi thuộc về người được bảo hiểm",
+      "category": "Điều kiện tham gia",
+      "tags": ["mua hộ", "người thân", "gia đình"],
+      "priority": 8,
+      "source": "cross_product_generated",
+      "scope": "all_partners"
+    },
+    {
+      "id": "general_exclusion_001",
+      "canonical_question": "Trường hợp nào không được bồi thường bảo hiểm?",
+      "user_questions": [
+        "Trường hợp nào không được bồi thường bảo hiểm?",
+        "Bảo hiểm không bồi thường trong trường hợp nào?",
+        "Điều kiện loại trừ bảo hiểm là gì?",
+        "Những trường hợp nào bị từ chối bồi thường?",
+        "Bệnh gì thì không được bảo hiểm?",
+        "Truong hop khong duoc boi thuong?",
+        "Miễn trừ trách nhiệm bảo hiểm là gì?",
+        "Bảo hiểm không chi trả khi nào?"
+      ],
+      "answer": "Các trường hợp **KHÔNG được bồi thường** (phổ biến):\n\n**A. LOẠI TRỪ CHUNG (Áp dụng cho hầu hết sản phẩm)**:\n\n1. **Hành vi cố ý**:\n   - Tự gây thương tích\n   - Cố ý vi phạm pháp luật\n   - Tham gia bạo động, gây rối\n\n2. **Chiến tranh & thiên tai**:\n   - Chiến tranh, khủng bố\n   - Động đất, sóng thần (trừ khi ghi rõ)\n   - Bạo loạn, đình công\n\n3. **Ma túy & say rượu**:\n   - Sử dụng ma túy trái phép\n   - Lái xe trong tình trạng say rượu/bia\n   - Vi phạm nồng độ cồn theo quy định\n\n**B. LOẠI TRỪ RIÊNG TỪNG SẢN PHẨM**:\n\n**Bảo hiểm Sức khỏe 24/7 (MSIG)**:\n❌ Không bồi thường:\n- Bệnh có sẵn trước khi mua BH\n- Bệnh bẩm sinh\n- Thẩm mỹ, chỉnh hình không y tế\n- HIV/AIDS\n- Thai sản (không nằm trong quyền lợi)\n- Điều trị ngoài Việt Nam\n- Trong thời gian chờ:\n  + 15 ngày: Bệnh thông thường\n  + 365 ngày: Bệnh đặc biệt\n\n**Bảo hiểm Cyber (VBI)**:\n❌ Không bồi thường:\n- Cung cấp thông tin giả mạo\n- Chia sẻ mật khẩu cho người khác\n- Giao dịch sau khi biết tài khoản bị xâm nhập\n- Mất tiền do lừa đảo trực tiếp (không qua mạng)\n- Thiệt hại gián tiếp (mất cơ hội kinh doanh...)\n\n**C. ĐIỀU KIỆN ĐỂ ĐƯỢC BỒI THƯỜNG**:\n\n✅ Phải có:\n1. Hợp đồng bảo hiểm còn hiệu lực\n2. Đã qua thời gian chờ (nếu có)\n3. Hồ sơ chứng từ đầy đủ\n4. Thông báo đúng hạn\n5. Sự kiện thuộc phạm vi bảo hiểm\n\n*Lưu ý*: \n- Đọc kỹ Quy tắc bảo hiểm trước khi mua\n- Mỗi sản phẩm có điều khoản loại trừ riêng\n- Khai báo trung thực tình trạng sức khỏe\n- Liên hệ hotline để được tư vấn cụ thể",
+      "category": "Loại trừ & Miễn trừ",
+      "tags": ["loại trừ", "exclusion", "không bồi thường", "miễn trừ"],
+      "priority": 10,
+      "source": "cross_product_generated",
+      "scope": "all_partners"
+    },
+    {
+      "id": "general_exclusion_002",
+      "canonical_question": "Bệnh có sẵn có được bảo hiểm không?",
+      "user_questions": [
+        "Bệnh có sẵn có được bảo hiểm không?",
+        "Đã mắc bệnh trước có mua được bảo hiểm không?",
+        "Pre-existing condition có được bồi thường không?",
+        "Bệnh mãn tính có được bảo hiểm không?",
+        "Tiểu đường có mua được bảo hiểm không?",
+        "Benh co san co duoc bao hiem khong?",
+        "Đang điều trị ung thư có tham gia được không?",
+        "Bệnh tim mạch có được bảo hiểm không?"
+      ],
+      "answer": "**Bệnh có sẵn (Pre-existing condition)** - Quy định theo sản phẩm:\n\n**Bảo hiểm Sức khỏe 24/7 (MSIG)**:\n\n❌ **Không bảo hiểm**:\n- Bệnh đã có trước khi mua bảo hiểm\n- Bệnh bẩm sinh\n- Bệnh mãn tính đang điều trị\n- Ví dụ: Tiểu đường, tim mạch, ung thư đang điều trị\n\n⏰ **Thời gian chờ cho bệnh đặc biệt**: 365 ngày\n- Nghĩa là: Mua hôm nay, bệnh đặc biệt mới phát sinh sau 1 năm mới được bồi thường\n\n✅ **Được bảo hiểm**:\n- Bệnh mới phát sinh sau khi mua BH (và qua thời gian chờ)\n- Tai nạn: Không có thời gian chờ\n\n**Bảo hiểm Cyber (VBI)**:\n✅ Không liên quan đến tình trạng sức khỏe\n- Bảo vệ tài khoản Zalopay\n- Không phụ thuộc vào bệnh tật\n\n**Khuyến nghị**:\n1. **Khai báo trung thực** tình trạng sức khỏe khi mua\n2. Nếu khai báo sai → Từ chối bồi thường\n3. Mua bảo hiểm sớm khi còn khỏe mạnh\n4. Đọc kỹ \"Điều kiện sản phẩm\" trước khi mua\n5. Liên hệ tư vấn: 1900 9129 (MSIG)",
+      "category": "Loại trừ & Miễn trừ",
+      "tags": ["bệnh có sẵn", "pre-existing", "bệnh mãn tính"],
+      "priority": 9,
+      "source": "cross_product_generated",
+      "scope": "all_partners"
+    },
+    {
+      "id": "general_exclusion_003",
+      "canonical_question": "Thời gian chờ bảo hiểm là gì?",
+      "user_questions": [
+        "Thời gian chờ bảo hiểm là gì?",
+        "Waiting period bảo hiểm là gì?",
+        "Mua xong bao lâu thì được bồi thường?",
+        "Tại sao mua rồi mà không được bảo hiểm ngay?",
+        "Thoi gian cho bao hiem la gi?",
+        "Bệnh bình thường thời gian chờ bao lâu?",
+        "Tai nạn có thời gian chờ không?",
+        "15 ngày thời gian chờ nghĩa là gì?"
+      ],
+      "answer": "**Thời gian chờ** là khoảng thời gian sau khi mua bảo hiểm mà **chưa được bồi thường** (trừ tai nạn).\n\n**Mục đích**: Tránh tình trạng mua bảo hiểm khi đã biết mình sắp mắc bệnh.\n\n**Bảo hiểm Sức khỏe 24/7 (MSIG)**:\n\n| Loại bệnh | Thời gian chờ | Ví dụ |\n|-----------|---------------|--------|\n| **Tai nạn** | ⚡ **0 ngày** | Ngã xe, bỏng, chấn thương → Bồi thường ngay |\n| **Bệnh thông thường** | ⏰ **15 ngày** | Cảm cúm, viêm họng, đau bụng |\n| **Trẻ < 5 tuổi** | ⏰ **30 ngày** | Tất cả các bệnh |\n| **Bệnh đặc biệt** | ⏰ **365 ngày** | Ung thư, sỏi thận, bệnh tim... |\n| **Telemed (khám từ xa)** | ⚡ **0 ngày** | Khám ngay, nhưng thuốc có thời gian chờ |\n\n**Bảo hiểm Cyber (VBI)**:\n✅ **Không có thời gian chờ**\n- Hiệu lực ngay sau khi thanh toán\n- Bảo vệ tài khoản Zalopay từ ngày đầu tiên\n\n**Ví dụ thực tế**:\n\n*Mua ngày 1/1/2026*:\n- Tai nạn ngày 2/1 → ✅ Được bồi thường\n- Viêm họng ngày 10/1 → ❌ Chưa qua 15 ngày\n- Viêm họng ngày 20/1 → ✅ Được bồi thường\n- Phát hiện ung thư 3/2026 → ❌ Chưa qua 365 ngày\n- Phát hiện ung thư 2/2027 → ✅ Được bồi thường\n\n**Lưu ý**:\n- Thời gian chờ **chỉ áp dụng 1 lần** khi mua mới\n- Tái tục hàng năm: Không cần chờ lại\n- Đọc kỹ \"Điều kiện sản phẩm\" để biết chi tiết",
+      "category": "Loại trừ & Miễn trừ",
+      "tags": ["thời gian chờ", "waiting period", "hiệu lực"],
+      "priority": 10,
+      "source": "cross_product_generated",
+      "scope": "all_partners"
+    }
+  ]
+}

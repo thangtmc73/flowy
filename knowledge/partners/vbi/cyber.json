@@ -1,0 +1,118 @@
+{
+  "product_id": "cyber",
+  "partner_id": "vbi",
+  "product_name": "Bảo hiểm Cyber",
+  "partner_name": "VBI Insurance",
+  "version": "1.0",
+  "last_updated": "2026-06-14",
+  "faqs": [
+    {
+      "id": "vbi_cyber_001",
+      "canonical_question": "Bảo hiểm an ninh mạng là gì và chi phí tham gia như thế nào?",
+      "user_questions": [
+        "Bảo hiểm an ninh mạng là sản phẩm gì?",
+        "Chi phí mua bảo hiểm an ninh mạng bao nhiêu?",
+        "Bao hiem an ninh mang la gi va gia bao nhieu?"
+      ],
+      "answer": "Bảo hiểm an ninh mạng là sản phẩm bảo hiểm do Tổng Công Ty CP Bảo Hiểm Ngân Hàng TMCP Công Thương Việt Nam  (VBI) cung cấp – giúp hành trình thanh toán của Khách hàng được bảo vệ toàn diện chỉ với thao tác mua đơn giản và nhanh chóng. Chỉ với 3.000 – 5.000VND/tháng, tài khoản thanh toán Quý khách sẽ được bảo vệ trước các rủi ro an ninh mạng tinh vi với số tiền bảo hiểm lên tới 50,000,000 VND (gấp 17.000 số tiền bỏ ra). Bên cạnh đó có thêm quyền lợi Bảo hiểm tai nạn cá nhân đến 10.000.000 VND bảo vệ trước các rủi ro trong cuộc sống.   Bằng việc thanh toán, bạn đồng ý với Chính sách Quyền riêng tư và cho phép Zalopay chia sẻ thông tin cho đối tác để thực hiện hợp đồng bảo hiểm:  • Họ và tên của Người được bảo hiểm • Ngày/tháng/năm sinh của tất cả Người được bảo hiểm • Số điện thoại • Ngày mua bảo hiểm • Mã khách hàng Zalopay  Và Cam kết tham gia Bảo hiểm, Quy tắc bảo hiểm của VBI và Chi tiết Quy định quyền lợi Chương trình như sau:",
+      "category": "Giới thiệu",
+      "tags": [
+        "vbi",
+        "imported"
+      ],
+      "related_faq_ids": [],
+      "source": "VBI_ TnC BH Cyber.pdf",
+      "priority": 5
+    },
+    {
+      "id": "vbi_cyber_002",
+      "canonical_question": "Quyền lợi bảo hiểm an ninh mạng bao gồm những trường hợp nào và mức bồi thường ra sao?",
+      "user_questions": [
+        "Bảo hiểm an ninh mạng bảo vệ những rủi ro gì?",
+        "Khi nào được bồi thường bảo hiểm an ninh mạng?",
+        "Muc boi thuong bao hiem an ninh mang la bao nhieu?"
+      ],
+      "answer": "Quyền lợi bảo vệ: Dành cho tài khoản Zalopay  a) Khách hàng thực hiện chuyển tiền từ tài khoản được bảo hiểm tại Zalopay tới tài khoản của một bên thứ ba theo yêu cầu liên lạc điện tử giả mạo. b) Khách hàng cung cấp thông tin tài khoản bao gồm tên đăng nhập, mật khẩu và mã OTP trên các trang web giả mạo Zalopay hoặc tổ chức tài chính do bên thứ ba cung cấp qua liên lạc điện tử giả mạo hoặc thư điện tử giả mạo Zalopay hoặc các tổ chức tài chính trên dẫn đến xảy ra giao dịch trái phép. c) Khách hàng thực hiện cài đặt các phần mềm độc hại hoặc truy cập các trang web giả mạo thương hiệu Zalopay, ngân hàng, tổ chức tài chính hoặc các trang web giả mạo cơ quan chức năng dẫn đến thiệt hại tài chính. d) Bên thứ ba sử dụng các phần mềm độc hại cài đặt trên thiết bị điện tử của Khách hàng nhằm tiếp cận các thông tin nhận dạng, đăng nhập ứng dụng, tài khoản được bảo hiểm của Khách hàng để thực hiện các giao dịch trái phép trên tài khoản Zalopay bằng cách sử dụng các thông tin này \nBảng chi tiết quyền lợi Bảo hiểm Mục 1 - Quyền lợi Bảo hiểm an ninh mạng   Quyền lợi bảo hiểm Số tiền Bảo hiểm I QUYỀN LỢI BẢO HIỂM AN NINH MẠNG Gói tháng Gói năm \n  a) NĐBH thực hiện chuyển tiền từ tài khoản được bảo hiểm tại Zalopay tới tài khoản của một bên thứ ba theo yêu cầu liên lạc điện tử giả mạo. b) NĐBH cung cấp thông tin tài khoản bao gồm tên đăng nhập, mật khẩu và mã OTP trên các trang web giả mạo do bên thứ ba cung cấp qua liên lạc điện tử giả mạo hoặc thư điện tử giả mạo các tổ chức tài chính trên dẫn đến xảy ra giao dịch trái phép. c) NĐBH thực hiện cài đặt các phần mềm độc hại hoặc truy cập các trang web giả mạo thương hiệu Zalopay, ngân hàng tổ chức tài chính hoặc các trang web giả mạo cơ quan chức năng dẫn đến thiệt hại tài chính. d) Bên thứ ba sử dụng các phần mềm độc hại cài đặt trên thiết bị điện tử của NĐBH nhằm tiếp cận các thông tin nhận dạng, đăng nhập ứng dụng, tài khoản được bảo hiểm của NĐBH để thực hiện các giao dịch trái phép trên tài khoản Zalopay bằng cách sử dụng các thông tin này. 10.000.000/vụ Tối đa 25.000.000/năm  10.000.000/vụ Tối đa 50.000.000/năm  \n 1. Liên lạc điện tử giả mạo là: a. Giả mạo Hướng dẫn được đưa ra qua ứng dụng Zalopay b. Giả mạo Tin nhắn từ Zalopay c. Giả mạo Tin nhắn được gửi đến từ nhà mạng viễn thông dưới tên thương hiệu của Zalopay 2. Thư điện tử giả mạo là thư điện tử được gửi cho chủ tài khoản mang 1 hoặc nhiều đặc điểm sau a. Tên người gửi giả mạo: Tên người gửi thư điện tử giả mạo là giống toàn bộ tên của tổ chức tài chính được bảo hiểm hoặc sai khác, thiếu hoặc thừa một số ký tự, hoặc thay thế một số ký tự với ký tự khác gần giống tên của Zalopay hoặc tổ chức tài chính. Ví dụ tên người gửi là Zalopay Support nhưng thực tế không phải thư điện tử Zalopay, hoặc tên người gửi là Zallo Pay hoặc Zaalo Pay v.v…; b. Địa chỉ thư điện tử giả mạo: Thư điện tử chứa các ký tự sai khác, thiếu hoặc thừa một số ký tự, hoặc thay thế một số ký tự với ký tự khác gần giống hoặc chứa các tiền tố hoặc hậu tố gần giống với thư điện tử của Zalopay và các tổ chức tài chỉnh thuộc phạm vi bảo hiểm. Ví dụ: @Zalopayopay.com, @Zalopayy.com; @s-Zalopay.com, @Zalopay.net; \nc. Logo hoặc bộ nhận diện giả mạo: Thư điện tử giả mạo được gửi có thể sử dụng logo hoặc bộ nhận diện giống hoàn toàn hoặc gần giống về màu sắc, logo dễ gây nhầm lẫn cho người nhận với logo hoặc bộ nhận diện thương hiệu của Zalopay và tổ chức tài chính đó mà không phải do tổ chức đó gửi. 3. Trang web giả mạo là các trang web mang một trong những đặc điểm sau: a. Tên miền có lỗi chính tả: Sai khác, thiếu hoặc thừa một số ký tự, hoặc thay thế một số ký tự với ký tự khác gần giống các trang web của Zalopay hoặc các tổ chức tài chính thuộc phạm vi bảo hiểm. Ví dụ: Zalopayy.com  b. Tên miền có tiền tố hoặc hậu tố sử dụng ký tự lạ. Ví dụ: s-Zalopay.com, Zalopay.net; hoặc c. Tên miền phụ cố mô phỏng tên miền của một trang hợp pháp. Ví dụ: Zalopay.xyz.com, trong đó Zalopaylà tên miền phụ, tên miền thực tế là xyz; hoặc d. Tên miền dài bất thường nhằm đánh lừa người dùng nhầm lẫn. Ví dụ: Zalopay.com-account.application-settingsindexphp.xyz. 4. Tổn thất tài chính (tổn thất) là  a) Thiệt hại về tiền từ tài khoản được bảo hiểm trong ví điện tử b) Các khoản phí từ tài khoản được bảo hiểm đã phát sinh mà Chủ tài khoản phải trả cho ví điện tử, bao gồm tất cả các khoản tiền phạt hoặc lãi suất trong thời hạn bảo hiểm (nếu có) Tổn thất tài chính không bao gồm thuế, mất quyền lợi thuế hoặc tiền phạt theo luật định.  5. Tổ chức tài chính là một công ty được cấp phép thực hiện một hoặc một",
+      "category": "Quyền lợi",
+      "tags": [
+        "vbi",
+        "imported"
+      ],
+      "related_faq_ids": [],
+      "source": "VBI_ TnC BH Cyber.pdf",
+      "priority": 5
+    },
+    {
+      "id": "vbi_cyber_003",
+      "canonical_question": "Quyền lợi bảo hiểm tai nạn cá nhân bao gồm những gì?",
+      "user_questions": [
+        "Bảo hiểm này có quyền lợi tai nạn không?",
+        "Quyền lợi tử vong và thương tật được bảo hiểm như thế nào?",
+        "Ngoai an ninh mang thi con bao hiem gi khac?"
+      ],
+      "answer": "Quyền lợi bảo vệ: Dành cho chủ tài khoản Zalopay - Tử vong và Thương tật toàn bộ vĩnh viễn do tai nạn - Thương tật bộ phận vĩnh viễn do tai nạn - Chi phí y tế điều trị thương tật do tai nạn",
+      "category": "Quyền lợi",
+      "tags": [
+        "vbi",
+        "imported"
+      ],
+      "related_faq_ids": [],
+      "source": "VBI_ TnC BH Cyber.pdf",
+      "priority": 5
+    },
+    {
+      "id": "vbi_cyber_004",
+      "canonical_question": "Điều kiện tham gia và thời hạn bảo hiểm là gì?",
+      "user_questions": [
+        "Ai được mua bảo hiểm an ninh mạng?",
+        "Thời gian bảo vệ của bảo hiểm an ninh mạng là gì?",
+        "Dieu kien tham gia bao hiem la gi?"
+      ],
+      "answer": "Thời hạn Bảo hiểm Thời hạn bảo hiểm của chương trình này là 1 tháng hoặc 12 tháng bắt đầu kể từ thời điểm cụ thể được quy định trên Hợp đồng bảo hiểm/Giấy chứng nhận bảo hiểm hoặc Sửa đổi bổ sung/Phụ lục hợp đồng do VBI cấp cho Bên mua bảo hiểm/Người được bảo hiểm.  Điều kiện tham gia Bảo hiểm • Người được bảo hiểm là cá nhân chủ tài khoản Zalopay • Người được bảo hiểm phải đáp ứng các điều kiện sau: -  Người được bảo hiểm có độ tuổi từ 18 tuổi đến 65 tuổi, là công dân Việt Nam, người nước ngoài sinh sống và làm việc trên lãnh thổ Việt Nam, không rời Việt Nam quá 180 ngày liên tục; và - Người được bảo hiểm không thuộc một trong các trường hợp sau: + Người được bảo hiểm đang bị bệnh tâm thần, bệnh phong + Người đã hay đang trong tình trạng thương tật vĩnh viễn trên 50%. Tỷ lệ thương tật xác định theo Thông tư số 28/2013/TTLT-BYT-BLĐTBXH và các văn bản sửa đổi thay thế/ bổ sung (nếu có). + Người đang trong thời gian điều trị thương tật do tai nạn.",
+      "category": "Điều kiện",
+      "tags": [
+        "vbi",
+        "imported"
+      ],
+      "related_faq_ids": [],
+      "source": "VBI_ TnC BH Cyber.pdf",
+      "priority": 5
+    },
+    {
+      "id": "vbi_cyber_005",
+      "canonical_question": "Hướng dẫn mua, hủy và tra cứu bảo hiểm an ninh mạng?",
+      "user_questions": [
+        "Làm sao để mua bảo hiểm an ninh mạng?",
+        "Cách hủy bảo hiểm an ninh mạng trên Zalopay?",
+        "Tra cuu hop dong bao hiem VBI o dau?"
+      ],
+      "answer": "Hướng dẫn mua bảo hiểm  Ø Tại màn hình Nạp Điện thoại, lựa chọn Bảo hiểm gắn kèm giao dịch Ø Sau khi thanh toán thành công, Quý khách sẽ được cấp Giấy chứng nhận Bảo hiểm.  Ø Quý khách vào lại màn hình Nạp điện thoại tại mục bảo hiểm an ninh mạng có đường dẫn xem giấy chứng nhận  Hướng dẫn hủy bảo hiểm:  Ø Quý khách vào lại màn hình Nạp điện thoại tại  mục  bảo hiểm an ninh mạng  có đường dẫn xem giấy chứng nhận  Ø Nhấn Xem chứng nhận để vào xem chi tiết hợp đồng bảo hiểm đã mua trên trang web nhà bảo hiểm VBI Ø Click nút  “Hủy hợp đồng” và thực hiện tiếp theo hướng dẫn trên web VBI \nLưu ý: Trường hợp khách hàng đã thanh toán phí bảo hiểm và Chứng nhận bảo hiểm đã được cấp sẽ được huỷ hợp đồng bảo hiểm, tuy nhiên sẽ không được hoàn phí.   Tra cứu thông tin giấy chứng nhận bảo hiểm:  Ø Tra cứu trên website: https://myvbi.vn/tra-cuu/ nhập số CMND/CCCD, Mã  khách hàng Zalopay để tra cứu  Ø Tra cứu trên ứng dụng MyVBI: cài đặt ứng dụng & đăng ký tài khoản MyVBI bằng các thông tin Quý khách đã đăng ký với VietinBank, sau đó truy cập “Giấy chứng nhận của tôi\".  Ø Tra cứu trên ứng dụng Zalopay: Quý khách vào lại màn hình Nạp điện thoại tại mục bảo hiểm an ninh mạng có đường dẫn xem giấy chứng nhận",
+      "category": "Quy trình mua",
+      "tags": [
+        "vbi",
+        "imported"
+      ],
+      "related_faq_ids": [],
+      "source": "VBI_ TnC BH Cyber.pdf",
+      "priority": 5
+    },
+    {
+      "id": "vbi_cyber_006",
+      "canonical_question": "Thông tin liên hệ hỗ trợ bảo hiểm VBI?",
+      "user_questions": [
+        "Số hotline bảo hiểm VBI là gì?",
+        "Email hỗ trợ bảo hiểm an ninh mạng?",
+        "Lien he VBI khi can ho tro?"
+      ],
+      "answer": "Dịch vụ hỗ trợ 24/7 từ nhà bảo hiểm VBI Hotline của Tổng đài hỗ trợ của VBI: 1900 1566 Email hỗ trợ VBI:  online@myvbi.vn",
+      "category": "Giới thiệu",
+      "tags": [
+        "vbi",
+        "imported"
+      ],
+      "related_faq_ids": [],
+      "source": "VBI_ TnC BH Cyber.pdf",
+      "priority": 5
+    }
+  ]
+}
