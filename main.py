@@ -363,6 +363,19 @@ agent = create_agent(
         "2. Kiểm tra memory xem có thông tin liên quan về người dùng này không\n"
         "3. Kết hợp cả hai nguồn để đưa ra câu trả lời cá nhân hóa, chính xác\n"
         "4. Nhớ các thông tin quan trọng về nhu cầu hoặc sở thích của người dùng\n\n"
+        "QUY TẮC FORMAT OUTPUT (RẤT QUAN TRỌNG):\n"
+        "- KHÔNG tự thêm markdown syntax (**, *, _, ~) vào nội dung từ FAQ\n"
+        "- Trả lời CHÍNH XÁC theo nội dung trong FAQ, giữ nguyên format có sẵn\n"
+        "- Nếu FAQ có HTML table (<table>), giữ nguyên không thay đổi\n"
+        "- Nếu FAQ có bullet points (•, -), giữ nguyên không thay đổi\n"
+        "- Nếu FAQ có emoji và icon, giữ nguyên không thay đổi\n"
+        "- Chỉ tóm tắt hoặc diễn giải KHI THẬT SỰ CẦN THIẾT, ưu tiên trích dẫn nguyên văn\n"
+        "- Khi cần nhấn mạnh, dùng emoji thay vì markdown (✓, ✗, 💡, ⚠️, 📌)\n\n"
+        "VÍ DỤ FORMAT ĐÚNG:\n"
+        "Câu hỏi: Giá bảo hiểm bao nhiêu?\n"
+        "Trả lời: [Trích nguyên văn từ FAQ, bao gồm cả table HTML nếu có]\n\n"
+        "Câu hỏi: Quyền lợi là gì?\n"
+        "Trả lời: [Giữ nguyên các bullet points • và emoji từ FAQ]\n\n"
         "Lưu ý:\n"
         "- Luôn trả lời bằng tiếng Việt\n"
         "- Thân thiện, nhiệt tình, chuyên nghiệp\n"
@@ -371,6 +384,42 @@ agent = create_agent(
     ),
     checkpointer=checkpointer,
 )
+
+
+def format_response(text: str) -> str:
+    """
+    Post-process response to ensure consistent formatting.
+    - Preserve HTML tables
+    - Preserve bullet points and emojis
+    - Clean up extra whitespace
+    """
+    import re
+    
+    # Preserve existing line breaks and structure
+    lines = text.split('\n')
+    formatted_lines = []
+    
+    for line in lines:
+        # Skip empty lines (but keep them)
+        if not line.strip():
+            formatted_lines.append(line)
+            continue
+        
+        # Don't modify HTML table lines
+        if any(tag in line for tag in ['<table>', '</table>', '<tr>', '</tr>', '<th>', '</th>', '<td>', '</td>']):
+            formatted_lines.append(line)
+            continue
+        
+        # Don't modify lines that already have bullet points or numbered lists
+        if re.match(r'^\s*[•\-\*\d\.]\s', line):
+            formatted_lines.append(line)
+            continue
+        
+        # Clean up excessive whitespace but preserve intentional spacing
+        cleaned = re.sub(r'\s+', ' ', line).strip()
+        formatted_lines.append(cleaned)
+    
+    return '\n'.join(formatted_lines)
 
 
 @app.entrypoint
@@ -426,7 +475,7 @@ async def handler(payload: dict, context: RequestContext) -> dict:
 
     return {
         "status": "success",
-        "response": ai_message.content,
+        "response": format_response(ai_message.content),
         "timestamp": datetime.now().isoformat(),
     }
 
