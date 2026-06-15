@@ -4,7 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "sync-knowledge": "sh ../scripts/sync_knowledge.sh",
+    "predev": "npm run sync-knowledge",
     "dev": "vite",
+    "prebuild": "npm run sync-knowledge",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
@@ -13,7 +16,8 @@
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "react-markdown": "^10.1.0",
-    "remark-gfm": "^4.0.1"
+    "remark-gfm": "^4.0.1",
+    "wouter": "^3.5.3"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useLocation } from 'wouter'
 import Header from './components/Header'
 import Sidebar from './components/Sidebar'
 import ChatWindow from './components/ChatWindow'
@@ -6,8 +7,15 @@ import SuggestedQuestions from './components/SuggestedQuestions'
 import QuickReplyButtons from './components/QuickReplyButtons'
 import InputArea from './components/InputArea'
 import { useChat } from './hooks/useChat'
+import KnowledgeBrowser from './pages/KnowledgeBrowser'
+import FAQList from './pages/FAQList'
 
-export default function App() {
+function normalizePath(path) {
+  const trimmed = path.replace(/\/+$/, '')
+  return trimmed === '' ? '/' : trimmed
+}
+
+function ChatPage() {
   const { messages, loading, send, reset } = useChat()
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
@@ -50,4 +58,23 @@ export default function App() {
       </div>
     </div>
   )
+}
+
+export default function App() {
+  const [location] = useLocation()
+  const path = normalizePath(location)
+
+  if (path === '/knowledge') {
+    return <KnowledgeBrowser />
+  }
+
+  if (path.startsWith('/knowledge/')) {
+    return <FAQList />
+  }
+
+  if (path === '/') {
+    return <ChatPage />
+  }
+
+  return <div style={{padding:'40px'}}>404 - Page not found: {location}</div>
 }
