@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import FileUpload from './FileUpload'
+import { unlockAudioSync } from '../utils/chatSounds'
 
 export default function InputArea({ onSend, disabled }) {
   const [value, setValue] = useState('')
@@ -17,6 +18,8 @@ export default function InputArea({ onSend, disabled }) {
   const handleSubmit = () => {
     const trimmed = value.trim()
     if ((!trimmed && !uploadedFile) || disabled) return
+
+    unlockAudioSync()
     
     const messageData = {
       text: trimmed || 'So sánh file bảo hiểm này với sản phẩm hiện có',
@@ -77,6 +80,7 @@ export default function InputArea({ onSend, disabled }) {
             value={value}
             onChange={(e) => setValue(e.target.value)}
             onKeyDown={handleKeyDown}
+            onFocus={() => unlockAudioSync()}
             disabled={disabled}
             placeholder={uploadedFile ? "Nhập câu hỏi về file (hoặc để trống để so sánh)..." : "Nhập câu hỏi về bảo hiểm..."}
             rows={1}
@@ -87,7 +91,7 @@ export default function InputArea({ onSend, disabled }) {
           <button
             onClick={handleSubmit}
             disabled={disabled || (!value.trim() && !uploadedFile)}
-            aria-label={disabled ? 'Đang trả lời' : 'Gửi tin nhắn'}
+            aria-label={disabled ? 'Đang soạn tin nhắn' : 'Gửi tin nhắn'}
             className={`shrink-0 w-9 h-9 rounded-full flex items-center justify-center transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-brand/30 ${
               (value.trim() || uploadedFile) && !disabled
                 ? 'cursor-pointer bg-brand text-white hover:bg-brand-hover shadow-sm'

@@ -43,6 +43,13 @@
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
     }
+
+    /* Giữ bubble/avatar loop — feedback chức năng */
+    .thinking-bubble,
+    .avatar-thinking {
+      animation-duration: 1.4s !important;
+      animation-iteration-count: infinite !important;
+    }
   }
 }
 
@@ -78,34 +85,161 @@ aside.chat-scroll::-webkit-scrollbar-thumb:hover {
 
 /* AI-Native UI Animations */
 
-/* Typing indicator - 3-dot pulse */
-@keyframes bounce-dot {
-  0%, 80%, 100% {
-    transform: scale(1) translateY(0);
-    opacity: 0.5;
+/* Typing / waiting indicator */
+.typing-phrase-line {
+  display: inline-flex;
+  align-items: baseline;
+}
+
+.typing-ellipsis {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0;
+  margin-left: 1px;
+  min-width: 1.2em;
+}
+
+.ellipsis-dot {
+  display: inline-block;
+  font-size: 1em;
+  font-weight: 500;
+  line-height: 1;
+  color: inherit;
+  opacity: 0;
+  transition: opacity 0.12s ease;
+}
+
+.ellipsis-dot.is-visible {
+  opacity: 1;
+}
+
+.typing-phrase {
+  display: inline-block;
+  transition: opacity 0.32s ease-in-out, transform 0.32s ease-in-out;
+  will-change: opacity, transform;
+}
+.typing-phrase-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+.typing-phrase-hidden {
+  opacity: 0;
+  transform: translate3d(0, 3px, 0);
+}
+
+@keyframes avatar-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(1, 68, 219, 0.3);
+    transform: scale(1);
   }
-  40% {
-    transform: scale(1.2) translateY(-6px);
-    opacity: 1;
+  50% {
+    box-shadow: 0 0 0 6px rgba(1, 68, 219, 0);
+    transform: scale(1.03);
   }
 }
-.dot-1 { animation: bounce-dot 1.2s ease-in-out infinite 0s; }
-.dot-2 { animation: bounce-dot 1.2s ease-in-out infinite 0.2s; }
-.dot-3 { animation: bounce-dot 1.2s ease-in-out infinite 0.4s; }
+.avatar-thinking {
+  animation: avatar-pulse 2s ease-in-out infinite;
+}
 
-/* Message smooth reveal */
-@keyframes fade-in-up {
+@keyframes bubble-breathe {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+    box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+  }
+  50% {
+    transform: translate3d(0, -1px, 0);
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+  }
+}
+.thinking-bubble {
+  animation: bubble-breathe 2.2s ease-in-out infinite;
+}
+
+@keyframes typing-indicator-in {
   from {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
+.typing-indicator-enter {
+  animation: typing-indicator-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Message reveal — user (pop from right) */
+@keyframes message-in-user {
+  0% {
+    opacity: 0;
+    transform: translateX(48px) scale(0.8);
+  }
+  65% {
+    opacity: 1;
+    transform: translateX(-6px) scale(1.04);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+.message-appear-user {
+  animation: message-in-user 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  transform-origin: right center;
+}
+
+/* Agent avatar pop-in */
+@keyframes agent-avatar-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.4) rotate(-12deg);
+  }
+  70% {
+    opacity: 1;
+    transform: scale(1.1) rotate(2deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+  }
+}
+.agent-avatar-enter {
+  animation: agent-avatar-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* Message reveal — agent bubble (slide from left) */
+@keyframes message-in-agent {
+  0% {
+    opacity: 0;
+    transform: translateX(-36px) translateY(12px) scale(0.92);
+  }
+  70% {
+    opacity: 1;
+    transform: translateX(4px) translateY(0) scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) translateY(0) scale(1);
+  }
+}
+.message-appear-agent {
+  animation: message-in-agent 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.12s both;
+  transform-origin: left center;
+}
+
+.user-bubble {
+  box-shadow: 0 4px 16px rgba(1, 68, 219, 0.28);
+}
+
+.agent-bubble {
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+}
+
+/* Legacy alias */
 .message-appear {
-  animation: fade-in-up 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: message-in-agent 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 /* Suggestion cards appear */

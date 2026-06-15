@@ -4,10 +4,31 @@ import zlpLogoSquare from '../assets/zlp_logo_square.webp'
 
 function formatTime(iso) {
   try {
-    return new Date(iso).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
+    const date = new Date(iso)
+    if (Number.isNaN(date.getTime())) return ''
+    return date.toLocaleTimeString('vi-VN', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    })
   } catch {
     return ''
   }
+}
+
+function MessageTime({ timestamp, align }) {
+  const time = formatTime(timestamp)
+  if (!time) return null
+
+  return (
+    <p
+      className={`text-xs text-slate-400 mt-2 tabular-nums ${
+        align === 'right' ? 'text-right pr-2' : 'pl-2'
+      }`}
+    >
+      {time}
+    </p>
+  )
 }
 
 export default function MessageBubble({ message }) {
@@ -15,9 +36,9 @@ export default function MessageBubble({ message }) {
 
   if (isUser) {
     return (
-      <div className="flex justify-end message-appear">
-        <div className="max-w-[85%] sm:max-w-[80%]">
-          <div className="bg-brand text-white rounded-3xl px-5 sm:px-6 py-3 sm:py-3.5 shadow-sm">
+      <div className="flex justify-end">
+        <div className="max-w-[85%] sm:max-w-[80%] message-appear-user">
+          <div className="bg-brand text-white rounded-3xl rounded-br-lg px-5 sm:px-6 py-3 sm:py-3.5 user-bubble">
             {message.hasFile && message.fileName && (
               <div className="flex items-center gap-2 mb-2.5 pb-2.5 border-b border-white/20">
                 <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -28,24 +49,24 @@ export default function MessageBubble({ message }) {
             )}
             <p className="text-[15px] leading-relaxed whitespace-pre-wrap wrap-break-word">{message.content}</p>
           </div>
-          <p className="text-xs text-slate-400 mt-2 text-right pr-2">{formatTime(message.timestamp)}</p>
+          <MessageTime timestamp={message.timestamp} align="right" />
         </div>
       </div>
     )
   }
 
   return (
-    <div className="flex items-start gap-3 sm:gap-4 message-appear">
-      <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-full overflow-hidden shrink-0 shadow-sm">
+    <div className="flex items-start gap-3 sm:gap-4">
+      <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-full overflow-hidden shrink-0 shadow-sm agent-avatar-enter">
         <img src={zlpLogoSquare} alt="Trợ lý AI Zalopay" className="h-full w-full object-cover" />
       </div>
 
-      <div className="max-w-[85%] sm:max-w-[80%] min-w-0">
+      <div className="max-w-[85%] sm:max-w-[80%] min-w-0 message-appear-agent">
         <div
-          className={`rounded-3xl px-5 sm:px-6 py-3.5 sm:py-4 text-[15px] wrap-break-word ${
+          className={`rounded-3xl rounded-tl-lg px-5 sm:px-6 py-3.5 sm:py-4 text-[15px] wrap-break-word ${
             message.isError
               ? 'bg-red-50 text-red-800'
-              : 'bg-white text-slate-800 shadow-sm'
+              : 'bg-white text-slate-800 agent-bubble'
           }`}
         >
           <ReactMarkdown
@@ -88,7 +109,7 @@ export default function MessageBubble({ message }) {
             {message.content}
           </ReactMarkdown>
         </div>
-        <p className="text-xs text-slate-400 mt-2 pl-2">{formatTime(message.timestamp)}</p>
+        <MessageTime timestamp={message.timestamp} align="left" />
       </div>
     </div>
   )

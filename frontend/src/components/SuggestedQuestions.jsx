@@ -1,8 +1,13 @@
 import { SUGGESTIONS } from '../constants/suggestions'
+import { unlockAudioSync } from '../utils/chatSounds'
 
 export default function SuggestedQuestions({ onSelectQuestion, disabled }) {
-  // Show max 4 suggestions on initial load
   const visibleSuggestions = SUGGESTIONS.slice(0, 4)
+
+  const handleSelect = (question) => {
+    unlockAudioSync()
+    onSelectQuestion(question)
+  }
 
   return (
     <div className="px-4 sm:px-6 lg:px-8 pb-4 flex-shrink-0">
@@ -11,7 +16,7 @@ export default function SuggestedQuestions({ onSelectQuestion, disabled }) {
           {visibleSuggestions.map((question, idx) => (
             <button
               key={idx}
-              onClick={() => onSelectQuestion(question)}
+              onClick={() => handleSelect(question)}
               disabled={disabled}
               className="cursor-pointer text-left px-4 py-3 rounded-2xl bg-white hover:bg-slate-50 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-sm text-slate-700 hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand/30 shadow-sm border border-slate-100"
             >
