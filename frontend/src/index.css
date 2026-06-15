@@ -67,6 +67,15 @@ aside.chat-scroll::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.35);
 }
 
+/* Hide scrollbar for quick reply buttons */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 /* AI-Native UI Animations */
 
 /* Typing indicator - 3-dot pulse */

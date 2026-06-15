@@ -3,6 +3,7 @@ import Header from './components/Header'
 import Sidebar from './components/Sidebar'
 import ChatWindow from './components/ChatWindow'
 import SuggestedQuestions from './components/SuggestedQuestions'
+import QuickReplyButtons from './components/QuickReplyButtons'
 import InputArea from './components/InputArea'
 import { useChat } from './hooks/useChat'
 
@@ -16,6 +17,7 @@ export default function App() {
   }
 
   const showSuggestions = messages.length === 1 && messages[0].id === 'welcome'
+  const showQuickReplies = messages.length > 1 && !loading
 
   return (
     <div className="flex h-dvh min-h-dvh bg-slate-50 overflow-hidden">
@@ -34,6 +36,14 @@ export default function App() {
 
         {showSuggestions && (
           <SuggestedQuestions onSelectQuestion={handleSend} disabled={loading} />
+        )}
+
+        {showQuickReplies && (
+          <QuickReplyButtons 
+            messages={messages}
+            onSelectReply={handleSend} 
+            disabled={loading} 
+          />
         )}
 
         <InputArea onSend={handleSend} disabled={loading} />
