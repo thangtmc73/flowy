@@ -128,17 +128,16 @@ aside.chat-scroll::-webkit-scrollbar-thumb:hover {
 }
 
 @keyframes avatar-pulse {
-  0%, 100% {
-    box-shadow: 0 0 0 0 rgba(1, 68, 219, 0.3);
-    transform: scale(1);
+  0% {
+    box-shadow: 0 0 0 0 rgba(1, 68, 219, 0.38);
   }
-  50% {
-    box-shadow: 0 0 0 6px rgba(1, 68, 219, 0);
-    transform: scale(1.03);
+  70%,
+  100% {
+    box-shadow: 0 0 0 8px rgba(1, 68, 219, 0);
   }
 }
 .avatar-thinking {
-  animation: avatar-pulse 2s ease-in-out infinite;
+  animation: avatar-pulse 2s ease-out infinite;
 }
 
 @keyframes bubble-breathe {
