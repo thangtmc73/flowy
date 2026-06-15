@@ -6,14 +6,20 @@ Hướng dẫn import tài liệu FAQ từ PDF hoặc DOCX của đối tác và
 
 ### 1. Install dependencies
 
+Cài dependencies chính (bao gồm LLM cho `--use-llm`):
+
 ```bash
+pip install -r requirements.txt
 pip install -r requirements-import.txt
 ```
 
-Hoặc cài riêng lẻ:
+Hoặc cài riêng lẻ cho parsing tài liệu:
+
 ```bash
 pip install python-docx PyPDF2
 ```
+
+> **Lưu ý:** `langchain-openai` nằm trong `requirements.txt`, không nằm trong `requirements-import.txt`. Chỉ cài `requirements-import.txt` thì mode `--use-llm` sẽ không chạy được.
 
 ### 2. Prepare your file
 
@@ -23,36 +29,85 @@ Hỗ trợ 2 định dạng:
 
 ### 3. Run import script
 
+Chạy từ **thư mục gốc repo** (`flowy-agent/`).
+
 **Basic (manual parsing)**:
+
 ```bash
-python scripts/import_partner_docs.py \
-  --file /path/to/faq_pvi.docx \
-  --partner-id pvi \
-  --partner-name "PVI Insurance" \
-  --product-id health_premium \
-  --product-name "PVI Care"
+python3 scripts/import_partner_docs.py \
+  --file /path/to/gic_faq.docx \
+  --partner-id gic \
+  --partner-name "GIC Insurance" \
+  --product-id credit_topup \
+  --product-name "Credit Topup Insurance" \
+  --category financial
 ```
 
 **Recommended (with LLM parsing)**:
+
 ```bash
-python scripts/import_partner_docs.py \
-  --file /path/to/faq_pvi.docx \
-  --partner-id pvi \
-  --partner-name "PVI Insurance" \
-  --product-id health_premium \
-  --product-name "PVI Care" \
+python3 scripts/import_partner_docs.py \
+  --file /path/to/baoviet_faq.pdf \
+  --partner-id baoviet \
+  --partner-name "Bảo Việt Insurance" \
+  --product-id flight_delay_cancel \
+  --product-name "Bảo hiểm trễ và hủy chuyến bay" \
+  --category travel \
   --use-llm
 ```
 
 ### 4. Review output
 
-Script tạo file tại: `knowledge/partners/{partner_id}/{product_id}.json`
+Script tạo / ghi đè file tại:
 
-### 5. Test
+```
+knowledge/partners/{partner_id}/{product_id}.json
+```
+
+Đồng thời **tự cập nhật** `knowledge/_index.json` — thêm partner hoặc product mới nếu chưa có. Không cần sửa index thủ công trừ khi muốn chỉnh `keywords`, `priority`, hoặc metadata khác.
+
+> **Lưu ý:** Nếu `product_id` đã tồn tại trong index, script vẫn ghi đè JSON nhưng **không** cập nhật lại entry index (chỉ thêm khi product mới).
+
+### 5. Validate
 
 ```bash
-python -c "from main import load_knowledge_base; load_knowledge_base()"
+python3 scripts/validate_knowledge.py
 ```
+
+CI deploy cũng dùng script này. Nên chạy trước khi commit.
+
+### 6. Sync to frontend
+
+```bash
+bash scripts/sync_knowledge.sh
+```
+
+Copy knowledge sang `frontend/public/knowledge/` và tạo `manifest.json` cho Knowledge Browser. Bỏ qua bước này thì frontend không thấy file mới.
+
+### 7. Test agent load
+
+```bash
+python3 -c "from main import load_knowledge_base; load_knowledge_base()"
+```
+
+Kỳ vọng output dạng: `✓ Loaded N FAQ entries from X partner(s)`
+
+---
+
+## CLI Reference
+
+| Flag | Required | Default | Mô tả |
+|------|----------|---------|-------|
+| `--file` | Yes | — | Path tới file `.pdf` hoặc `.docx` |
+| `--partner-id` | Yes | — | ID đối tác, lowercase không space (vd. `gic`, `baoviet`, `msig`) |
+| `--partner-name` | Yes | — | Tên hiển thị |
+| `--product-id` | Yes | — | ID sản phẩm, snake_case (vd. `credit_topup`) |
+| `--product-name` | Yes | — | Tên sản phẩm hiển thị |
+| `--category` | No | `health` | Category trong `_index.json` (`health`, `travel`, `financial`, …) |
+| `--use-llm` | No | off | Bật LLM parsing (khuyến nghị) |
+| `--output-dir` | No | `knowledge` | Thư mục knowledge gốc |
+
+Xem thêm: `python3 scripts/import_partner_docs.py --help`
 
 ---
 
@@ -63,6 +118,7 @@ python -c "from main import load_knowledge_base; load_knowledge_base()"
 **Pros**:
 - Không cần LLM API key
 - Nhanh (< 1s)
+- Parse toàn bộ text (không bị giới hạn 8K)
 
 **Cons**:
 - Chỉ hỗ trợ format đơn giản:
@@ -77,13 +133,14 @@ python -c "from main import load_knowledge_base; load_knowledge_base()"
 - Phải manual edit sau
 
 **Usage**:
+
 ```bash
-python scripts/import_partner_docs.py \
+python3 scripts/import_partner_docs.py \
   --file faq.docx \
-  --partner-id pvi \
-  --partner-name "PVI" \
-  --product-id health \
-  --product-name "PVI Care"
+  --partner-id msig \
+  --partner-name "MSIG Việt Nam" \
+  --product-id health_247 \
+  --product-name "Bảo hiểm Sức khỏe 24/7"
 ```
 
 ### Mode 2: LLM Parsing (Recommended)
@@ -95,26 +152,32 @@ python scripts/import_partner_docs.py \
 - Hiểu context, merge duplicate questions
 
 **Cons**:
-- Cần LLM API key (OpenAI hoặc compatible)
-- Chậm hơn (30-60s tùy độ dài file)
-- Tốn phí API (~$0.01-0.10 per file)
+- Cần LLM API key (GreenNode AI Platform hoặc OpenAI-compatible)
+- Chậm hơn (30–60s tùy độ dài file)
+- **Chỉ gửi ~8.000 ký tự đầu** của tài liệu vào LLM — file dài cần split hoặc dùng manual mode
 
 **Setup**:
-1. Set env vars trong `.env`:
+
+1. Set env vars trong `.env` (GreenNode Claw-a-thon):
+
    ```
-   LLM_MODEL=gpt-4
-   LLM_BASE_URL=https://api.openai.com/v1
-   LLM_API_KEY=sk-...
+   LLM_MODEL=google/gemma-4-31b-it
+   LLM_BASE_URL=https://<your-greennode-endpoint>/v1
+   LLM_API_KEY=<your-api-key>
    ```
 
+   Các model BTC hỗ trợ: `qwen/qwen3-5-27b`, `google/gemma-4-31b-it`, `minimax/minimax-m2.5`
+
 2. Run với flag `--use-llm`:
+
    ```bash
-   python scripts/import_partner_docs.py \
-     --file faq_pvi.docx \
-     --partner-id pvi \
-     --partner-name "PVI Insurance" \
-     --product-id health_premium \
-     --product-name "PVI Care" \
+   python3 scripts/import_partner_docs.py \
+     --file gic_faq.docx \
+     --partner-id gic \
+     --partner-name "GIC Insurance" \
+     --product-id credit_topup \
+     --product-name "Credit Topup Insurance" \
+     --category financial \
      --use-llm
    ```
 
@@ -125,29 +188,32 @@ python scripts/import_partner_docs.py \
 ### Best Format (works well with both modes)
 
 **Option 1: Q&A pairs**
+
 ```
-Q: Bảo hiểm PVI Care là gì?
-A: PVI Care là sản phẩm bảo hiểm sức khỏe...
+Q: Bảo hiểm Sống tự tin là gì?
+A: Bảo hiểm Sống tự tin được cung cấp bởi GIC...
 
 Q: Quyền lợi bảo hiểm gồm những gì?
-A: Quyền lợi chính bao gồm: Nội trú, Ngoại trú...
+A: Quyền lợi chính bao gồm...
 ```
 
 **Option 2: Numbered**
-```
-1. Bảo hiểm PVI Care là gì?
-   PVI Care là sản phẩm bảo hiểm sức khỏe...
 
-2. Quyền lợi bảo hiểm gồm những gì?
-   Quyền lợi chính bao gồm...
+```
+1. Bảo hiểm trễ chuyến bay là gì?
+   Sản phẩm bảo vệ khi chuyến bay bị trễ...
+
+2. Điều kiện tham gia là gì?
+   Khách hàng mua qua Zalopay...
 ```
 
 **Option 3: Heading + content** (LLM mode only)
+
 ```
 # Giới thiệu
 
-## Bảo hiểm PVI Care là gì?
-PVI Care là sản phẩm bảo hiểm sức khỏe...
+## Bảo hiểm MSIG Sức khỏe 24/7 là gì?
+MSIG Sức khỏe 24/7 là sản phẩm...
 
 ## Quyền lợi bảo hiểm
 Quyền lợi chính bao gồm:
@@ -169,6 +235,14 @@ Quyền lợi chính bao gồm:
 - Complex multi-column layouts
 - Password-protected files
 
+### File quá dài (LLM mode)
+
+Script cắt text tại `text[:8000]` trước khi gửi LLM. Với tài liệu > ~8K ký tự:
+
+1. Split thành nhiều file nhỏ, import từng phần rồi merge JSON thủ công
+2. Hoặc dùng manual mode (parse hết text) rồi edit JSON
+3. Hoặc import từng section (Giới thiệu, Quyền lợi, Bồi thường…) thành các lần chạy riêng
+
 ---
 
 ## Post-Processing (Recommended)
@@ -179,13 +253,12 @@ Sau khi import, nên review và edit JSON để cải thiện chất lượng:
 
 ```json
 {
-  "canonical_question": "Bảo hiểm PVI Care là gì?",
+  "canonical_question": "Bảo hiểm Sống tự tin là gì?",
   "user_questions": [
-    "Bảo hiểm PVI Care là gì?",
-    "PVI Care là gì?",               // Thêm: Short form
-    "Cho tôi hỏi về PVI Care",       // Thêm: Conversational
-    "Gói bảo hiểm PVI là gì?",       // Thêm: Variant
-    "Bao hiem PVI care la gi"        // Thêm: Typo
+    "Bảo hiểm Sống tự tin là gì?",
+    "GIC Credit Topup là gì?",
+    "Cho tôi hỏi về bảo hiểm GIC",
+    "Bao hiem song tu tin la gi"
   ]
 }
 ```
@@ -194,7 +267,7 @@ Sau khi import, nên review và edit JSON để cải thiện chất lượng:
 
 ```json
 {
-  "category": "Giới thiệu"  // Thay vì "General"
+  "category": "Giới thiệu"
 }
 ```
 
@@ -210,7 +283,7 @@ Common categories:
 
 ```json
 {
-  "tags": ["pvi", "sức khỏe", "nội trú", "ngoại trú"]
+  "tags": ["gic", "financial", "credit topup"]
 }
 ```
 
@@ -218,20 +291,29 @@ Common categories:
 
 ```json
 {
-  "priority": 10  // For top FAQs (default: 5)
+  "priority": 10
 }
 ```
+
+Default từ import script là `5`. Dùng `10` cho FAQ quan trọng (giới thiệu, mua hàng, hotline).
 
 ### 5. Link related FAQs
 
 ```json
 {
-  "id": "pvi_health_premium_001",
+  "id": "gic_credit_topup_001",
   "related_faq_ids": [
-    "pvi_health_premium_002",  // Quyền lợi
-    "pvi_health_premium_005"   // Pricing
+    "gic_credit_topup_002",
+    "gic_credit_topup_005"
   ]
 }
+```
+
+Sau khi chỉnh JSON, chạy lại validate + sync:
+
+```bash
+python3 scripts/validate_knowledge.py
+bash scripts/sync_knowledge.sh
 ```
 
 ---
@@ -244,29 +326,35 @@ Import nhiều files cùng lúc:
 #!/bin/bash
 # import_all_partners.sh
 
-python scripts/import_partner_docs.py \
-  --file docs/faq_pvi.docx \
-  --partner-id pvi \
-  --partner-name "PVI Insurance" \
-  --product-id health_premium \
-  --product-name "PVI Care" \
+python3 scripts/import_partner_docs.py \
+  --file docs/faq_msig.docx \
+  --partner-id msig \
+  --partner-name "MSIG Việt Nam" \
+  --product-id health_247 \
+  --product-name "Bảo hiểm Sức khỏe 24/7" \
+  --category health \
   --use-llm
 
-python scripts/import_partner_docs.py \
-  --file docs/faq_bao_viet.pdf \
-  --partner-id bao_viet \
-  --partner-name "Bảo Việt" \
-  --product-id health_basic \
-  --product-name "Bảo Việt An Gia" \
+python3 scripts/import_partner_docs.py \
+  --file docs/faq_gic.docx \
+  --partner-id gic \
+  --partner-name "GIC Insurance" \
+  --product-id credit_topup \
+  --product-name "Credit Topup Insurance" \
+  --category financial \
   --use-llm
 
-python scripts/import_partner_docs.py \
-  --file docs/faq_generali.docx \
-  --partner-id generali \
-  --partner-name "Generali Vietnam" \
-  --product-id health_360 \
-  --product-name "Generali 360" \
+python3 scripts/import_partner_docs.py \
+  --file docs/faq_baoviet.pdf \
+  --partner-id baoviet \
+  --partner-name "Bảo Việt Insurance" \
+  --product-id flight_delay_cancel \
+  --product-name "Bảo hiểm trễ và hủy chuyến bay" \
+  --category travel \
   --use-llm
+
+python3 scripts/validate_knowledge.py
+bash scripts/sync_knowledge.sh
 ```
 
 ---
@@ -285,30 +373,23 @@ python scripts/import_partner_docs.py \
 
 ### "LLM not available"
 
-**Cause**: Chưa cài langchain hoặc chưa set API key
+**Cause**: Chưa cài `langchain-openai` hoặc chưa set API key trong `.env`
 
 **Solutions**:
+
 ```bash
-pip install langchain-openai
-# Edit .env file với LLM_API_KEY
+pip install -r requirements.txt
+# Kiểm tra .env có LLM_MODEL, LLM_BASE_URL, LLM_API_KEY
 ```
 
-### "python-docx not installed"
+### "python-docx not installed" / "PyPDF2 not installed"
 
-**Cause**: Thiếu dependency
-
-**Solutions**:
-```bash
-pip install python-docx
-```
-
-### "PyPDF2 not installed"
-
-**Cause**: Thiếu dependency
+**Cause**: Thiếu dependency parsing
 
 **Solutions**:
+
 ```bash
-pip install PyPDF2
+pip install -r requirements-import.txt
 ```
 
 ### "JSON parsing error from LLM"
@@ -317,8 +398,9 @@ pip install PyPDF2
 
 **Solutions**:
 1. Thử lại (LLM đôi khi không ổn định)
-2. Giảm độ dài file (split thành nhiều phần)
-3. Dùng manual mode rồi edit sau
+2. Giảm độ dài file (split thành nhiều phần — nhớ giới hạn 8K chars)
+3. Đổi model (vd. `google/gemma-4-31b-it` thay vì Qwen reasoning)
+4. Dùng manual mode rồi edit sau
 
 ### Scanned PDF without text
 
@@ -328,106 +410,121 @@ pip install PyPDF2
 1. Dùng OCR tool: `ocrmypdf input.pdf output.pdf`
 2. Hoặc manual copy-paste từ PDF viewer
 
+### Frontend không hiển thị FAQ mới
+
+**Cause**: Chưa sync knowledge sang `frontend/public/`
+
+**Solutions**:
+
+```bash
+bash scripts/sync_knowledge.sh
+```
+
 ---
 
 ## Examples
 
-### Example 1: DOCX with Q&A format
+### Example 1: DOCX with Q&A format (GIC)
 
-**Input** (`faq_pvi.docx`):
+**Input** (`gic_faq.docx`):
+
 ```
-Q: PVI Care là gì?
-A: PVI Care là sản phẩm bảo hiểm sức khỏe toàn diện...
+Q: Bảo hiểm Sống tự tin là gì?
+A: Bảo hiểm Sống tự tin được cung cấp bởi GIC...
 
-Q: Quyền lợi bảo hiểm gồm gì?
-A: Nội trú, Ngoại trú, Telemed...
+Q: Mức phí bảo hiểm là bao nhiêu?
+A: Phí từ ...
 ```
 
 **Command**:
+
 ```bash
-python scripts/import_partner_docs.py \
-  --file faq_pvi.docx \
-  --partner-id pvi \
-  --partner-name "PVI Insurance" \
-  --product-id health_premium \
-  --product-name "PVI Care" \
+python3 scripts/import_partner_docs.py \
+  --file gic_faq.docx \
+  --partner-id gic \
+  --partner-name "GIC Insurance" \
+  --product-id credit_topup \
+  --product-name "Credit Topup Insurance" \
+  --category financial \
   --use-llm
 ```
 
-**Output** (`knowledge/partners/pvi/health_premium.json`):
+**Output** (`knowledge/partners/gic/credit_topup.json`):
+
 ```json
 {
-  "product_id": "health_premium",
-  "partner_id": "pvi",
+  "product_id": "credit_topup",
+  "partner_id": "gic",
   "faqs": [
     {
-      "id": "pvi_health_premium_001",
-      "canonical_question": "PVI Care là gì?",
+      "id": "gic_credit_topup_001",
+      "canonical_question": "Bảo hiểm Sống tự tin là gì?",
       "user_questions": [
-        "PVI Care là gì?",
-        "Bảo hiểm PVI Care là gì?",
-        "Cho tôi hỏi về PVI Care"
+        "Bảo hiểm Sống tự tin là gì?",
+        "GIC Credit Topup là gì?",
+        "Cho tôi hỏi về bảo hiểm GIC"
       ],
-      "answer": "PVI Care là sản phẩm bảo hiểm sức khỏe toàn diện...",
+      "answer": "Bảo hiểm Sống tự tin được cung cấp bởi GIC...",
       "category": "Giới thiệu"
     }
   ]
 }
 ```
 
-### Example 2: PDF with complex format
+### Example 2: PDF with complex format (Bảo Việt)
 
-**Input** (`faq_generali.pdf`): Mixed headings, bullets, tables
+**Input** (`baoviet_faq.pdf`): Mixed headings, bullets, tables
 
 **Command**:
+
 ```bash
-python scripts/import_partner_docs.py \
-  --file faq_generali.pdf \
-  --partner-id generali \
-  --partner-name "Generali Vietnam" \
-  --product-id health_360 \
-  --product-name "Generali 360" \
-  --category health \
+python3 scripts/import_partner_docs.py \
+  --file baoviet_faq.pdf \
+  --partner-id baoviet \
+  --partner-name "Bảo Việt Insurance" \
+  --product-id flight_delay_cancel \
+  --product-name "Bảo hiểm trễ và hủy chuyến bay" \
+  --category travel \
   --use-llm
 ```
 
-**Output**: LLM tự động parse và structure hóa
+**Output**: LLM tự động parse và structure hóa. Review JSON, validate, sync frontend.
 
 ---
 
 ## Best Practices
 
-1. **Always use `--use-llm`** if possible (chính xác hơn nhiều)
+1. **Always use `--use-llm`** if possible (chính xác hơn nhiều), trừ file rất dài (>8K chars)
 2. **Review output JSON** sau khi import
-3. **Add 5-10 user_questions variants** per FAQ
-4. **Set proper priority** (10 for top FAQs)
-5. **Link related FAQs** via `related_faq_ids`
-6. **Consistent naming**:
-   - partner_id: lowercase, no spaces (`pvi`, `bao_viet`)
-   - product_id: lowercase_underscore (`health_premium`)
-7. **Backup original files** trước khi xóa
+3. **Run validate + sync** trước mỗi commit: `validate_knowledge.py` → `sync_knowledge.sh`
+4. **Add 5–10 user_questions variants** per FAQ
+5. **Set proper priority** (10 for top FAQs)
+6. **Link related FAQs** via `related_faq_ids`
+7. **Consistent naming**:
+   - `partner_id`: lowercase, no spaces (`gic`, `baoviet`, `msig`, `vbi`)
+   - `product_id`: lowercase_underscore (`credit_topup`, `flight_delay_cancel`)
+8. **Backup original files** trước khi xóa
+9. **Split large docs** khi dùng LLM mode (giới hạn 8.000 ký tự)
 
 ---
 
-## API Usage & Cost
+## LLM Notes (GreenNode Platform)
 
-Nếu dùng OpenAI GPT-4 với `--use-llm`:
+| Model | Path | Ghi chú |
+|-------|------|---------|
+| Gemma 4 31B-IT | `google/gemma-4-31b-it` | Khuyến nghị cho import — nhanh, ít reasoning overhead |
+| Qwen 3.5 27B | `qwen/qwen3-5-27b` | Có thinking mode, chậm hơn |
+| MiniMax M2.5 | `minimax/minimax-m2.5` | Alternative |
 
-| File size | Tokens | Cost (USD) |
-|-----------|--------|------------|
-| 1-2 pages | ~2K    | $0.02      |
-| 5-10 pages | ~8K   | $0.08      |
-| 20-30 pages | ~20K | $0.20      |
+Lấy API key tại [Model Browser](https://aiplatform.console.vngcloud.vn/models).
 
-Tips để tiết kiệm:
-- Dùng GPT-3.5-turbo thay GPT-4 (rẻ hơn 10x)
-- Split file lớn thành nhiều phần nhỏ
-- Manual parsing cho format đơn giản
+Với file lớn, ưu tiên split document thay vì dựa vào một lần gọi LLM duy nhất.
 
 ---
 
 ## Support
 
-- Script issues: Check `scripts/import_partner_docs.py --help`
-- Format questions: See examples above
-- Can't parse: Try manual mode → edit JSON sau
+- Script issues: `python3 scripts/import_partner_docs.py --help`
+- Knowledge schema: `knowledge/README.md`
+- Validate errors: `python3 scripts/validate_knowledge.py`
+- Can't parse: Try manual mode → edit JSON → validate → sync
