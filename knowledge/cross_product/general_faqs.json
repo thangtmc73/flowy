@@ -381,6 +381,34 @@
       "priority": 6,
       "source": "motorcycle_purchase_guide",
       "scope": "motorcycle"
+    },
+    {
+      "id": "zalopay_support_001",
+      "canonical_question": "Liên hệ hỗ trợ Zalopay qua đâu?",
+      "user_questions": [
+        "Liên hệ hỗ trợ Zalopay qua đâu?",
+        "Hotline Zalopay là số nào?",
+        "Tổng đài Zalopay bao nhiêu?",
+        "Số điện thoại hỗ trợ Zalopay?",
+        "Email hỗ trợ Zalopay là gì?",
+        "Lien he ho tro Zalopay o dau?",
+        "Gọi Zalopay số mấy?",
+        "Zalopay hỗ trợ khách hàng qua kênh nào?",
+        "Fanpage Zalopay ở đâu?",
+        "Liên hệ ZaloPay như thế nào?"
+      ],
+      "answer": "Tổng đài chính thức **Zalopay**: **1900 54 54 36**\n\n* **Cước phí:** 1.000 VNĐ/phút\n* **Thời gian hoạt động:** 24/7 (kể cả ngày lễ, Tết)\n\n**Các kênh hỗ trợ khác:**\n* **Email:** hotro@zalopay.vn\n* **Trên app:** Cá nhân → Trung tâm hỗ trợ → Gửi yêu cầu hỗ trợ\n* **Facebook:** [Fanpage ZaloPay](https://www.facebook.com/Zalopay)\n\n*Lưu ý:* Với yêu cầu **bồi thường bảo hiểm**, hãy liên hệ hotline của công ty bảo hiểm đối tác (MSIG, VBI, GIC, Bảo Việt...). Tổng đài Zalopay hỗ trợ các vấn đề về app, thanh toán và sử dụng dịch vụ trên nền tảng.",
+      "category": "Liên hệ & Hỗ trợ",
+      "tags": [
+        "zalopay",
+        "liên hệ",
+        "hotline",
+        "hỗ trợ",
+        "tổng đài"
+      ],
+      "priority": 8,
+      "source": "zalopay_official_support",
+      "scope": "all_partners"
     }
   ]
 }
