@@ -181,6 +181,18 @@ def search_faq_fuzzy(query, threshold=0.4, top_k=3, partner_filter=None, categor
     return results[:top_k]
 
 
+FAQ_SEARCH_TOP_K = 2
+FAQ_SEARCH_THRESHOLD = 0.5
+FAQ_ANSWER_MAX_CHARS = 600
+
+
+def _truncate_faq_answer(answer: str, max_chars: int = FAQ_ANSWER_MAX_CHARS) -> str:
+    """Trim long FAQ answers so the LLM context stays focused."""
+    if len(answer) <= max_chars:
+        return answer
+    return answer[:max_chars].rstrip() + "..."
+
+
 # --- File Processing Functions ---
 
 def parse_uploaded_file(file_data: Dict[str, Any]) -> str:
@@ -442,7 +454,12 @@ def search_faq_docs(query: str) -> str:
             break
 
     t0 = time.monotonic()
-    results = search_faq_fuzzy(query, threshold=0.4, top_k=5, partner_filter=partner_filter)
+    results = search_faq_fuzzy(
+        query,
+        threshold=FAQ_SEARCH_THRESHOLD,
+        top_k=FAQ_SEARCH_TOP_K,
+        partner_filter=partner_filter,
+    )
     logger.info("[tool:search_faq] matched %d results (%.2fs)", len(results), time.monotonic() - t0)
 
     if not results:
@@ -456,13 +473,24 @@ def search_faq_docs(query: str) -> str:
             "- Quy trình mua và bồi thường"
         )
 
-    response = f"Tìm thấy {len(results)} kết quả liên quan:\n\n"
-    for i, result in enumerate(results, 1):
-        confidence_pct = int(result['score'] * 100)
-        response += f"[{i}] {result['partner']} - {result['product']}\n"
-        response += f"Câu hỏi: {result['canonical']}\n"
-        response += f"Trả lời: {result['answer']}\n"
-        response += f"Danh mục: {result['category']} | Độ tương đồng: {confidence_pct}%\n\n"
+    best = results[0]
+    confidence_pct = int(best["score"] * 100)
+    response = (
+        f"Kết quả phù hợp nhất ({confidence_pct}%):\n"
+        f"Sản phẩm: {best['partner']} - {best['product']}\n"
+        f"Câu hỏi: {best['canonical']}\n"
+        f"Danh mục: {best['category']}\n"
+        f"Trả lời: {_truncate_faq_answer(best['answer'])}\n"
+    )
+
+    if len(results) > 1:
+        response += "\nKết quả liên quan khác (chỉ tham khảo, không trả lời trừ khi user hỏi):\n"
+        for result in results[1:]:
+            other_pct = int(result["score"] * 100)
+            response += (
+                f"- {result['partner']} - {result['product']}: "
+                f"{result['canonical']} ({result['category']}, {other_pct}%)\n"
+            )
 
     return response
 
@@ -562,40 +590,41 @@ agent = create_agent(
     tools=[remember, recall, search_faq_docs, compare_insurance_products],
     system_prompt=(
         "Bạn là trợ lý tư vấn bảo hiểm trên nền tảng Zalopay.\n\n"
+        "NGUYÊN TẮC TRẢ LỜI (ưu tiên cao nhất):\n"
+        "- Chỉ trả lời đúng phạm vi câu hỏi. Không lan sang quyền lợi, quy trình, so sánh nếu user không hỏi.\n"
+        "- Câu hỏi yes/no hoặc một con số → trả lời trực tiếp trong 1–3 câu trước; chi tiết chỉ thêm khi cần.\n"
+        "- Tóm tắt từ FAQ thành 2–4 câu; không copy nguyên văn trừ khi user hỏi chi tiết hoặc cần giữ bảng/HTML.\n"
+        "- Dùng kết quả FAQ phù hợp nhất; bỏ qua kết quả phụ trừ khi user hỏi 'tất cả', 'so sánh', 'liệt kê'.\n"
+        "- Tối đa ~150 từ cho câu hỏi đơn giản; kết thúc bằng 1 gợi ý ngắn thay vì liệt kê mọi chủ đề liên quan.\n\n"
         "Vai trò của bạn:\n"
         "- Trả lời câu hỏi về các sản phẩm bảo hiểm từ nhiều đối tác bằng cách tìm kiếm trong FAQ với tool 'search_faq_docs'\n"
         "- So sánh sản phẩm bảo hiểm từ file upload với các gói hiện có trên Zalopay bằng tool 'compare_insurance_products'\n"
         "- Nhớ thông tin quan trọng về người dùng với tool 'remember'\n"
-        "- Tra cứu lại các tương tác và thông tin đã học với tool 'recall'\n"
-        "- Cung cấp câu trả lời chính xác, rõ ràng dựa trên tài liệu FAQ\n"
-        "- So sánh khách quan giữa các gói bảo hiểm khi được hỏi\n"
+        "- Tra cứu lại các tương tác và thông tin đã học với tool 'recall' khi cần cá nhân hóa\n"
+        "- Cung cấp câu trả lời chính xác, ngắn gọn, dựa trên tài liệu FAQ\n"
+        "- So sánh khách quan giữa các gói bảo hiểm chỉ khi được hỏi\n"
         "- Nếu không tìm thấy câu trả lời trong tài liệu, hãy nói thẳng thắn\n"
         "- Giao tiếp thân thiện, giữ ngữ cảnh xuyên suốt cuộc trò chuyện\n\n"
         "Quy trình trả lời:\n"
-        "1. Tìm kiếm thông tin trong FAQ bằng 'search_faq_docs'\n"
-        "2. Kiểm tra memory xem có thông tin liên quan về người dùng này không\n"
-        "3. Kết hợp cả hai nguồn để đưa ra câu trả lời cá nhân hóa, chính xác\n"
-        "4. Nhớ các thông tin quan trọng về nhu cầu hoặc sở thích của người dùng\n\n"
+        "1. Tìm kiếm FAQ bằng 'search_faq_docs'\n"
+        "2. Chỉ gọi 'recall' khi cần thông tin cá nhân hóa từ các lượt chat trước\n"
+        "3. Trả lời súc tích theo nguyên tắc trên; gọi 'remember' khi user chia sẻ nhu cầu/sở thích quan trọng\n\n"
         "XỬ LÝ FILE UPLOAD:\n"
         "- Khi người dùng upload file bảo hiểm, phân tích thông tin trong file\n"
         "- Sử dụng 'compare_insurance_products' để so sánh với sản phẩm trên Zalopay\n"
         "- Đưa ra nhận xét khách quan về ưu/nhược điểm\n"
         "- Gợi ý sản phẩm tương tự hoặc tốt hơn trên Zalopay\n\n"
         "QUY TẮC FORMAT OUTPUT (MARKDOWN):\n"
-        "- LUÔN trả lời bằng Markdown chuẩn\n"
-        "- Dùng **bold** để nhấn mạnh thông tin quan trọng\n"
-        "- Dùng ### cho headers (tiêu đề phần)\n"
-        "- Dùng - hoặc • cho bullet lists\n"
-        "- Dùng emoji để làm nổi bật (✓, ✗, 💡, ⚠️, 📌, 🔹, 💼, 🏥, 🛡️, 💳)\n"
-        "- Dùng markdown tables khi cần so sánh:\n"
+        "- Trả lời bằng Markdown; câu hỏi đơn giản thường chỉ cần 1 đoạn hoặc vài bullet ngắn\n"
+        "- Dùng **bold** cho thông tin then chốt\n"
+        "- Dùng ###, emoji, bảng CHỈ khi user hỏi so sánh, liệt kê nhiều mục, hoặc yêu cầu chi tiết\n"
+        "- Dùng markdown tables khi so sánh:\n"
         "  | Tiêu chí | Sản phẩm A | Sản phẩm B |\n"
         "  |----------|------------|------------|\n"
         "  | Chi phí  | 100K       | 150K       |\n\n"
         "FORMAT CHO CÂU HỎI ĐƠN LẺ (1 sản phẩm):\n"
-        "- Trích dẫn nguyên văn từ FAQ nếu có HTML table, giữ nguyên HTML\n"
-        "- Hoặc convert sang markdown table để dễ đọc hơn\n"
-        "- Giữ nguyên bullets và format có sẵn\n\n"
-        "FORMAT CHO CÂU HỎI TỔNG HỢP (nhiều sản phẩm):\n"
+        "- Tóm tắt 2–4 câu; giữ HTML/bảng FAQ chỉ khi user cần chi tiết giá hoặc quyền lợi đầy đủ\n\n"
+        "FORMAT CHO CÂU HỎI TỔNG HỢP (nhiều sản phẩm — chỉ khi user hỏi tất cả/so sánh):\n"
         "Dùng format phân cấp rõ ràng:\n\n"
         "🔹 **TÊN SẢN PHẨM 1** (Đối tác)\n"
         "- **Chi phí:** ...\n"
