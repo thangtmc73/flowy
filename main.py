@@ -1,4 +1,5 @@
 import os
+import re
 import json
 import logging
 import time
@@ -184,6 +185,16 @@ def search_faq_fuzzy(query, threshold=0.4, top_k=3, partner_filter=None, categor
 FAQ_SEARCH_TOP_K = 2
 FAQ_SEARCH_THRESHOLD = 0.5
 FAQ_ANSWER_MAX_CHARS = 600
+
+
+def normalize_brand_name(text: str) -> str:
+    """Ensure the platform brand is spelled Zalopay in agent-facing text."""
+    if not text:
+        return text
+    text = re.sub(r"\bZaloPay\b", "Zalopay", text)
+    text = re.sub(r"\bZalo Pay\b", "Zalopay", text)
+    text = re.sub(r"\bZALOPAY\b", "Zalopay", text)
+    return text
 
 
 def _truncate_faq_answer(answer: str, max_chars: int = FAQ_ANSWER_MAX_CHARS) -> str:
@@ -590,6 +601,9 @@ agent = create_agent(
     tools=[remember, recall, search_faq_docs, compare_insurance_products],
     system_prompt=(
         "Bạn là trợ lý tư vấn bảo hiểm trên nền tảng Zalopay.\n\n"
+        "QUY TẮC THƯƠNG HIỆU:\n"
+        "- Luôn viết tên nền tảng là **Zalopay** (chữ Z viết hoa, còn lại viết thường)\n"
+        "- KHÔNG dùng ZaloPay, Zalo Pay hay ZALOPAY\n\n"
         "NGUYÊN TẮC TRẢ LỜI (ưu tiên cao nhất):\n"
         "- Chỉ trả lời đúng phạm vi câu hỏi. Không lan sang quyền lợi, quy trình, so sánh nếu user không hỏi.\n"
         "- Câu hỏi yes/no hoặc một con số → trả lời trực tiếp trong 1–3 câu trước; chi tiết chỉ thêm khi cần.\n"
@@ -747,7 +761,7 @@ Sử dụng tool 'compare_insurance_products' để đưa ra so sánh chi tiết
 
     return {
         "status": "success",
-        "response": ai_message.content,
+        "response": normalize_brand_name(ai_message.content),
         "timestamp": datetime.now().isoformat(),
     }
 
