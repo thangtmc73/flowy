@@ -50,7 +50,6 @@ export default function MessageBubble({ message }) {
         >
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
-            className="markdown-content"
             components={{
               // Custom styling for markdown elements
               h1: ({node, ...props}) => <h1 className="text-xl font-bold text-slate-900 mt-4 mb-2 first:mt-0" {...props} />,
