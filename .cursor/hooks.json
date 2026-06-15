@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "hooks": {
+    "afterFileEdit": [
+      {
+        "command": ".cursor/hooks/validate-knowledge.sh",
+        "matcher": "knowledge/.*\\.json$",
+        "timeout": 30
+      }
+    ],
+    "beforeShellExecution": [
+      {
+        "command": ".cursor/hooks/dangerous-commands.sh",
+        "matcher": "rm\\s+-rf|DROP\\s+TABLE|truncate|docker\\s+system\\s+prune",
+        "failClosed": true,
+        "timeout": 5
+      }
+    ],
+    "beforeSubmitPrompt": [
+      {
+        "command": ".cursor/hooks/check-secrets.sh",
+        "timeout": 10
+      }
+    ]
+  }
+}
