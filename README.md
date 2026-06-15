@@ -1,6 +1,26 @@
-# Flowy Agent - Multi-Partner Insurance FAQ Chatbot
+![Flowy — Zalopay Insurance FAQ Chatbot cover](docs/cover.png)
 
-Agent tư vấn bảo hiểm đa đối tác với giao diện chat, tích hợp upload file và so sánh sản phẩm. Được xây dựng trên nền tảng GreenNode AgentBase.
+# Flowy — Multi-Partner Insurance FAQ Chatbot
+
+A multi-partner insurance advisory agent with a chat interface, file upload, and product comparison. Built on the [GreenNode AgentBase](https://docs.vngcloud.vn/agentbase) platform for Zalopay insurance products.
+
+> **Disclaimer:** This project was developed for the [GreenNode Claw-a-thon](https://greennode.ai/events/greennode-claw-a-thon) hackathon. Platform resources (LLM access, AgentBase runtime, memory, container registry, etc.) are provided for the event and **may be revoked after the hackathon ends**. Insurance product details, benefits, premiums, and policies in the knowledge base **may become outdated over time** and are for reference only — always verify with the official insurer or Zalopay before making decisions.
+
+## Team
+
+TramNTQ, ThangTM2, TranVHD
+
+## Supported LLMs (Organizer-Provided)
+
+The following models are enabled on the GreenNode AI Platform for Claw-a-thon participants. Set `LLM_MODEL` in `.env` to the model path below.
+
+| Model | Path | Notes |
+|-------|------|-------|
+| Qwen 3.5 27B | `qwen/qwen3-5-27b` | Reasoning mode; higher latency |
+| Gemma 4 31B-IT | `google/gemma-4-31b-it` | Recommended for low-latency FAQ replies |
+| MiniMax M2.5 | `minimax/minimax-m2.5` | General-purpose alternative |
+
+Get your API key and base URL from the [Model Browser](https://aiplatform.console.vngcloud.vn/models).
 
 ## Tech Stack
 
@@ -14,31 +34,33 @@ Agent tư vấn bảo hiểm đa đối tác với giao diện chat, tích hợp
 ## Features
 
 ### Core Capabilities
-- **Multi-Partner Support**: Quản lý FAQ từ nhiều đối tác bảo hiểm (MSIG, VBI, PVI, Bảo Việt)
-- **Intelligent Search**: Kết hợp fuzzy matching và LLM để tìm câu trả lời chính xác
-- **Long-term Memory**: Ghi nhớ ngữ cảnh hội thoại và preferences theo user
-- **Product Comparison**: So sánh các gói bảo hiểm khác nhau
-- **File Upload**: Upload và phân tích tài liệu (PDF, JSON, TXT, CSV, Excel, Word)
-- **Vietnamese Support**: Tối ưu cho tiếng Việt
+
+- **Multi-Partner Support**: FAQ coverage for MSIG, GIC, VBI, and Bảo Việt insurance products
+- **Intelligent Search**: Combines fuzzy matching and LLM tools to find accurate answers
+- **Long-term Memory**: Remembers conversation context and user preferences per user
+- **Product Comparison**: Compare insurance packages across partners
+- **File Upload**: Upload and analyze documents (PDF, JSON, TXT, CSV, Excel, Word)
+- **Vietnamese Support**: Optimized for Vietnamese language queries
 
 ### UI Features
-- Modern chat interface với Zalopay branding
-- Drag & drop file upload (tối đa 10MB)
+
+- Modern chat interface with Zalopay branding
+- Drag & drop file upload (max 10MB)
 - Real-time typing indicators
-- Responsive design cho mobile và desktop
+- Responsive design for mobile and desktop
 
 ## Prerequisites
 
-- **Python 3.13+** (hoặc 3.10+)
-- **Node.js 24+** (để build frontend)
-- **Docker** (để deploy)
-- **GreenNode IAM Service Account** — [Tạo tại đây](https://iam.console.vngcloud.vn/service-accounts)
+- **Python 3.13+** (or 3.10+)
+- **Node.js 24+** (to build the frontend)
+- **Docker** (for deployment)
+- **GreenNode IAM Service Account** — [Create one here](https://iam.console.vngcloud.vn/service-accounts)
 
 ## Quick Start
 
 ### 1. Backend Setup
 
-Tạo virtual environment và cài dependencies:
+Create a virtual environment and install dependencies:
 
 ```bash
 python3 -m venv venv
@@ -48,23 +70,23 @@ pip install -r requirements.txt
 
 ### 2. Configuration
 
-Copy file config mẫu:
+Copy the example config files:
 
 ```bash
 cp .env.example .env
 cp agentbase.config.example.json agentbase.config.json
 ```
 
-Cấu hình IAM credentials (chọn một trong hai):
+Configure IAM credentials (choose one option):
 
-- **Option A**: Biến môi trường
+- **Option A**: Environment variables
 
 ```bash
 export GREENNODE_CLIENT_ID="your-client-id"
 export GREENNODE_CLIENT_SECRET="your-client-secret"
 ```
 
-- **Option B**: File `.greennode.json` (khuyến nghị cho local dev)
+- **Option B**: `.greennode.json` file (recommended for local dev)
 
 ```json
 {
@@ -75,18 +97,18 @@ export GREENNODE_CLIENT_SECRET="your-client-secret"
 
 ### 3. Environment Variables
 
-Edit file `.env` với các giá trị sau:
+Edit `.env` with the following values:
 
-| Variable | Mô tả | Ví dụ |
-|----------|--------|-------|
-| `MEMORY_ID` | Memory store ID trên AgentBase | `mem_xxx` |
-| `MEMORY_STRATEGY_ID` | Strategy ID cho long-term memory | `strat_xxx` |
-| `LLM_BASE_URL` | Base URL OpenAI-compatible | `https://api.example.com/v1` |
-| `LLM_MODEL` | Tên model | `gpt-4` |
-| `LLM_API_KEY` | API key LLM | `sk-xxx` |
-| `FAQ_DATA_PATH` | Path đến knowledge base | `knowledge` (default) |
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `MEMORY_ID` | Memory store ID on AgentBase | `mem_xxx` |
+| `MEMORY_STRATEGY_ID` | Strategy ID for long-term memory | `strat_xxx` |
+| `LLM_BASE_URL` | OpenAI-compatible base URL | `https://api.example.com/v1` |
+| `LLM_MODEL` | Model path (see table above) | `google/gemma-4-31b-it` |
+| `LLM_API_KEY` | LLM API key | `sk-xxx` |
+| `FAQ_DATA_PATH` | Path to knowledge base | `knowledge` (default) |
 
-> **Note**: Trên AgentBase Runtime, IAM và Agent Identity được inject tự động. Không cần config thủ công trong container.
+> **Note:** On AgentBase Runtime, IAM and Agent Identity are injected automatically. No manual config is needed inside the container.
 
 ## Development
 
@@ -97,11 +119,11 @@ source venv/bin/activate
 python3 main.py
 ```
 
-Backend API chạy tại `http://127.0.0.1:8080`
+Backend API runs at `http://127.0.0.1:8080`
 
 ### Run Frontend (Development Mode)
 
-Mở terminal mới:
+Open a new terminal:
 
 ```bash
 cd frontend
@@ -109,13 +131,13 @@ npm install
 npm run dev
 ```
 
-Frontend dev server chạy tại `http://localhost:5173`
+Frontend dev server runs at `http://localhost:5173`
 
-> **Note**: Cấu hình VITE_API_URL trong `frontend/.env` để kết nối tới backend
+> **Note:** Set `VITE_API_URL` in `frontend/.env` to point to the backend.
 
 ### Testing API
 
-Test agent với curl:
+Test the agent with curl:
 
 ```bash
 curl -X POST http://127.0.0.1:8080/invocations \
@@ -134,7 +156,7 @@ curl http://127.0.0.1:8080/health
 
 ### Required Headers
 
-Khi sử dụng memory, bắt buộc có cả hai headers:
+When using memory, both headers are required:
 
 - `X-GreenNode-AgentBase-User-Id`: Unique user identifier
 - `X-GreenNode-AgentBase-Session-Id`: Session/conversation identifier
@@ -143,31 +165,34 @@ Khi sử dụng memory, bắt buộc có cả hai headers:
 
 ### Structure
 
-Knowledge base sử dụng cấu trúc multi-partner:
+The knowledge base uses a multi-partner layout:
 
 ```
 knowledge/
-├── _index.json                    # Partner & product metadata
+├── _index.json                         # Partner & product metadata
 ├── partners/
 │   ├── msig/
-│   │   └── health_247.json        # MSIG Health 24/7
+│   │   └── health_247.json             # MSIG Health 24/7
+│   ├── gic/
+│   │   └── credit_topup.json           # GIC Credit Topup
 │   ├── vbi/
-│   │   └── cyber.json             # VBI Cyber Insurance
-│   └── pvi/
-│       └── health_premium.json    # PVI Care
+│   │   └── cyber.json                  # VBI Cyber Insurance
+│   └── baoviet/
+│       └── flight_delay_cancel.json    # Bảo Việt Flight Delay/Cancel
 └── cross_product/
-    └── comparisons.json           # Cross-partner comparisons
+    ├── comparisons.json                # Cross-partner comparisons
+    └── general_faqs.json               # General Zalopay / platform FAQs
 ```
 
 ### Adding New Partners
 
-**Option 1: Manual (xem `knowledge/README.md`)**
+**Option 1: Manual (see `knowledge/README.md`)**
 
-1. Tạo file JSON trong `knowledge/partners/{partner_id}/{product_id}.json`
+1. Create a JSON file under `knowledge/partners/{partner_id}/{product_id}.json`
 2. Update `knowledge/_index.json`
-3. Validate với script
+3. Validate with the script below
 
-**Option 2: Import từ document (khuyến nghị)**
+**Option 2: Import from document (recommended)**
 
 ```bash
 pip install -r requirements-import.txt
@@ -179,9 +204,15 @@ python3 scripts/import_partner_docs.py path/to/document.pdf \
   --product-name "Product Name"
 ```
 
+Sync knowledge to the frontend after changes:
+
+```bash
+bash scripts/sync_knowledge.sh
+```
+
 ### Validation
 
-Validate FAQ structure trước khi deploy:
+Validate FAQ structure before deploy:
 
 ```bash
 python3 scripts/validate_faq.py knowledge/
@@ -190,7 +221,7 @@ python3 scripts/validate_faq.py knowledge/
 Expected output:
 
 ```
-✓ Loaded 150 FAQ entries from 3 partner(s)
+✓ Loaded 150 FAQ entries from 4 partner(s)
 ✓ Validation passed
 ```
 
@@ -202,9 +233,9 @@ Expected output:
 
 ## Deployment
 
-### Option 1: GitHub Actions CI/CD (Khuyến nghị)
+### Option 1: GitHub Actions CI/CD (Recommended)
 
-Workflow tự động khi push lên `main`:
+The workflow runs automatically on push to `main`:
 
 1. **Validate** FAQ structure
 2. **Build** Docker image (frontend + backend)
@@ -213,25 +244,25 @@ Workflow tự động khi push lên `main`:
 
 #### Setup GitHub Secrets
 
-Vào repo **Settings → Secrets and variables → Actions**, thêm:
+Go to repo **Settings → Secrets and variables → Actions** and add:
 
-| Secret Name | Mô tả | Lấy từ đâu |
-|-------------|--------|------------|
+| Secret Name | Description | Where to get it |
+|-------------|-------------|-----------------|
 | `GREENNODE_CLIENT_ID` | IAM Service Account ID | [IAM Console](https://iam.console.vngcloud.vn/service-accounts) |
 | `GREENNODE_CLIENT_SECRET` | IAM Service Account Secret | IAM Console |
 | `AGENTBASE_RUNTIME_ID` | Runtime ID | [AgentBase Console](https://aiplatform.console.vngcloud.vn/agent-runtime) |
 | `MEMORY_ID` | Memory Store ID | [Memory Dashboard](https://aiplatform.console.vngcloud.vn/memory) |
 | `MEMORY_STRATEGY_ID` | Memory Strategy ID | Memory Dashboard |
 | `LLM_BASE_URL` | LLM API Base URL | GreenNode AI Platform |
-| `LLM_MODEL` | Model name | `gpt-4`, `claude-3-sonnet`, etc. |
+| `LLM_MODEL` | Model path | e.g. `google/gemma-4-31b-it` |
 | `LLM_API_KEY` | LLM API Key | [Model Browser](https://aiplatform.console.vngcloud.vn/models) |
 
 ### Option 2: Manual Deployment
 
-Build và deploy bằng script:
+Build and deploy with the script:
 
 ```bash
-# Tạo file env cho production
+# Create production env file
 cp .env .env.deploy
 
 # Export IAM credentials
@@ -242,28 +273,30 @@ export GREENNODE_CLIENT_SECRET="your-client-secret"
 bash scripts/deploy_agentbase.sh
 ```
 
-Script sẽ:
-1. Build Docker image với multi-stage build
-2. Push image lên Container Registry
-3. Update AgentBase Runtime với image mới
+The script will:
+
+1. Build a Docker image with multi-stage build
+2. Push the image to Container Registry
+3. Update the AgentBase Runtime with the new image
 
 ### Option 3: Local Docker Build
 
-Build image locally để test:
+Build the image locally for testing:
 
 ```bash
-docker build -t flowy-agent:local .
-docker run -p 8080:8080 --env-file .env flowy-agent:local
+docker build -t flowy:local .
+docker run -p 8080:8080 --env-file .env flowy:local
 ```
 
-Truy cập:
+Access:
+
 - API: `http://localhost:8080`
-- Frontend: `http://localhost:8080` (nginx serve static files)
+- Frontend: `http://localhost:8080` (nginx serves static files)
 
 ## Project Structure
 
 ```
-flowy-agent/
+flowy/
 ├── main.py                          # Agent entrypoint + LangChain logic
 ├── requirements.txt                 # Python dependencies
 ├── requirements-import.txt          # Optional: document import tools
@@ -278,12 +311,7 @@ flowy-agent/
 │   ├── README.md                    # Schema documentation
 │   ├── QUICKSTART.md                # Quick start guide
 │   ├── partners/                    # Partner-specific FAQs
-│   │   ├── msig/
-│   │   │   └── health_247.json
-│   │   └── vbi/
-│   │       └── cyber.json
 │   └── cross_product/               # Cross-partner FAQs
-│       └── comparisons.json
 │
 ├── frontend/                        # React chat UI
 │   ├── src/
@@ -302,6 +330,7 @@ flowy-agent/
 │
 ├── scripts/
 │   ├── validate_faq.py              # Validate FAQ structure
+│   ├── sync_knowledge.sh            # Copy knowledge to frontend/public
 │   ├── import_partner_docs.py       # Import from PDF/DOCX
 │   ├── deploy_agentbase.sh          # Build & deploy to AgentBase
 │   └── migrate_faq.py               # Migrate old FAQ format
@@ -342,7 +371,7 @@ curl -X POST http://localhost:8080/invocations \
 
 ### File Upload Query
 
-Frontend tự động gửi file content trong request body:
+The frontend sends file content in the request body:
 
 ```json
 {
@@ -383,7 +412,7 @@ agentbase runtime logs <RUNTIME_ID>
 
 ### Memory Inspection
 
-Check user's long-term memory via AgentBase Memory Dashboard:
+Check user long-term memory via the AgentBase Memory Dashboard:
 
 1. Go to [Memory Dashboard](https://aiplatform.console.vngcloud.vn/memory)
 2. Select your Memory Store
@@ -393,17 +422,18 @@ Check user's long-term memory via AgentBase Memory Dashboard:
 
 **Issue**: FAQ not found
 
-- **Solution**: 
+- **Solution**:
   - Check `knowledge/_index.json` has correct file paths
   - Validate with `python3 scripts/validate_faq.py knowledge/`
   - Ensure partner is `active: true`
+  - Run `bash scripts/sync_knowledge.sh` if the frontend browser shows stale data
 
 **Issue**: File upload fails
 
 - **Solution**:
   - Check file size < 10MB
   - Verify file type is supported (PDF, JSON, TXT, CSV, Excel, Word)
-  - Check frontend VITE_API_URL points to correct backend
+  - Check frontend `VITE_API_URL` points to the correct backend
 
 **Issue**: Memory not working
 
@@ -412,52 +442,27 @@ Check user's long-term memory via AgentBase Memory Dashboard:
   - Ensure headers `X-GreenNode-AgentBase-User-Id` and `X-GreenNode-AgentBase-Session-Id` are sent
   - Check IAM credentials have Memory service permissions
 
-## Security Best Practices
+**Issue**: Slow responses
 
-### Never Commit These Files
-
-- `.env`, `.env.deploy`, `.env.local`
-- `.greennode.json`
-- `agentbase.config.json`
-
-All sensitive files are in `.gitignore`. Chỉ commit file `.example`.
-
-### Secret Rotation
-
-Nếu credentials bị lộ trên GitHub:
-
-1. **Immediately rotate**:
-   - IAM credentials tại [IAM Console](https://iam.console.vngcloud.vn/service-accounts)
-   - LLM API keys tại provider dashboard
-2. **Update** GitHub Secrets và `.env` files
-3. **Redeploy** agent với credentials mới
-
-### Container Security
-
-- Image không chứa `.env` files (excluded via `.dockerignore`)
-- Secrets được inject runtime qua AgentBase
-- Nginx chỉ serve static frontend assets
+- **Solution**:
+  - Switch `LLM_MODEL` to `google/gemma-4-31b-it` (Qwen 3.5 uses reasoning mode and adds latency)
+  - Restart the agent after changing `.env`
 
 ## Contributing
 
 ### Development Workflow
 
-1. Create feature branch: `git checkout -b feature/your-feature`
+1. Create a feature branch: `git checkout -b feature/your-feature`
 2. Make changes and test locally
 3. Validate FAQ: `python3 scripts/validate_faq.py knowledge/`
-4. Commit with descriptive message
-5. Push and create Pull Request
-
-### Code Style
-
-- Python: Follow PEP 8
-- JavaScript: ESLint config in `frontend/eslint.config.js`
-- Comments in English
+4. Commit with a descriptive message
+5. Push and open a Pull Request
 
 ## Links & Resources
 
 ### GreenNode Platform
 
+- [GreenNode Claw-a-thon](https://greennode.ai/events/greennode-claw-a-thon)
 - [AgentBase Console](https://aiplatform.console.vngcloud.vn/agent-runtime)
 - [Memory Dashboard](https://aiplatform.console.vngcloud.vn/memory)
 - [Model Browser](https://aiplatform.console.vngcloud.vn/models)
@@ -477,5 +482,6 @@ MIT License
 ## Support
 
 For issues or questions:
-- Create GitHub issue
+
+- Open a GitHub issue
 - Contact: thangtm2@vng.com.vn
