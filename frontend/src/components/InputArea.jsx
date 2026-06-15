@@ -47,7 +47,7 @@ export default function InputArea({ onSend, disabled }) {
   }
 
   return (
-    <div className="bg-white px-4 sm:px-6 lg:px-8 pt-3 sm:pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:pb-5 shrink-0 shadow-[0_-2px_10px_rgba(0,0,0,0.04)]">
+    <div className="bg-transparent px-4 sm:px-6 lg:px-8 pt-3 sm:pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:pb-5 shrink-0">
       <div className="max-w-4xl mx-auto">
         {showUpload && (
           <div className="mb-3 animate-[slide-fade-in_0.2s_ease-out]">

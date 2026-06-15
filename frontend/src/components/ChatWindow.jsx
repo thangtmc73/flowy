@@ -10,7 +10,7 @@ export default function ChatWindow({ messages, loading }) {
   }, [messages, loading])
 
   return (
-    <div className="flex-1 overflow-y-auto chat-scroll bg-slate-50 min-h-0 overscroll-contain">
+    <div className="flex-1 overflow-y-auto chat-scroll min-h-0 overscroll-contain">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         <div className="space-y-5 sm:space-y-6">
           {messages.map((msg) => (
