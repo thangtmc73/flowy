@@ -14,7 +14,7 @@
         "Gia bao hiem tren Zalopay bao nhieu?",
         "Chi phí bảo hiểm các gói có khác nhau không?"
       ],
-      "answer": "Chi phí bảo hiểm trên Zalopay phụ thuộc vào từng sản phẩm và đối tác:\n\n**Bảo hiểm Sức khỏe 24/7 (MSIG)**:\n- Phí bảo hiểm: Từ 2-10 triệu/năm tùy gói\n- Thời hạn: 1 năm\n- Quyền lợi: Nội trú + Ngoại trú + Telemed\n\n**Bảo hiểm Cyber (VBI)**:\n- Gói tháng: 3.000 VND/tháng\n- Gói năm: 5.000 VND/tháng (60.000 VND/năm)\n- Quyền lợi: An ninh mạng + Tai nạn cá nhân\n- Số tiền bảo hiểm: Lên tới 50 triệu VND\n\n**Credit Topup Insurance (GIC)**:\n- Phí bảo hiểm: Tùy theo gói và số tiền bảo hiểm\n- Liên hệ: +84 28 7300 8803\n\n**Bảo hiểm trễ và hủy chuyến bay (Bảo Việt)**:\n- Phí: 50.000 VNĐ/vé một chiều, 100.000 VNĐ/vé khứ hồi (không chịu VAT)\n- Quyền lợi: Trễ chuyến bay + Hủy chuyến bay, mỗi quyền lợi 1.000.000 VNĐ\n- Mua kèm khi đặt vé máy bay trên Zalopay\n\n*Lưu ý*: \n- Giá có thể thay đổi theo chính sách của từng đối tác\n- Xem chi tiết trong mục sản phẩm trên ứng dụng Zalopay\n- Thanh toán dễ dàng qua ví Zalopay",
+      "answer": "Chi phí bảo hiểm trên Zalopay **khác nhau theo từng sản phẩm**. Hãy hỏi tên sản phẩm cụ thể (MSIG Sức khỏe 24/7, VBI Cyber, GIC Sống tự tin, Bảo Việt trễ/hủy chuyến bay...) để biết mức phí chính xác.",
       "category": "Chi phí & Giá cả",
       "tags": [
         "chi phí",
@@ -22,7 +22,7 @@
         "phí bảo hiểm",
         "pricing"
       ],
-      "priority": 9,
+      "priority": 5,
       "source": "cross_product_generated",
       "scope": "all_partners"
     },
@@ -72,7 +72,7 @@
         "trẻ em",
         "người cao tuổi"
       ],
-      "priority": 9,
+      "priority": 5,
       "source": "cross_product_generated",
       "scope": "all_partners"
     },
@@ -113,7 +113,7 @@
         "Miễn trừ trách nhiệm bảo hiểm là gì?",
         "Bảo hiểm không chi trả khi nào?"
       ],
-      "answer": "Các trường hợp **KHÔNG được bồi thường** (phổ biến):\n\n**A. LOẠI TRỪ CHUNG (Áp dụng cho hầu hết sản phẩm)**:\n\n1. **Hành vi cố ý**:\n   - Tự gây thương tích\n   - Cố ý vi phạm pháp luật\n   - Tham gia bạo động, gây rối\n\n2. **Chiến tranh & thiên tai**:\n   - Chiến tranh, khủng bố\n   - Động đất, sóng thần (trừ khi ghi rõ)\n   - Bạo loạn, đình công\n\n3. **Ma túy & say rượu**:\n   - Sử dụng ma túy trái phép\n   - Lái xe trong tình trạng say rượu/bia\n   - Vi phạm nồng độ cồn theo quy định\n\n**B. LOẠI TRỪ RIÊNG TỪNG SẢN PHẨM**:\n\n**Bảo hiểm Sức khỏe 24/7 (MSIG)**:\n❌ Không bồi thường:\n- Bệnh có sẵn trước khi mua BH\n- Bệnh bẩm sinh\n- Thẩm mỹ, chỉnh hình không y tế\n- HIV/AIDS\n- Thai sản (không nằm trong quyền lợi)\n- Điều trị ngoài Việt Nam\n- Trong thời gian chờ:\n  + 15 ngày: Bệnh thông thường\n  + 365 ngày: Bệnh đặc biệt\n\n**Bảo hiểm Cyber (VBI)**:\n❌ Không bồi thường:\n- Cung cấp thông tin giả mạo\n- Chia sẻ mật khẩu cho người khác\n- Giao dịch sau khi biết tài khoản bị xâm nhập\n- Mất tiền do lừa đảo trực tiếp (không qua mạng)\n- Thiệt hại gián tiếp (mất cơ hội kinh doanh...)\n\n**Bảo hiểm trễ và hủy chuyến bay (Bảo Việt)**:\n❌ Không bồi thường (một số trường hợp phổ biến):\n- Chuyến bay nối chuyến, không xuất phát từ Việt Nam\n- Đến sân bay muộn, không làm thủ tục check-in\n- Hãng hủy chuyến nhưng có chuyến thay thế trong 24-48 giờ\n- Thay đổi ý muốn du lịch, hoàn cảnh tài chính cá nhân\n- Chi tiết đầy đủ xem tại sản phẩm Bảo Việt trễ/hủy chuyến bay\n\n**C. ĐIỀU KIỆN ĐỂ ĐƯỢC BỒI THƯỜNG**:\n\n✅ Phải có:\n1. Hợp đồng bảo hiểm còn hiệu lực\n2. Đã qua thời gian chờ (nếu có)\n3. Hồ sơ chứng từ đầy đủ\n4. Thông báo đúng hạn\n5. Sự kiện thuộc phạm vi bảo hiểm\n\n*Lưu ý*: \n- Đọc kỹ Quy tắc bảo hiểm trước khi mua\n- Mỗi sản phẩm có điều khoản loại trừ riêng\n- Khai báo trung thực tình trạng sức khỏe\n- Liên hệ hotline để được tư vấn cụ thể",
+      "answer": "Điều khoản loại trừ **khác nhau theo từng sản phẩm**. Hãy hỏi theo tên sản phẩm bạn quan tâm (ví dụ: loại trừ bảo hiểm Cyber, loại trừ Sức khỏe 24/7...) để xem chi tiết chính xác.",
       "category": "Loại trừ & Miễn trừ",
       "tags": [
         "loại trừ",
@@ -121,7 +121,7 @@
         "không bồi thường",
         "miễn trừ"
       ],
-      "priority": 10,
+      "priority": 4,
       "source": "cross_product_generated",
       "scope": "all_partners"
     },
@@ -145,7 +145,7 @@
         "pre-existing",
         "bệnh mãn tính"
       ],
-      "priority": 9,
+      "priority": 4,
       "source": "cross_product_generated",
       "scope": "all_partners"
     },
@@ -169,7 +169,7 @@
         "waiting period",
         "hiệu lực"
       ],
-      "priority": 10,
+      "priority": 4,
       "source": "cross_product_generated",
       "scope": "all_partners"
     },
@@ -187,7 +187,7 @@
         "Zalopay là trung gian hay công ty bảo hiểm?",
         "Ai là người phát hành bảo hiểm trên Zalopay?"
       ],
-      "answer": "Zalopay là **nền tảng trung gian phân phối bảo hiểm** - không phải công ty bảo hiểm.\n\n**Vai trò của Zalopay:**\n* Hợp tác với các công ty bảo hiểm uy tín (MSIG, VBI, GIC, Bảo Việt...)\n* Đưa sản phẩm bảo hiểm lên nền tảng dễ tiếp cận\n* Đơn giản hóa quy trình mua và thanh toán\n* Cung cấp trải nghiệm \"một chạm là an tâm\"\n\n**Lợi ích khi mua qua Zalopay:**\n✅ Đơn giản – dễ hiểu – dễ mua\n✅ So sánh nhiều sản phẩm cùng lúc\n✅ Thanh toán nhanh qua ví Zalopay\n✅ Quản lý hợp đồng ngay trên app\n✅ Chỉ vài thao tác nhanh gọn\n\n*Lưu ý:* Hợp đồng bảo hiểm được phát hành bởi các công ty bảo hiểm đối tác, không phải Zalopay.",
+      "answer": "Zalopay là **nền tảng trung gian phân phối bảo hiểm**, không phải công ty bảo hiểm. Hợp đồng do đối tác (MSIG, VBI, GIC, Bảo Việt...) phát hành; Zalopay hỗ trợ hiển thị, mua và thanh toán trên app.",
       "category": "Về nền tảng Zalopay",
       "tags": [
         "zalopay",
@@ -195,7 +195,7 @@
         "trung gian",
         "vai trò"
       ],
-      "priority": 10,
+      "priority": 5,
       "source": "zalopay_platform_intro",
       "scope": "all_partners"
     },
@@ -213,7 +213,7 @@
         "Bảo hiểm trên Zalopay dễ dùng không?",
         "Mua bảo hiểm online trên Zalopay như thế nào?"
       ],
-      "answer": "**Bảo hiểm trên Zalopay: Một chạm là an tâm**\n\nSản phẩm bảo hiểm trên Zalopay được thiết kế đơn giản – dễ hiểu – dễ mua, giúp bạn chủ động bảo vệ bản thân và tài chính trước những rủi ro thường gặp trong cuộc sống, chỉ với vài thao tác nhanh gọn trên ứng dụng.\n\n**1. Đơn giản & Dễ hiểu**\n* Thông tin sản phẩm được trình bày rõ ràng\n* So sánh quyền lợi giữa các gói dễ dàng\n* Không cần giấy tờ phức tạp\n\n**2. Dễ mua – Nhanh gọn**\n* Chỉ cần vài thao tác trên app\n* Thanh toán trực tiếp qua ví Zalopay\n* Nhận giấy chứng nhận điện tử ngay\n\n**3. Bảo vệ toàn diện**\n* Chủ động bảo vệ bản thân và tài chính\n* Phòng ngừa rủi ro thường gặp trong cuộc sống\n* Đa dạng sản phẩm: sức khỏe, cyber, tài chính, du lịch/chuyến bay...\n\n**4. Quản lý tập trung**\n* Tất cả hợp đồng trong một app\n* Theo dõi quyền lợi, thời hạn dễ dàng\n* Nộp hồ sơ bồi thường online",
+      "answer": "Mua trên Zalopay: thao tác nhanh trên app, thanh toán qua ví, nhận giấy chứng nhận điện tử và quản lý hợp đồng tập trung.",
       "category": "Về nền tảng Zalopay",
       "tags": [
         "zalopay",
@@ -221,7 +221,7 @@
         "lợi ích",
         "tiện lợi"
       ],
-      "priority": 10,
+      "priority": 5,
       "source": "zalopay_platform_intro",
       "scope": "all_partners"
     },
@@ -239,7 +239,7 @@
         "Bảo hiểm Zalopay có hợp pháp không?",
         "Công ty bảo hiểm trên Zalopay có uy tín không?"
       ],
-      "answer": "**Hoàn toàn an toàn và uy tín!**\n\n**1. Đối tác chính thức**\n* Hợp tác với các công ty bảo hiểm được cấp phép tại Việt Nam\n* MSIG Việt Nam - Top bảo hiểm uy tín\n* VBI Insurance - Bảo hiểm nhà nước\n* GIC Insurance - Bảo hiểm quốc tế\n* Bảo Việt Insurance - Bảo hiểm phi nhân thọ hàng đầu Việt Nam\n\n**2. Hợp đồng hợp pháp**\n* Giấy chứng nhận bảo hiểm do công ty BH phát hành\n* Đầy đủ giá trị pháp lý\n* Được bảo vệ bởi Luật Kinh doanh Bảo hiểm\n\n**3. Quyền lợi đảm bảo**\n* Bồi thường theo đúng hợp đồng\n* Hỗ trợ từ các công ty bảo hiểm đối tác\n* Hotline chăm sóc khách hàng 24/7\n\n**4. Thanh toán an toàn**\n* Qua ví Zalopay được giám sát bởi NHNN\n* Bảo mật thông tin cao\n* Hóa đơn điện tử đầy đủ\n\n*Kết luận:* Zalopay là kênh phân phối uy tín, sản phẩm do các công ty bảo hiểm chính thức cung cấp.",
+      "answer": "Bảo hiểm trên Zalopay do các công ty bảo hiểm được cấp phép tại Việt Nam phát hành. Giấy chứng nhận có giá trị pháp lý; quyền lợi và bồi thường theo hợp đồng của công ty bảo hiểm.",
       "category": "Về nền tảng Zalopay",
       "tags": [
         "zalopay",
@@ -247,7 +247,7 @@
         "uy tín",
         "hợp pháp"
       ],
-      "priority": 10,
+      "priority": 5,
       "source": "zalopay_platform_intro",
       "scope": "all_partners"
     },
@@ -275,7 +275,7 @@
         "quy trình",
         "hướng dẫn"
       ],
-      "priority": 10,
+      "priority": 5,
       "source": "zalopay_claim_process",
       "scope": "all_partners"
     },
@@ -292,7 +292,7 @@
         "Xem danh sách bảo hiểm đã mua ở mục nào?",
         "Kiểm tra hợp đồng bảo hiểm trên Zalopay?"
       ],
-      "answer": "**Cách tìm hợp đồng bảo hiểm trên app Zalopay:**\n\n📱 **Bước 1:** Mở app **Zalopay**\n\n🛡️ **Bước 2:** Vào mục **Bảo hiểm** (biểu tượng khiên/shield)\n\n📋 **Bước 3:** Chọn **Quản lý hợp đồng** ở góc trái trên cùng\n\n✅ **Bước 4:** Xem danh sách tất cả hợp đồng bảo hiểm của bạn\n\n---\n\n**Tại đây bạn có thể:**\n• Xem chi tiết từng hợp đồng\n• Kiểm tra thời hạn bảo hiểm\n• Xem quyền lợi bảo hiểm\n• Tải giấy chứng nhận điện tử\n• Yêu cầu bồi thường\n• Tái tục hợp đồng (nếu sắp hết hạn)\n\n**Trạng thái hợp đồng:**\n🟢 **Đang hoạt động:** Hợp đồng có hiệu lực\n🟡 **Sắp hết hạn:** Cần tái tục sớm\n⚪ **Đã hết hạn:** Không còn hiệu lực\n\n*Lưu ý:* Nếu không thấy hợp đồng, kiểm tra lại tài khoản Zalopay đã dùng để mua hoặc liên hệ hotline hỗ trợ.",
+      "answer": "Trên app **Zalopay** → mục **Bảo hiểm** → **Quản lý hợp đồng** để xem danh sách hợp đồng, giấy chứng nhận và trạng thái hiệu lực.",
       "category": "Quy trình bồi thường",
       "tags": [
         "quản lý hợp đồng",
@@ -300,7 +300,7 @@
         "app zalopay",
         "giấy chứng nhận"
       ],
-      "priority": 9,
+      "priority": 5,
       "source": "zalopay_claim_process",
       "scope": "all_partners"
     },
@@ -327,7 +327,7 @@
         "ưu đãi",
         "lợi ích"
       ],
-      "priority": 10,
+      "priority": 6,
       "source": "motorcycle_promotion",
       "scope": "motorcycle"
     },
@@ -352,7 +352,7 @@
         "bắt buộc",
         "trách nhiệm dân sự"
       ],
-      "priority": 9,
+      "priority": 6,
       "source": "motorcycle_general",
       "scope": "motorcycle"
     },
@@ -378,7 +378,7 @@
         "quy trình",
         "hướng dẫn"
       ],
-      "priority": 10,
+      "priority": 6,
       "source": "motorcycle_purchase_guide",
       "scope": "motorcycle"
     }

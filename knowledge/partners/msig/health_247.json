@@ -19,7 +19,7 @@
         "Mình muốn biết bảo hiểm Sức khỏe 24/7 là gì?",
         "Sản phẩm Sức khỏe 24/7 bảo vệ những gì?"
       ],
-      "answer": "Sức khỏe 24/7 là sản phẩm bảo hiểm sức khỏe do MSIG Việt Nam phát hành, phân phối qua đại Flý bảo hiểm Ngôi Nhà Xanh, hiển thị trên nền tảng Zalopay. Sản phẩm bảo vệ toàn diện Nội trú & Ngoại trú, kèm dịch vụ tư vấn sức khỏe từ xa qua ứng dụng di động và bảo lãnh thuốc trực tiếp tại hệ thống nhà thuốc Pharmacity. Khách hàng có thể xem thông tin chi tiết về quyền lợi và điều kiện sản phẩm tại đây.",
+      "answer": "Sức khỏe 24/7 là sản phẩm bảo hiểm sức khỏe do MSIG Việt Nam phát hành, phân phối qua đại lý bảo hiểm Ngôi Nhà Xanh, hiển thị trên nền tảng Zalopay. Sản phẩm bảo vệ toàn diện Nội trú & Ngoại trú, kèm dịch vụ tư vấn sức khỏe từ xa qua ứng dụng di động và bảo lãnh thuốc trực tiếp tại hệ thống nhà thuốc Pharmacity. Khách hàng có thể xem thông tin chi tiết về quyền lợi và điều kiện sản phẩm tại đây.",
       "category": "Câu hỏi chung",
       "tags": [
         "sức khỏe",
@@ -31,16 +31,14 @@
     },
     {
       "id": "msig_health_247_faq_002",
-      "canonical_question": "Bảo hiểm có nội trú ngoại trú không?",
+      "canonical_question": "Bảo hiểm Sức khỏe 24/7 có những quyền lợi gì?",
       "user_questions": [
         "Bảo hiểm có nội trú ngoại trú không?",
         "Cho tôi hỏi tôi được bảo vệ quyền lợi gì?",
         "Có quyền lợi khám từ xa không?",
         "Gói này chi trả những quyền lợi nào?",
-        "Mình muốn biết tôi được bảo vệ quyền lợi gì?",
         "Ngoại trú được chi trả gì?",
         "Quyền lợi nội trú gồm gì?",
-        "Tôi được bảo vệ quyền lợi gì như thế nào?",
         "Tôi được bảo vệ quyền lợi gì?"
       ],
       "answer": "Nội trú: chi trả chi phí khi nằm viện, phẫu thuật, điều trị trong ngày do tại nạn, ốm đau, bệnh tật tại các bệnh viện công, bệnh viện tư và các cơ sở y tế được Nhà Nước cấp phép trên toàn quốc. Xem chi tiết các bệnh viện và phòng khám được bảo lãnh trực tiếp tại đây.\nNgoại trú: chi phí thuốc tại hệ thống nhà thuốc Pharmacity (tối đa 1,5 triệu/lần).\nKhám sức khỏe từ xa: tư vấn từ xa, đa chuyên khoa không giới hạn qua ứng dụng WhiteCoat",
@@ -55,43 +53,15 @@
     },
     {
       "id": "msig_health_247_faq_003",
-      "canonical_question": "Bảo hiểm có nội trú ngoại trú không?",
+      "canonical_question": "Sử dụng quyền lợi bảo hiểm Sức khỏe 24/7 như thế nào?",
       "user_questions": [
-        "Bảo hiểm có nội trú ngoại trú không?",
         "Cho tôi hỏi tôi sử dụng các quyền lợi này như thế nào?",
-        "Có quyền lợi khám từ xa không?",
-        "Gói này chi trả những quyền lợi nào?",
         "Mình muốn biết tôi sử dụng các quyền lợi này như thế nào?",
-        "Ngoại trú được chi trả gì?",
-        "Quyền lợi nội trú gồm gì?",
-        "Tôi sử dụng các quyền lợi này như thế nào như thế nào?",
-        "Tôi sử dụng các quyền lợi này như thế nào?"
+        "Tôi sử dụng các quyền lợi này như thế nào?",
+        "Làm sao để dùng quyền lợi nội trú ngoại trú?"
       ],
       "answer": "- Nội trú: có thể bảo lãnh trực tiếp hoặc tạm ứng chi phí khám chữa bệnh trước và yêu cầu bồi thường để hoàn tiền sau.\n- Ngoại trú: đem toa thuốc đã được kê đơn đến Pharmacity để mua thuốc và gửi yêu cầu bồi thường, hoặc thực hiện khám sức khỏe từ xa và được hệ thống Pharmacity giao thuốc tận nơi.\n- Khám sức khỏe từ xa: tải ứng dụng WhiteCoat (App Store hoặc Google Play), đăng nhập tài khoản để khám với bác sĩ. Bạn sẽ được kê đơn thuốc điện tử và được hệ thống Pharmacity giao thuốc tận nơi, không cần tạm ứng tiền.\nChi tiết vui lòng xem ở mục Quy trình mua và sử dụng.",
       "category": "Câu hỏi chung",
-      "tags": [
-        "sức khỏe",
-        "msig"
-      ],
-      "related_faq_ids": [],
-      "source": "migrated",
-      "priority": 5
-    },
-    {
-      "id": "msig_health_247_faq_004",
-      "canonical_question": "Ai phát hành bảo hiểm Sức khỏe 24/7?",
-      "user_questions": [
-        "Ai phát hành bảo hiểm Sức khỏe 24/7?",
-        "Bảo hiểm Sức khỏe 24/7 là gì như thế nào?",
-        "Bảo hiểm Sức khỏe 24/7 là gì?",
-        "Bảo hiểm sức khỏe trên Zalopay là gì?",
-        "Cho tôi hỏi bảo hiểm Sức khỏe 24/7 là gì?",
-        "Gói Sức khỏe 24/7 là bảo hiểm gì?",
-        "Mình muốn biết bảo hiểm Sức khỏe 24/7 là gì?",
-        "Sản phẩm Sức khỏe 24/7 bảo vệ những gì?"
-      ],
-      "answer": "Sức khỏe 24/7 là sản phẩm bảo hiểm sức khỏe do MSIG Việt Nam phát hành, phân phối qua đại lý bảo hiểm Ngôi Nhà Xanh, hiển thị trên nền tảng Zalopay. Sản phẩm bảo vệ toàn diện Nội trú & Ngoại trú, kèm dịch vụ tư vấn sức khỏe từ xa qua ứng dụng di động và bảo lãnh thuốc trực tiếp tại hệ thống nhà thuốc Pharmacity. Khách hàng có thể xem thông tin chi tiết về quyền lợi và điều kiện sản phẩm tại đây.",
-      "category": "Về sản phẩm Sức khỏe 24/7",
       "tags": [
         "sức khỏe",
         "msig"
@@ -240,17 +210,11 @@
     },
     {
       "id": "msig_health_247_faq_011",
-      "canonical_question": "Bảo hiểm có nội trú ngoại trú không?",
+      "canonical_question": "Quyền lợi nội trú, ngoại trú và Telemed của Sức khỏe 24/7 là gì?",
       "user_questions": [
-        "Bảo hiểm có nội trú ngoại trú không?",
-        "Cho tôi hỏi tôi được bảo vệ quyền lợi gì?",
-        "Có quyền lợi khám từ xa không?",
-        "Gói này chi trả những quyền lợi nào?",
-        "Mình muốn biết tôi được bảo vệ quyền lợi gì?",
-        "Ngoại trú được chi trả gì?",
-        "Quyền lợi nội trú gồm gì?",
-        "Tôi được bảo vệ quyền lợi gì như thế nào?",
-        "Tôi được bảo vệ quyền lợi gì?"
+        "Quyền lợi nội trú ngoại trú Sức khỏe 24/7 gồm gì?",
+        "Nội trú ngoại trú được chi trả như thế nào?",
+        "Telemed có trong gói Sức khỏe 24/7 không?"
       ],
       "answer": "Nội trú: chi trả khi nằm viện, phẫu thuật, điều trị trong ngày.\nNgoại trú: chi phí thuốc tại hệ thống nhà thuốc Pharmacity (tối đa 1,5 triệu/lần).\nKhám Telemed: tư vấn từ xa, đa chuyên khoa không giới hạn qua ứng dụng WhiteCoat.",
       "category": "Về phí & quyền lợi",
@@ -264,17 +228,12 @@
     },
     {
       "id": "msig_health_247_faq_012",
-      "canonical_question": "Bảo hiểm có nội trú ngoại trú không?",
+      "canonical_question": "Thời gian chờ của bảo hiểm Sức khỏe 24/7 là bao lâu?",
       "user_questions": [
-        "Bảo hiểm có nội trú ngoại trú không?",
         "Cho tôi hỏi thời gian chờ của các quyền lợi này ra sao?",
-        "Có quyền lợi khám từ xa không?",
-        "Gói này chi trả những quyền lợi nào?",
-        "Mình muốn biết thời gian chờ của các quyền lợi này ra sao?",
-        "Ngoại trú được chi trả gì?",
-        "Quyền lợi nội trú gồm gì?",
-        "Thời gian chờ của các quyền lợi này ra sao như thế nào?",
-        "Thời gian chờ của các quyền lợi này ra sao?"
+        "Thời gian chờ của các quyền lợi này ra sao?",
+        "Thời gian chờ bảo hiểm Sức khỏe 24/7 là bao lâu?",
+        "Bao lâu thì được dùng quyền lợi nội trú?"
       ],
       "answer": "Thời gian chờ của bảo hiểm là khoảng thời gian mà trong đó nếu có phát sinh chi phí khám, chữa bệnh thì bệnh nhân sẽ không được Công ty bảo hiểm thanh toán cho chi phí khám, chữa bệnh đó.\nTrong chương trình bảo hiểm Sức khỏe 24/7, thời gian chờ quy định như sau:\n- Dịch vụ tư vấn sức khỏe từ xa: Khách hàng có thể đặt lịch khám ngay khi kích hoạt thành công trên ứng dụng WhiteCoat, không phải chi trả chi phí khám; tuy nhiên chưa được chi trả tiền thuốc trong thời gian chờ.\n- Điều trị nội trú & ngoại trú và chi phí mua thuốc tại Pharmacity:\n+ Bệnh thông thường: 15 ngày; Trẻ dưới 5 tuổi: 30 ngày\n+ Bệnh đặc biệt, bệnh có sẵn: 365 ngày (không bảo hiểm cho bệnh bẩm sinh)",
       "category": "Về phí & quyền lợi",
@@ -334,17 +293,12 @@
     },
     {
       "id": "msig_health_247_faq_015",
-      "canonical_question": "Bảo hiểm có nội trú ngoại trú không?",
+      "canonical_question": "Quyền lợi Telemed và bảo lãnh thuốc hoạt động thế nào?",
       "user_questions": [
-        "Bảo hiểm có nội trú ngoại trú không?",
-        "Cho tôi hỏi quyền lợi Telemed (dịch vụ khám sức khỏe từ xa) và bảo lãnh thuốc hoạt động thế nào?",
-        "Có quyền lợi khám từ xa không?",
-        "Gói này chi trả những quyền lợi nào?",
-        "Mình muốn biết quyền lợi Telemed (dịch vụ khám sức khỏe từ xa) và bảo lãnh thuốc hoạt động thế nào?",
-        "Ngoại trú được chi trả gì?",
-        "Quyền lợi Telemed (dịch vụ khám sức khỏe từ xa) và bảo lãnh thuốc hoạt động thế nào như thế nào?",
         "Quyền lợi Telemed (dịch vụ khám sức khỏe từ xa) và bảo lãnh thuốc hoạt động thế nào?",
-        "Quyền lợi nội trú gồm gì?"
+        "Cho tôi hỏi quyền lợi Telemed (dịch vụ khám sức khỏe từ xa) và bảo lãnh thuốc hoạt động thế nào?",
+        "Khám từ xa WhiteCoat và giao thuốc Pharmacity hoạt động ra sao?",
+        "Telemed Sức khỏe 24/7 dùng như thế nào?"
       ],
       "answer": "Bạn khám trực tuyến trên ứng dụng WhiteCoat, được bác sĩ kê đơn thuốc điện tử và được hệ thống Pharmacity giao thuốc tận nơi, không cần tạm ứng tiền.",
       "category": "Về phí & quyền lợi",
@@ -384,10 +338,6 @@
       "canonical_question": "Cho tôi hỏi nếu tôi không tìm được giấy chứng nhận ở các kênh trên, có thể gửi lại tôi được không?",
       "user_questions": [
         "Cho tôi hỏi nếu tôi không tìm được giấy chứng nhận ở các kênh trên, có thể gửi lại tôi được không?",
-        "Có thể gửi lại giấy chứng nhận không?",
-        "Giấy chứng nhận gửi qua kênh nào?",
-        "Không thấy giấy chứng nhận bảo hiểm thì làm sao?",
-        "Mua xong xem giấy chứng nhận ở đâu?",
         "Mình muốn biết nếu tôi không tìm được giấy chứng nhận ở các kênh trên, có thể gửi lại tôi được không?",
         "Nếu tôi không tìm được giấy chứng nhận ở các kênh trên, có thể gửi lại tôi được không như thế nào?",
         "Nếu tôi không tìm được giấy chứng nhận ở các kênh trên, có thể gửi lại tôi được không?"

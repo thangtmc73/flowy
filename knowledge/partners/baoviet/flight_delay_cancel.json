@@ -18,13 +18,7 @@
         "Bao hiem tre va huy chuyen bay la gi?",
         "Sản phẩm bảo hiểm chuyến bay này dùng để làm gì?",
         "Bảo hiểm trễ/hủy chuyến bay là gì?",
-        "Bảo hiểm delay chuyến bay bảo vệ gì?",
-        "Flight delay insurance là gì?",
-        "Bảo hiểm chuyến bay bồi thường những gì?",
-        "Trễ chuyến bay bao lâu thì được bồi thường?",
-        "Bao hiem tre chuyen bay la gi?",
-        "Hủy chuyến bay có được đền bù không?",
-        "Bảo hiểm máy bay bồi thường như thế nào?"
+        "Flight delay insurance là gì?"
       ],
       "answer": "Bảo hiểm trễ và hủy chuyến bay là sản phẩm bảo hiểm du lịch của **Tổng Công ty Bảo hiểm Bảo Việt**, do Công ty TNHH Tư vấn và Công nghệ 10X (\"Saladin\") phân phối — kết hợp giữa truyền thống và công nghệ hiện đại — cùng chia sẻ với bạn chi phí cơ hội trong thời gian chờ để tiếp tục chuyến hành trình thuận lợi.\n\nChỉ với một lần mua bảo hiểm, bạn đã được hưởng cả hai quyền lợi **Trễ** và **Hủy chuyến bay**. Đặc biệt, tại Saladin sản phẩm có thể được mua chỉ vài giờ trước chuyến đi và có hiệu lực chỉ sau ít phút.",
       "category": "Giới thiệu",
@@ -52,7 +46,7 @@
         "Don vi cung cap bao hiem nay la ai?",
         "Bảo Việt là công ty bảo hiểm như thế nào?"
       ],
-      "answer": "Bảo hiểm trễ và hủy chuyến bay được cung cấp bởi **Tổng Công ty Bảo hiểm Bảo Việt (Bảo Việt)**.\n\nTổng Công ty Bảo hiểm Bảo Việt được thành lập vào ngày 15/01/1965, là công ty bảo hiểm phi nhân thọ số 1 tại thị trường bảo hiểm Việt Nam, tiên phong và dẫn đầu trong các sản phẩm bán lẻ như bảo hiểm xe máy, bảo hiểm ô tô, bảo hiểm sức khỏe, bảo hiểm tài sản... Với kinh nghiệm lâu năm và tiềm lực tài chính vững mạnh, Bảo Việt luôn đem đến cho khách hàng những sản phẩm bảo hiểm toàn diện với chất lượng dịch vụ tốt nhất.",
+      "answer": "Bảo hiểm trễ và hủy chuyến bay được cung cấp bởi **Tổng Công ty Bảo hiểm Bảo Việt (Bảo Việt)**, phân phối qua **Saladin**.",
       "category": "Giới thiệu",
       "tags": [
         "baoviet",
@@ -72,14 +66,12 @@
       "user_questions": [
         "Khi tham gia bảo hiểm trễ và hủy chuyến bay, tôi nhận được những quyền lợi gì?",
         "Quyền lợi bảo hiểm trễ và hủy chuyến bay bao gồm những gì?",
-        "Bảo hiểm này bồi thường bao nhiêu?",
-        "Số tiền bảo hiểm trễ hủy chuyến bay là bao nhiêu?",
         "Quyền lợi của bảo hiểm chuyến bay gồm gì?",
         "Quyen loi bao hiem tre huy chuyen bay la gi?",
         "Bảo hiểm chuyến bay chi trả những trường hợp nào?"
       ],
-      "answer": "Sản phẩm gồm hai quyền lợi, mỗi quyền lợi có số tiền bảo hiểm **1.000.000 VNĐ**:\n\n**Bảo hiểm trễ chuyến bay:** Bảo hiểm Bảo Việt sẽ bồi thường nếu Người được bảo hiểm bị chậm trễ hành trình trên 2 giờ đồng hồ liên tục kể từ Thời gian khởi hành theo lịch trình. Thời gian khởi hành theo lịch trình là thời gian khởi hành nêu trên vé máy bay tại thời điểm mua hoặc thời gian khởi hành theo lịch trình mới (tùy thời gian nào muộn hơn). Thời gian khởi hành theo lịch trình mới là thời gian khởi hành theo thông báo thay đổi của hãng hàng không trước 24 giờ so với thời gian khởi hành nêu trên vé.\n\n**Bảo hiểm hủy chuyến bay:** Bảo hiểm Bảo Việt sẽ bồi thường nếu tại Thời gian khởi hành theo lịch trình, Người được bảo hiểm không thể thực hiện chuyến bay đã định do xảy ra một trong các sự kiện sau trong vòng mười bốn (14) ngày trước hoặc trong Ngày khởi hành theo lịch trình (nhưng phải trước giờ khởi hành theo lịch trình):\n* Thành viên gia đình trực hệ tử vong hoặc phải nằm viện điều trị (không được dự đoán/biết trước vào ngày mua vé)\n* Người được bảo hiểm phải nằm viện do ốm đau hoặc tai nạn\n* Hãng hàng không hủy chuyến bay vì bất kỳ lý do gì mà không sắp xếp chuyến bay thay thế trong vòng 24 giờ hoặc không có chuyến bay thay thế nào\n\nXem chi tiết Phạm vi bảo hiểm trong Quy tắc Bảo hiểm trễ và hủy chuyến bay.",
-      "category": "Giới thiệu",
+      "answer": "Sản phẩm gồm hai quyền lợi, mỗi quyền lợi **1.000.000 VNĐ**: **Trễ chuyến bay** (chậm trễ trên 2 giờ liên tục) và **Hủy chuyến bay** (không thể thực hiện chuyến bay do sự kiện thuộc phạm vi bảo hiểm).\n\nXem chi tiết từng quyền lợi trong FAQ liên quan.",
+      "category": "Quyền lợi",
       "tags": [
         "baoviet",
         "du lịch",
@@ -88,7 +80,10 @@
         "saladin",
         "zalopay"
       ],
-      "related_faq_ids": [],
+      "related_faq_ids": [
+        "baoviet_flight_delay_cancel_004",
+        "baoviet_flight_delay_cancel_005"
+      ],
       "source": "T&C _ Q&A_Bảo hiểm trễ hủy chuyến bay_MTN_1tr.docx",
       "priority": 5
     },
@@ -101,10 +96,13 @@
         "Trễ bao lâu thì được bồi thường?",
         "Bồi thường trễ chuyến bay bao nhiêu tiền?",
         "Quyen loi tre chuyen bay ap dung the nao?",
-        "Trễ chuyến mấy tiếng thì được chi trả?"
+        "Trễ chuyến mấy tiếng thì được chi trả?",
+        "Bảo hiểm này bồi thường bao nhiêu?",
+        "Số tiền bảo hiểm trễ hủy chuyến bay là bao nhiêu?",
+        "Trễ chuyến bay bao lâu thì được bồi thường?"
       ],
       "answer": "Người được bảo hiểm sẽ được chi trả **1.000.000 VNĐ** nếu bị chậm trễ hành trình trên **02 (hai) giờ** đồng hồ liên tục kể từ Thời gian khởi hành theo lịch trình.",
-      "category": "Giới thiệu",
+      "category": "Quyền lợi",
       "tags": [
         "baoviet",
         "du lịch",
@@ -126,10 +124,13 @@
         "Bồi thường hủy chuyến bay bao nhiêu?",
         "Trường hợp nào được bồi thường hủy chuyến?",
         "Quyen loi huy chuyen bay ap dung the nao?",
-        "Hủy chuyến được chi trả bao nhiêu tiền?"
+        "Hủy chuyến được chi trả bao nhiêu tiền?",
+        "Hủy chuyến bay có được đền bù không?",
+        "Bảo hiểm máy bay bồi thường như thế nào?",
+        "Bảo hiểm chuyến bay bồi thường những gì?"
       ],
       "answer": "Người được bảo hiểm sẽ được chi trả **1.000.000 VNĐ** nếu không thể thực hiện chuyến bay đã định, do xảy ra bất kỳ sự kiện nào thuộc phạm vi bảo hiểm được quy định cụ thể trong quy tắc bảo hiểm, trong vòng mười bốn (14) ngày trước hoặc trong Ngày khởi hành theo lịch trình (nhưng phải trước giờ khởi hành theo lịch trình).",
-      "category": "Giới thiệu",
+      "category": "Quyền lợi",
       "tags": [
         "baoviet",
         "du lịch",
@@ -154,8 +155,8 @@
         "Phi bao hiem tre huy chuyen bay bao nhieu?",
         "Bảo hiểm vé một chiều giá bao nhiêu?"
       ],
-      "answer": "Quyền lợi hấp dẫn và chỉ với chi phí rất nhỏ:\n\n* **50.000 VNĐ**/vé một chiều\n* **100.000 VNĐ**/vé khứ hồi\n\n*(Phí bảo hiểm nêu trên không chịu thuế VAT.)*",
-      "category": "Giới thiệu",
+      "answer": "* **50.000 VNĐ**/vé một chiều\n* **100.000 VNĐ**/vé khứ hồi\n\n*(Phí bảo hiểm nêu trên không chịu thuế VAT.)*",
+      "category": "Chi phí",
       "tags": [
         "baoviet",
         "du lịch",
@@ -281,8 +282,8 @@
         "Khi nào bảo hiểm từ chối chi trả?",
         "Bảo hiểm chuyến bay loại trừ những gì?"
       ],
-      "answer": "Bảo hiểm Bảo Việt sẽ không bồi thường cho các trường hợp sau và các chi phí phát sinh liên quan (nếu có):\n\n* Chiến tranh, xâm lược, hành động thù địch (dù tuyên bố hay không), nội chiến, nổi loạn, cách mạng, khởi nghĩa, binh biến, quân đội tiếm quyền, thiết quân luật, phong tỏa, tịch thu, kiểm dịch, quy định hải quan hoặc quốc hữu hóa theo lệnh của chính phủ hoặc nhà chức trách sở tại.\n* Bạo loạn hoặc bạo động dân sự, đình công, cưỡng chế hoặc các mối đe dọa tương tự.\n* Do không tặc.\n* Đi du lịch đến hoặc qua Afghanistan, Iran, Iraq, Syria, Belarus, Cuba, Cộng hòa Dân chủ Congo, Bắc Triều Tiên, Lebanon, Liberia, Somalia, Sudan, Nam Sudan, Crimea và Zimbabwe hoặc bất kỳ quốc gia bị loại trừ nào.\n* Thiệt hại có tính chất do hậu quả mà nguyên nhân xuất phát từ các điều khoản loại trừ.\n* Chuyến bay bị hủy bởi hãng hàng không và được hãng thay thế bằng chuyến bay mới (đối với quyền lợi Trễ chuyến bay).\n* Chuyến bay bị trễ trong mọi trường hợp (đối với quyền lợi Hủy chuyến bay).\n* Hãng hàng không hủy chuyến và có chuyến bay thay thế khởi hành trong vòng 24 giờ (chuyến bay nội địa) hoặc 48 giờ (chuyến bay quốc tế) kể từ Giờ khởi hành theo lịch trình (đối với quyền lợi Hủy chuyến bay).\n* Thành viên gia đình trực hệ hoặc Người được bảo hiểm phải cách ly kiểm dịch do bất kỳ bệnh tật nào (đối với quyền lợi Hủy chuyến bay).\n* Tổn thất phát sinh từ các điều kiện y tế hoặc hoàn cảnh tồn tại trước ngày yêu cầu tham gia bảo hiểm (đối với quyền lợi Hủy chuyến bay).\n* Tổn thất phát sinh từ quy định hoặc pháp lệnh của Chính phủ, sự trì hoãn, sửa đổi hành trình hoặc lỗi của nhà cung cấp dịch vụ, đại lý hoặc công ty lữ hành.\n* Tổn thất do thay đổi ý muốn thực hiện chuyến du lịch hoặc hoàn cảnh tài chính của Người được bảo hiểm.\n* Tổn thất do hành vi trái pháp luật hoặc tố tụng hình sự của bất kỳ ai liên quan và ảnh hưởng tới kế hoạch du lịch.\n* Không thông báo ngay cho đại lý du lịch/công ty lữ hành hoặc nhà cung cấp dịch vụ khi nhận thấy cần hủy chuyến đi (đối với quyền lợi Hủy chuyến bay).\n* Tổn thất đã được bảo hiểm bởi chương trình bảo hiểm khác, được chương trình của chính phủ chi trả hoặc được hãng hàng không/đại lý du lịch hoàn lại (đối với quyền lợi Hủy chuyến bay).\n* Sự kiện nêu trên đã được biết đến hoặc báo cáo công khai trên truyền thông tại thời điểm chuẩn bị sắp xếp cho chuyến đi.\n* Bất cứ tình trạng có sẵn nào (đối với quyền lợi Hủy chuyến bay).\n* Tổn thất gây ra trực tiếp và gián tiếp từ đại dịch hoặc dịch bệnh.\n* Người được bảo hiểm biết trước khi mua bảo hiểm về bất kỳ lý do nào có thể khiến chuyến bay bị trễ.\n* Hãng hàng không mà Người được bảo hiểm mua vé bị phá sản dẫn đến chuyến bay bị hủy.\n* Chuyến bay không xuất phát từ Việt Nam.\n* Chuyến bay theo lịch trình của Người được bảo hiểm là chuyến bay nối chuyến.\n* Người được bảo hiểm không làm thủ tục Đăng ký lên máy bay theo xác nhận hành trình đã cung cấp (đối với quyền lợi Trễ chuyến bay).\n* Người được bảo hiểm đến sân bay muộn, sau giờ làm thủ tục Đăng ký lên máy bay hoặc sau thời gian lên máy bay.\n* Người được bảo hiểm đã bị từ chối lên máy bay hoặc bị loại khỏi chuyến bay bởi hãng hàng không hoặc an ninh sân bay vì bất kỳ lý do nào.",
-      "category": "Điều kiện",
+      "answer": "Bảo hiểm trễ và hủy chuyến bay có nhiều điều khoản loại trừ, tùy theo quyền lợi **Trễ** hoặc **Hủy chuyến bay**.\n\nCác nhóm phổ biến: loại trừ chung (chiến tranh, đại dịch...), loại trừ địa lý/hành trình, loại trừ riêng cho trễ chuyến, loại trừ riêng cho hủy chuyến, loại trừ liên quan hãng/dịch vụ.\n\nHỏi cụ thể từng nhóm để xem chi tiết.",
+      "category": "Loại trừ",
       "tags": [
         "baoviet",
         "du lịch",
@@ -291,7 +292,13 @@
         "saladin",
         "zalopay"
       ],
-      "related_faq_ids": [],
+      "related_faq_ids": [
+        "baoviet_flight_delay_cancel_028",
+        "baoviet_flight_delay_cancel_029",
+        "baoviet_flight_delay_cancel_030",
+        "baoviet_flight_delay_cancel_031",
+        "baoviet_flight_delay_cancel_032"
+      ],
       "source": "T&C _ Q&A_Bảo hiểm trễ hủy chuyến bay_MTN_1tr.docx",
       "priority": 5
     },
@@ -389,7 +396,7 @@
         "Đặt vé máy bay có mua kèm bảo hiểm được không?",
         "Hướng dẫn mua bảo hiểm chuyến bay trên app?"
       ],
-      "answer": "Sản phẩm Bảo hiểm trễ và hủy chuyến bay được cung cấp bởi **Tổng công ty Bảo hiểm Bảo Việt (Bảo Việt)**. Nhà phân phối và chịu trách nhiệm trực tiếp là đại lý bảo hiểm Công ty TNHH Tư vấn và Công nghệ 10X (Saladin). ZION đóng vai trò là đơn vị cung cấp dịch vụ hỗ trợ hiển thị và trung gian thanh toán, hỗ trợ khách hàng truy cập và thanh toán sản phẩm.\n\nBảo hiểm là sản phẩm **mua kèm khi mua vé máy bay**. Trường hợp bạn muốn mua bảo hiểm và đồng ý với Quy tắc bảo hiểm và Điều khoản Điều kiện của Bảo Việt, có thể chọn mua tại trang **Dịch vụ bổ sung** đặt vé máy bay trên Zalopay.",
+      "answer": "Sản phẩm do **Bảo Việt** cung cấp, **Saladin** phân phối; Zalopay hỗ trợ hiển thị và thanh toán.\n\n**Cách mua trên Zalopay:**\n1. Mở app **Zalopay** → chọn **Vé máy bay**\n2. Chọn chuyến bay và điền thông tin hành khách\n3. Tại **Dịch vụ bổ sung**, tích chọn Bảo hiểm trễ và hủy chuyến bay\n4. Thanh toán một lần; nhận đơn bảo hiểm qua **email** sau thanh toán\n\n*Lưu ý:* Mua ít nhất **3 giờ** trước giờ khởi hành; đồng ý Quy tắc bảo hiểm Bảo Việt trước khi mua.",
       "category": "Quy trình mua",
       "tags": [
         "baoviet",
@@ -592,7 +599,7 @@
         "Cần hỗ trợ thì liên hệ ai?"
       ],
       "answer": "**Công ty TNHH Tư vấn và Công nghệ 10X (Saladin):**\n\n* **Địa chỉ:** Tầng 1, 111 Lý Chính Thắng, Phường Xuân Hòa, TP. Hồ Chí Minh\n* **Điện thoại:** 1900 638 454\n* **Email:** cs@saladin.vn\n* **Website:** www.saladin.vn",
-      "category": "Giới thiệu",
+      "category": "Liên hệ",
       "tags": [
         "baoviet",
         "du lịch",
@@ -617,7 +624,7 @@
         "Zalopay chia sẻ thông tin gì của tôi cho đối tác?"
       ],
       "answer": "Bằng việc thanh toán, bạn đồng ý với Chính sách Quyền riêng tư và cho phép Zalopay chia sẻ thông tin cho đối tác để thực hiện hợp đồng bảo hiểm, gồm:\n\n* Họ và tên của tất cả Người được bảo hiểm\n* Ngày/tháng/năm sinh của tất cả Người được bảo hiểm\n* Email\n* Số điện thoại\n* Ngày mua bảo hiểm\n* Thời gian khởi hành\n* Thời gian trở về (đối với vé khứ hồi)\n* Nơi đi\n* Nơi đến\n* Số hiệu chuyến bay\n* Số PNR",
-      "category": "Giới thiệu",
+      "category": "Quyền riêng tư",
       "tags": [
         "baoviet",
         "du lịch",
@@ -636,15 +643,11 @@
       "user_questions": [
         "Mua bảo hiểm trễ/hủy chuyến bay trên Zalopay có lợi ích gì?",
         "Lợi ích bảo hiểm chuyến bay trên Zalopay?",
-        "Bảo hiểm delay chuyến bay có gì tốt?",
-        "Tại sao nên mua bảo hiểm trễ chuyến bay?",
-        "Ưu điểm bảo hiểm hủy chuyến bay Zalopay?",
-        "Bao hiem tre chuyen bay co loi ich gi?",
-        "Mua bảo hiểm máy bay trên Zalopay có rẻ không?",
+        "Tại sao nên mua bảo hiểm trễ chuyến bay trên Zalopay?",
         "Bảo hiểm delay flight có đáng mua không?",
-        "Giá bảo hiểm chuyến bay bao nhiêu?"
+        "Bao hiem tre chuyen bay co loi ich gi tren zalopay?"
       ],
-      "answer": "**Lợi ích khi mua Bảo hiểm trễ và hủy chuyến bay (Bảo Việt) trên Zalopay:**\n\n**1. Chi phí siêu tiết kiệm**\n* **50.000 VNĐ**/vé một chiều\n* **100.000 VNĐ**/vé khứ hồi (không chịu thuế VAT)\n* Phù hợp với mọi hành khách, chi phí nhỏ so với rủi ro chuyến bay trễ/hủy\n\n**2. Quyền lợi bồi thường hấp dẫn**\n* Mỗi quyền lợi **Trễ** và **Hủy chuyến bay**: **1.000.000 VNĐ**\n* Trễ chuyến: bồi thường khi chậm trễ trên **2 giờ** liên tục\n* Hủy chuyến: bồi thường khi không thể thực hiện chuyến bay do sự kiện thuộc phạm vi bảo hiểm\n\n**3. Bồi thường nhanh chóng**\n* Phản hồi trong **7 ngày làm việc**, chi trả trong **15 ngày làm việc** khi hồ sơ hợp lệ\n* Liên hệ Saladin qua cổng bồi thường, hotline **1900 638 454** hoặc **cs@saladin.vn**\n\n**4. Tích hợp tiện lợi trên Zalopay**\n* Mua kèm khi đặt vé máy bay — chỉ tích chọn thêm bảo hiểm\n* Thanh toán một lần cho cả vé + bảo hiểm\n* Nhận đơn bảo hiểm qua email ngay sau thanh toán\n\n**5. An tâm tuyệt đối**\n* Bảo vệ tài chính khi chuyến bay gặp sự cố\n* Phù hợp đi công tác, du lịch có lịch trình chặt chẽ\n\n*Kết luận:* Chỉ từ 50.000 VNĐ để an tâm cho chuyến bay của bạn!",
+      "answer": "**Lợi ích mua trên Zalopay:**\n* Mua kèm khi đặt vé máy bay — tích chọn tại **Dịch vụ bổ sung**\n* Thanh toán một lần cho vé + bảo hiểm qua ví Zalopay\n* Nhận đơn bảo hiểm qua email ngay sau thanh toán",
       "category": "Về Zalopay",
       "tags": [
         "baoviet",
@@ -657,78 +660,135 @@
         "zalopay"
       ],
       "related_faq_ids": [
-        "baoviet_flight_delay_cancel_001",
-        "baoviet_flight_delay_cancel_006",
-        "baoviet_flight_delay_cancel_015"
+        "baoviet_flight_delay_cancel_015",
+        "baoviet_flight_delay_cancel_006"
       ],
       "source": "cross_product_migrated",
-      "priority": 10
+      "priority": 4
     },
     {
-      "id": "baoviet_flight_delay_cancel_026",
-      "canonical_question": "Bảo hiểm trễ/hủy chuyến bay trên Zalopay bảo vệ những gì?",
-      "user_questions": [
-        "Bảo hiểm trễ/hủy chuyến bay là gì?",
-        "Bảo hiểm delay chuyến bay bảo vệ gì?",
-        "Flight delay insurance là gì?",
-        "Bảo hiểm chuyến bay bồi thường những gì?",
-        "Trễ chuyến bay bao lâu thì được bồi thường?",
-        "Bao hiem tre chuyen bay la gi?",
-        "Hủy chuyến bay có được đền bù không?",
-        "Bảo hiểm máy bay bồi thường như thế nào?"
-      ],
-      "answer": "**Bảo hiểm trễ và hủy chuyến bay** (Bảo Việt, phân phối qua Saladin) là sản phẩm bảo hiểm du lịch bảo vệ hành khách khi chuyến bay gặp sự cố.\n\n**Quyền lợi bảo hiểm:**\n\n**Chuyến bay trễ:**\n* Bồi thường **1.000.000 VNĐ** khi chậm trễ hành trình trên **2 giờ** liên tục kể từ Thời gian khởi hành theo lịch trình\n* Tính theo giờ khởi hành trên vé hoặc lịch trình mới (nếu hãng thông báo thay đổi trước 24 giờ)\n\n**Chuyến bay bị hủy:**\n* Bồi thường **1.000.000 VNĐ** khi không thể thực hiện chuyến bay do sự kiện thuộc phạm vi bảo hiểm\n* Ví dụ: thành viên gia đình tử vong/nằm viện, NĐBH nằm viện, hãng hủy chuyến không có chuyến thay thế trong 24 giờ\n\n**Chi phí bảo hiểm:**\n* **50.000 VNĐ**/vé một chiều\n* **100.000 VNĐ**/vé khứ hồi\n\n**Ai nên mua?**\n* Người đi công tác có lịch trình quan trọng\n* Người đi du lịch có kế hoạch chặt chẽ\n* Người bay vào mùa mưa bão hoặc các tuyến hay delay\n\n**Mua ở đâu?** Trên app Zalopay khi đặt vé máy bay — mua kèm tại trang Dịch vụ bổ sung.\n\n*Lưu ý:* Đọc kỹ điều khoản loại trừ (ví dụ: chuyến nối chuyến, không xuất phát từ Việt Nam).",
-      "category": "Giới thiệu",
       "tags": [
         "baoviet",
         "du lịch",
         "chuyến bay",
         "travel",
         "saladin",
-        "zalopay",
-        "quyền lợi"
-      ],
-      "related_faq_ids": [
-        "baoviet_flight_delay_cancel_003",
-        "baoviet_flight_delay_cancel_004",
-        "baoviet_flight_delay_cancel_005",
-        "baoviet_flight_delay_cancel_011"
-      ],
-      "source": "cross_product_migrated",
-      "priority": 9
-    },
-    {
-      "id": "baoviet_flight_delay_cancel_027",
-      "canonical_question": "Làm sao để mua bảo hiểm chuyến bay trên Zalopay?",
-      "user_questions": [
-        "Làm sao để mua bảo hiểm chuyến bay trên Zalopay?",
-        "Cách mua bảo hiểm trễ chuyến bay?",
-        "Mua bảo hiểm delay flight ở đâu trên Zalopay?",
-        "Quy trình mua bảo hiểm máy bay?",
-        "Mua bao hiem chuyen bay nhu the nao?",
-        "Đặt vé máy bay có mua kèm bảo hiểm được không?",
-        "Hướng dẫn mua bảo hiểm chuyến bay trên app?"
-      ],
-      "answer": "**Cách mua bảo hiểm trễ và hủy chuyến bay trên Zalopay:**\n\n**Mua kèm khi đặt vé máy bay**\n\n1. Mở app **Zalopay** → Chọn **Vé máy bay**\n\n2. Tìm kiếm và chọn chuyến bay phù hợp\n\n3. Điền thông tin hành khách\n\n4. Tại trang **Dịch vụ bổ sung**, tích chọn **Bảo hiểm trễ và hủy chuyến bay** (Bảo Việt)\n   * Phí: **50.000 VNĐ**/vé một chiều hoặc **100.000 VNĐ**/vé khứ hồi\n   * Quyền lợi: **1.000.000 VNĐ**/quyền lợi (Trễ + Hủy chuyến bay)\n\n5. Thanh toán một lần cho cả vé + bảo hiểm qua ví Zalopay\n\n6. Nhận đơn bảo hiểm qua **email** ngay sau khi thanh toán thành công\n\n---\n\n**Thời gian thực hiện:** Chỉ **1-2 phút**\n\n**Lưu ý:**\n* Mua ít nhất **3 giờ** trước giờ khởi hành dự kiến\n* Đồng ý với Quy tắc bảo hiểm và Điều khoản Điều kiện của Bảo Việt trước khi mua\n* Giữ giấy chứng nhận để yêu cầu bồi thường khi cần",
-      "category": "Quy trình mua",
-      "tags": [
-        "baoviet",
-        "du lịch",
-        "chuyến bay",
-        "travel",
-        "saladin",
-        "zalopay",
-        "mua bảo hiểm",
-        "hướng dẫn",
         "zalopay"
       ],
       "related_faq_ids": [
-        "baoviet_flight_delay_cancel_015",
-        "baoviet_flight_delay_cancel_007",
-        "baoviet_flight_delay_cancel_012"
+        "baoviet_flight_delay_cancel_011"
       ],
-      "source": "cross_product_migrated",
-      "priority": 10
+      "source": "T&C _ Q&A_Bảo hiểm trễ hủy chuyến bay_MTN_1tr.docx",
+      "priority": 5,
+      "id": "baoviet_flight_delay_cancel_028",
+      "canonical_question": "Loại trừ chung của bảo hiểm trễ và hủy chuyến bay là gì?",
+      "user_questions": [
+        "Loại trừ chung bảo hiểm chuyến bay là gì?",
+        "Chiến tranh có được bồi thường không?",
+        "Bảo hiểm có loại trừ đại dịch không?",
+        "Bao hiem co loai tru dai dich khong?"
+      ],
+      "answer": "Bảo hiểm **không** bồi thường các trường hợp liên quan:\n\n* Chiến tranh, xâm lược, nội chiến, nổi loạn, binh biến, thiết quân luật\n* Bạo loạn, bạo động dân sự, đình công\n* Không tặc\n* Tổn thất do hậu quả của các điều khoản loại trừ\n* Tổn thất trực tiếp/gián tiếp từ đại dịch hoặc dịch bệnh",
+      "category": "Loại trừ"
+    },
+    {
+      "tags": [
+        "baoviet",
+        "du lịch",
+        "chuyến bay",
+        "travel",
+        "saladin",
+        "zalopay"
+      ],
+      "related_faq_ids": [
+        "baoviet_flight_delay_cancel_011"
+      ],
+      "source": "T&C _ Q&A_Bảo hiểm trễ hủy chuyến bay_MTN_1tr.docx",
+      "priority": 5,
+      "id": "baoviet_flight_delay_cancel_029",
+      "canonical_question": "Loại trừ địa lý và hành trình của bảo hiểm chuyến bay là gì?",
+      "user_questions": [
+        "Bay đi nước nào thì không được bảo hiểm?",
+        "Chuyến bay không xuất phát từ Việt Nam có được bảo hiểm không?",
+        "Chuyến nối chuyến có loại trừ không?",
+        "Chuyen bay khong xuat phat tu viet nam co duoc bao hiem khong?"
+      ],
+      "answer": "Bảo hiểm **không** bồi thường khi:\n\n* Đi du lịch đến/qua Afghanistan, Iran, Iraq, Syria, Belarus, Cuba, Cộng hòa Dân chủ Congo, Bắc Triều Tiên, Lebanon, Liberia, Somalia, Sudan, Nam Sudan, Crimea, Zimbabwe hoặc quốc gia bị loại trừ khác\n* Chuyến bay **không xuất phát từ Việt Nam**\n* Chuyến bay theo lịch trình là **chuyến nối chuyến**",
+      "category": "Loại trừ"
+    },
+    {
+      "tags": [
+        "baoviet",
+        "du lịch",
+        "chuyến bay",
+        "travel",
+        "saladin",
+        "zalopay"
+      ],
+      "related_faq_ids": [
+        "baoviet_flight_delay_cancel_011"
+      ],
+      "source": "T&C _ Q&A_Bảo hiểm trễ hủy chuyến bay_MTN_1tr.docx",
+      "priority": 5,
+      "id": "baoviet_flight_delay_cancel_030",
+      "canonical_question": "Loại trừ quyền lợi Trễ chuyến bay là gì?",
+      "user_questions": [
+        "Trường hợp nào trễ chuyến bay không được bồi thường?",
+        "Hãng hủy chuyến có chuyến thay thì trễ chuyến có được bồi thường không?",
+        "Không check-in có được bồi thường trễ chuyến không?",
+        "Den san bay muon co duoc boi thuong tre chuyen khong?"
+      ],
+      "answer": "Quyền lợi **Trễ chuyến bay** không áp dụng khi:\n\n* Hãng hàng không hủy chuyến và có chuyến bay thay thế\n* Người được bảo hiểm biết trước khi mua về lý do có thể khiến chuyến bay bị trễ\n* Không làm thủ tục đăng ký lên máy bay theo xác nhận hành trình\n* Đến sân bay muộn, sau giờ làm thủ tục hoặc sau thời gian lên máy bay\n* Bị từ chối lên máy bay bởi hãng hàng không hoặc an ninh sân bay",
+      "category": "Loại trừ"
+    },
+    {
+      "tags": [
+        "baoviet",
+        "du lịch",
+        "chuyến bay",
+        "travel",
+        "saladin",
+        "zalopay"
+      ],
+      "related_faq_ids": [
+        "baoviet_flight_delay_cancel_011"
+      ],
+      "source": "T&C _ Q&A_Bảo hiểm trễ hủy chuyến bay_MTN_1tr.docx",
+      "priority": 5,
+      "id": "baoviet_flight_delay_cancel_031",
+      "canonical_question": "Loại trừ quyền lợi Hủy chuyến bay là gì?",
+      "user_questions": [
+        "Trường hợp nào hủy chuyến bay không được bồi thường?",
+        "Hãng có chuyến thay trong 24 giờ có được bồi thường hủy chuyến không?",
+        "Bệnh có sẵn có được bồi thường hủy chuyến không?",
+        "Thay doi y muon du lich co duoc boi thuong khong?"
+      ],
+      "answer": "Quyền lợi **Hủy chuyến bay** không áp dụng khi:\n\n* Chuyến bay bị trễ trong mọi trường hợp\n* Hãng hủy chuyến nhưng có chuyến thay trong **24 giờ** (nội địa) hoặc **48 giờ** (quốc tế)\n* Thành viên gia đình/NĐBH bị cách ly kiểm dịch\n* Bệnh tật/hoàn cảnh y tế có sẵn trước ngày tham gia bảo hiểm\n* Thay đổi ý muốn du lịch hoặc hoàn cảnh tài chính\n* Không thông báo kịp thời cho đại lý/công ty lữ hành khi cần hủy chuyến\n* Đã được bảo hiểm khác/chính phủ/hãng hàng không hoàn tiền\n* Sự kiện đã được biết/báo cáo công khai trước khi sắp xếp chuyến đi\n* Bất cứ tình trạng có sẵn nào",
+      "category": "Loại trừ"
+    },
+    {
+      "tags": [
+        "baoviet",
+        "du lịch",
+        "chuyến bay",
+        "travel",
+        "saladin",
+        "zalopay"
+      ],
+      "related_faq_ids": [
+        "baoviet_flight_delay_cancel_011"
+      ],
+      "source": "T&C _ Q&A_Bảo hiểm trễ hủy chuyến bay_MTN_1tr.docx",
+      "priority": 5,
+      "id": "baoviet_flight_delay_cancel_032",
+      "canonical_question": "Loại trừ liên quan hãng hàng không và nhà cung cấp dịch vụ là gì?",
+      "user_questions": [
+        "Hãng hàng không phá sản có được bồi thường không?",
+        "Lỗi đại lý du lịch có được bảo hiểm chi trả không?",
+        "Loai tru lien quan hang hang khong la gi?"
+      ],
+      "answer": "Bảo hiểm **không** bồi thường khi:\n\n* Hãng hàng không mà NĐBH mua vé **phá sản** dẫn đến hủy chuyến\n* Tổn thất do quy định/pháp lệnh Chính phủ, trì hoãn, sửa hành trình hoặc lỗi của nhà cung cấp dịch vụ, đại lý, công ty lữ hành\n* Tổn thất do hành vi trái pháp luật hoặc tố tụng hình sự ảnh hưởng kế hoạch du lịch",
+      "category": "Loại trừ"
     }
   ]
 }
