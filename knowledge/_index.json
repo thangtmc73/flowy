@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "last_updated": "2026-06-14",
+  "last_updated": "2026-06-15",
   "partners": [
     {
       "partner_id": "msig",
@@ -58,6 +58,29 @@
             "vbi",
             "cyber",
             "imported"
+          ]
+        }
+      ]
+    },
+    {
+      "partner_id": "baoviet",
+      "partner_name": "Bảo Việt Insurance",
+      "active": true,
+      "products": [
+        {
+          "product_id": "flight_delay_cancel",
+          "product_name": "Bảo hiểm trễ và hủy chuyến bay",
+          "category": "travel",
+          "file": "partners/baoviet/flight_delay_cancel.json",
+          "priority": 9,
+          "keywords": [
+            "baoviet",
+            "du lịch",
+            "chuyến bay",
+            "trễ chuyến",
+            "hủy chuyến",
+            "saladin",
+            "zalopay"
           ]
         }
       ]
