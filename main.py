@@ -2,8 +2,11 @@ import os
 import json
 import logging
 import time
+import base64
 from datetime import datetime
 from difflib import SequenceMatcher
+from typing import Dict, List, Any, Optional
+from pathlib import Path
 
 from dotenv import load_dotenv
 from greennode_agentbase.core.logging import configure_logger
@@ -177,6 +180,129 @@ def search_faq_fuzzy(query, threshold=0.4, top_k=3, partner_filter=None, categor
     results.sort(key=lambda x: (x["score"] * x.get("priority", 5)), reverse=True)
     return results[:top_k]
 
+
+# --- File Processing Functions ---
+
+def parse_uploaded_file(file_data: Dict[str, Any]) -> str:
+    """Parse uploaded file content based on file type.
+    
+    Args:
+        file_data: Dict with keys: name, type, size, content
+    
+    Returns:
+        Parsed text content
+    """
+    file_type = file_data.get("type", "")
+    content = file_data.get("content", "")
+    
+    # JSON file - already parsed
+    if file_type == "application/json" or isinstance(content, dict):
+        return json.dumps(content, ensure_ascii=False, indent=2)
+    
+    # PDF file - base64 encoded
+    if file_type == "application/pdf" and isinstance(content, dict):
+        pdf_data = content.get("data", "")
+        # For now, return metadata. Full PDF parsing requires pypdf2/pdfplumber
+        return f"[PDF File: {file_data.get('name')}]\nSize: {file_data.get('size')} bytes\nNote: PDF text extraction requires additional processing."
+    
+    # Text-based files
+    if isinstance(content, str):
+        return content
+    
+    return str(content)
+
+
+def load_all_products() -> List[Dict[str, Any]]:
+    """Load all insurance products from knowledge base.
+    
+    Returns:
+        List of product dicts with partner info
+    """
+    products = []
+    knowledge_dir = Path(FAQ_DATA_PATH)
+    index_path = knowledge_dir / "_index.json"
+    
+    if not index_path.exists():
+        return products
+    
+    try:
+        with open(index_path, "r", encoding="utf-8") as f:
+            index_data = json.load(f)
+        
+        for partner in index_data.get("partners", []):
+            if not partner.get("active", True):
+                continue
+            
+            for product in partner.get("products", []):
+                product_file = knowledge_dir / product["file"]
+                if not product_file.exists():
+                    continue
+                
+                with open(product_file, "r", encoding="utf-8") as f:
+                    product_data = json.load(f)
+                
+                products.append({
+                    "partner_id": partner.get("partner_id", ""),
+                    "partner_name": partner.get("partner_name", ""),
+                    "product_id": product.get("product_id", ""),
+                    "product_name": product.get("product_name", ""),
+                    "category": product.get("category", ""),
+                    "data": product_data
+                })
+        
+        return products
+    except Exception as e:
+        logger.error(f"Error loading products: {e}")
+        return products
+
+
+def extract_insurance_features(text_content: str, llm: ChatOpenAI) -> Dict[str, Any]:
+    """Use LLM to extract insurance features from text.
+    
+    Args:
+        text_content: Raw text from uploaded file
+        llm: ChatOpenAI instance
+    
+    Returns:
+        Dict with extracted features
+    """
+    extraction_prompt = f"""Analyze this insurance document and extract key information in JSON format.
+
+Document content:
+{text_content[:3000]}
+
+Extract the following information (in Vietnamese):
+- product_name: Tên sản phẩm bảo hiểm
+- partner: Công ty bảo hiểm/đối tác
+- category: Loại bảo hiểm (sức khỏe, xe, du lịch, cyber, v.v.)
+- coverage: Quyền lợi bảo hiểm chính
+- cost: Chi phí/phí bảo hiểm
+- age_range: Độ tuổi áp dụng
+- benefits: Các quyền lợi cụ thể
+- exclusions: Điều khoản loại trừ (nếu có)
+- highlights: Điểm nổi bật
+
+Return ONLY valid JSON, no additional text."""
+
+    try:
+        response = llm.invoke(extraction_prompt)
+        content = response.content.strip()
+        
+        # Extract JSON from markdown code blocks if present
+        if "```json" in content:
+            content = content.split("```json")[1].split("```")[0].strip()
+        elif "```" in content:
+            content = content.split("```")[1].split("```")[0].strip()
+        
+        return json.loads(content)
+    except Exception as e:
+        logger.error(f"Error extracting features with LLM: {e}")
+        return {
+            "product_name": "Unknown",
+            "error": str(e),
+            "raw_content": text_content[:500]
+        }
+
 # Load FAQ data on startup
 load_knowledge_base()
 
@@ -341,17 +467,104 @@ def search_faq_docs(query: str) -> str:
     return response
 
 
+@tool
+async def compare_insurance_products(uploaded_info: str) -> str:
+    """Compare uploaded insurance document with existing products on Zalopay.
+    
+    This tool analyzes insurance information from uploaded files and compares
+    it with products available on the Zalopay platform.
+    
+    Args:
+        uploaded_info: Extracted insurance information in JSON string format
+    """
+    logger.info("[tool:compare_insurance] starting comparison")
+    
+    try:
+        # Parse uploaded info
+        if isinstance(uploaded_info, str):
+            uploaded = json.loads(uploaded_info)
+        else:
+            uploaded = uploaded_info
+        
+        # Load all existing products
+        products = load_all_products()
+        
+        if not products:
+            return "Không thể tải danh sách sản phẩm từ knowledge base."
+        
+        # Build comparison response
+        response = f"## So sánh: {uploaded.get('product_name', 'Sản phẩm tải lên')}\n\n"
+        response += f"**Đối tác:** {uploaded.get('partner', 'N/A')}\n"
+        response += f"**Loại:** {uploaded.get('category', 'N/A')}\n\n"
+        
+        # Find similar products by category
+        similar_products = [
+            p for p in products 
+            if uploaded.get('category', '').lower() in p.get('category', '').lower() or
+               p.get('category', '').lower() in uploaded.get('category', '').lower()
+        ]
+        
+        if not similar_products:
+            response += "Không tìm thấy sản phẩm tương tự trong danh mục này trên Zalopay.\n\n"
+            response += "**Sản phẩm hiện có trên Zalopay:**\n"
+            for p in products[:3]:
+                response += f"- {p['product_name']} ({p['partner_name']})\n"
+            return response
+        
+        response += f"**Tìm thấy {len(similar_products)} sản phẩm tương tự trên Zalopay:**\n\n"
+        
+        # Detailed comparison
+        for i, product in enumerate(similar_products[:3], 1):
+            product_data = product['data']
+            response += f"### {i}. {product['product_name']} - {product['partner_name']}\n\n"
+            
+            # Extract key info from product
+            summary = product_data.get('product_summary', {})
+            response += f"**Chi phí:** {summary.get('cost', 'N/A')}\n"
+            response += f"**Quyền lợi:** {summary.get('coverage', 'N/A')}\n"
+            response += f"**Độ tuổi:** {summary.get('age_range', 'N/A')}\n"
+            
+            # Find specific FAQs about benefits
+            benefit_faqs = [
+                faq for faq in product_data.get('faqs', [])
+                if 'quyền lợi' in faq.get('canonical_question', '').lower() or
+                   'benefits' in faq.get('category', '').lower()
+            ]
+            
+            if benefit_faqs:
+                response += f"\n**Chi tiết quyền lợi:**\n{benefit_faqs[0].get('answer', '')[:300]}...\n"
+            
+            response += "\n---\n\n"
+        
+        # Comparison summary
+        response += "## Kết luận\n\n"
+        response += f"Sản phẩm tải lên thuộc danh mục **{uploaded.get('category')}**, "
+        response += f"tương tự với các sản phẩm của {', '.join([p['partner_name'] for p in similar_products[:2]])} trên Zalopay.\n\n"
+        
+        response += "Bạn có thể:\n"
+        response += "- So sánh chi tiết quyền lợi và chi phí\n"
+        response += "- Tìm hiểu thêm về quy trình mua bảo hiểm trên Zalopay\n"
+        response += "- Liên hệ để được tư vấn cụ thể hơn\n"
+        
+        return response
+        
+    except Exception as e:
+        logger.error(f"[tool:compare_insurance] error: {e}")
+        return f"Lỗi khi so sánh sản phẩm: {str(e)}"
+
+
 # --- Create Agent with Checkpointer ---
 # create_agent builds a compiled LangGraph StateGraph with tool-calling support.
 # checkpointer: persists conversation state via AgentBase Memory (short-term)
 # Long-term memory is handled by remember/recall tools via MemoryClient SDK
 agent = create_agent(
     llm,
-    tools=[remember, recall, search_faq_docs],
+    tools=[remember, recall, search_faq_docs, compare_insurance_products],
     system_prompt=(
         "Bạn là trợ lý tư vấn bảo hiểm trên nền tảng Zalopay.\n\n"
         "Vai trò của bạn:\n"
         "- Trả lời câu hỏi về các sản phẩm bảo hiểm từ nhiều đối tác bằng cách tìm kiếm trong FAQ với tool 'search_faq_docs'\n"
+        "- So sánh sản phẩm bảo hiểm từ file upload với các gói hiện có trên Zalopay bằng tool 'compare_insurance_products'\n"
         "- Nhớ thông tin quan trọng về người dùng với tool 'remember'\n"
         "- Tra cứu lại các tương tác và thông tin đã học với tool 'recall'\n"
         "- Cung cấp câu trả lời chính xác, rõ ràng dựa trên tài liệu FAQ\n"
@@ -363,6 +576,11 @@ agent = create_agent(
         "2. Kiểm tra memory xem có thông tin liên quan về người dùng này không\n"
         "3. Kết hợp cả hai nguồn để đưa ra câu trả lời cá nhân hóa, chính xác\n"
         "4. Nhớ các thông tin quan trọng về nhu cầu hoặc sở thích của người dùng\n\n"
+        "XỬ LÝ FILE UPLOAD:\n"
+        "- Khi người dùng upload file bảo hiểm, phân tích thông tin trong file\n"
+        "- Sử dụng 'compare_insurance_products' để so sánh với sản phẩm trên Zalopay\n"
+        "- Đưa ra nhận xét khách quan về ưu/nhược điểm\n"
+        "- Gợi ý sản phẩm tương tự hoặc tốt hơn trên Zalopay\n\n"
         "QUY TẮC FORMAT OUTPUT (RẤT QUAN TRỌNG):\n"
         "- KHÔNG tự thêm markdown syntax (**, *, _, ~) vào nội dung từ FAQ\n"
         "- Trả lời CHÍNH XÁC theo nội dung trong FAQ, giữ nguyên format có sẵn\n"
@@ -382,11 +600,19 @@ agent = create_agent(
         "   • Quyền lợi: ...\n"
         "   • Đặc điểm: ...\n\n"
         "Lưu ý: Các thông tin chi tiết PHẢI được indent với 3 SPACES và bullet point (•)\n\n"
+        "FORMAT CHO SO SÁNH SẢN PHẨM:\n"
+        "Khi so sánh sản phẩm upload với sản phẩm Zalopay:\n"
+        "1. Tóm tắt thông tin sản phẩm upload\n"
+        "2. Liệt kê các sản phẩm tương tự trên Zalopay\n"
+        "3. So sánh chi tiết: Chi phí, Quyền lợi, Điều kiện\n"
+        "4. Đưa ra nhận xét khách quan và gợi ý\n\n"
         "VÍ DỤ FORMAT ĐÚNG:\n\n"
         "Câu hỏi đơn lẻ về 1 sản phẩm:\n"
         "→ Trích nguyên văn từ FAQ, giữ nguyên format HTML table/bullets\n\n"
         "Câu hỏi tổng hợp về nhiều sản phẩm:\n"
         "→ Dùng format phân cấp với icon 🔹 và indent 3 spaces\n\n"
+        "So sánh sản phẩm:\n"
+        "→ Dùng format rõ ràng với sections và bullet points\n\n"
         "Lưu ý:\n"
         "- Luôn trả lời bằng tiếng Việt\n"
         "- Thân thiện, nhiệt tình, chuyên nghiệp\n"
@@ -473,7 +699,7 @@ async def handler(payload: dict, context: RequestContext) -> dict:
     """Main agent entrypoint with LangChain + Memory support.
 
     Args:
-        payload: JSON body with "message"
+        payload: JSON body with "message" and optional "file"
         context: Request metadata (session_id, user_id, request_headers)
     """
     # Short-term memory (checkpointer) requires both user_id and session_id
@@ -485,12 +711,46 @@ async def handler(payload: dict, context: RequestContext) -> dict:
         }
 
     message = payload.get("message", "Hello")
+    file_data = payload.get("file")
     t_start = time.monotonic()
 
     logger.info(
-        "[handler] user=%s session=%s msg=%r",
-        context.user_id, context.session_id, message[:100],
+        "[handler] user=%s session=%s msg=%r has_file=%s",
+        context.user_id, context.session_id, message[:100], bool(file_data),
     )
+
+    # Handle file upload if present
+    enhanced_message = message
+    if file_data:
+        try:
+            logger.info("[handler] processing uploaded file: %s", file_data.get("name", "unknown"))
+            
+            # Parse file content
+            file_content = parse_uploaded_file(file_data)
+            
+            # Extract insurance info using LLM
+            insurance_info = extract_insurance_features(file_content, llm)
+            
+            # Enhance message with file context
+            enhanced_message = f"""Người dùng đã upload file bảo hiểm: {file_data.get('name')}
+
+Thông tin trích xuất từ file:
+{json.dumps(insurance_info, ensure_ascii=False, indent=2)}
+
+Câu hỏi của người dùng: {message}
+
+Hãy phân tích file này và so sánh với các sản phẩm bảo hiểm trên Zalopay. 
+Sử dụng tool 'compare_insurance_products' để đưa ra so sánh chi tiết."""
+            
+            logger.info("[handler] extracted insurance info: %s", insurance_info.get("product_name", "N/A"))
+            
+        except Exception as e:
+            logger.error(f"[handler] error processing file: {e}")
+            return {
+                "status": "error",
+                "error": f"Không thể xử lý file upload: {str(e)}",
+                "timestamp": datetime.now().isoformat(),
+            }
 
     # Map AgentBase context to LangGraph config
     # thread_id -> session persistence, actor_id -> per-user memory
@@ -503,7 +763,7 @@ async def handler(payload: dict, context: RequestContext) -> dict:
 
     # ainvoke is required when using async tools (remember, recall)
     result = await agent.ainvoke(
-        {"messages": [{"role": "user", "content": message}]},
+        {"messages": [{"role": "user", "content": enhanced_message}]},
         config=config,
     )
     ai_message = result["messages"][-1]
@@ -515,8 +775,8 @@ async def handler(payload: dict, context: RequestContext) -> dict:
     )
     elapsed = time.monotonic() - t_start
     logger.info(
-        "[handler] done user=%s tool_calls=%d elapsed=%.2fs",
-        context.user_id, tool_calls, elapsed,
+        "[handler] done user=%s tool_calls=%d elapsed=%.2fs has_file=%s",
+        context.user_id, tool_calls, elapsed, bool(file_data),
     )
 
     return {

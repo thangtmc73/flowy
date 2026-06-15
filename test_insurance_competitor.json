@@ -1,0 +1,25 @@
+{
+  "product_name": "Bảo hiểm Sức khỏe VinaCare Plus",
+  "partner": "VinaCare Insurance",
+  "category": "Sức khỏe",
+  "cost": "150.000 VND/tháng",
+  "age_range": "18-65 tuổi",
+  "coverage": "100.000.000 VND/năm",
+  "benefits": [
+    "Khám chữa bệnh nội trú: 80.000.000 VND",
+    "Khám chữa bệnh ngoại trú: 15.000.000 VND",
+    "Răng hàm mặt: 5.000.000 VND",
+    "Thai sản: Không"
+  ],
+  "exclusions": [
+    "Bệnh có sẵn",
+    "Tai nạn do say rượu",
+    "Tự tử hoặc tự gây thương tích"
+  ],
+  "highlights": [
+    "Bồi thường nhanh trong 24h",
+    "Mạng lưới bệnh viện rộng khắp",
+    "Không cần khám sức khỏe ban đầu"
+  ],
+  "waiting_period": "30 ngày đối với bệnh thường, 120 ngày đối với bệnh đặc biệt"
+}

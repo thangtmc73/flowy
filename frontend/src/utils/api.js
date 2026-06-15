@@ -8,9 +8,21 @@ const PROD_BASE = import.meta.env.VITE_API_BASE_URL || ''
  * @param {string} message
  * @param {string} userId  - Stable per-browser-session ID
  * @param {string} sessionId - Current chat session ID
+ * @param {object|null} fileData - Optional file data {file, content}
  * @returns {Promise<{response: string, timestamp: string}>}
  */
-export async function sendMessage(message, userId, sessionId) {
+export async function sendMessage(message, userId, sessionId, fileData = null) {
+  const payload = { message }
+  
+  if (fileData) {
+    payload.file = {
+      name: fileData.file.name,
+      type: fileData.file.type,
+      size: fileData.file.size,
+      content: fileData.content
+    }
+  }
+  
   const res = await fetch(`${PROD_BASE}/invocations`, {
     method: 'POST',
     headers: {
@@ -18,7 +30,7 @@ export async function sendMessage(message, userId, sessionId) {
       'X-GreenNode-AgentBase-User-Id': userId,
       'X-GreenNode-AgentBase-Session-Id': sessionId,
     },
-    body: JSON.stringify({ message }),
+    body: JSON.stringify(payload),
   })
 
   if (!res.ok) {

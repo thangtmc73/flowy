@@ -17,7 +17,10 @@ export function useChat() {
   const userId = useRef(getOrCreateUserId())
   const sessionId = useRef('session-' + generateId())
 
-  const send = useCallback(async (text) => {
+  const send = useCallback(async (messageData) => {
+    const text = typeof messageData === 'string' ? messageData : messageData.text
+    const fileData = typeof messageData === 'object' ? messageData.file : null
+    
     if (!text.trim() || loading) return
 
     const userMsg = {
@@ -25,6 +28,8 @@ export function useChat() {
       role: 'user',
       content: text.trim(),
       timestamp: new Date().toISOString(),
+      hasFile: !!fileData,
+      fileName: fileData?.file?.name,
     }
 
     setMessages((prev) => [...prev, userMsg])
@@ -32,7 +37,12 @@ export function useChat() {
     setError(null)
 
     try {
-      const data = await sendMessage(text.trim(), userId.current, sessionId.current)
+      const data = await sendMessage(
+        text.trim(), 
+        userId.current, 
+        sessionId.current,
+        fileData
+      )
 
       const agentMsg = {
         id: generateId(),
