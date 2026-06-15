@@ -371,11 +371,22 @@ agent = create_agent(
         "- Nếu FAQ có emoji và icon, giữ nguyên không thay đổi\n"
         "- Chỉ tóm tắt hoặc diễn giải KHI THẬT SỰ CẦN THIẾT, ưu tiên trích dẫn nguyên văn\n"
         "- Khi cần nhấn mạnh, dùng emoji thay vì markdown (✓, ✗, 💡, ⚠️, 📌)\n\n"
-        "VÍ DỤ FORMAT ĐÚNG:\n"
-        "Câu hỏi: Giá bảo hiểm bao nhiêu?\n"
-        "Trả lời: [Trích nguyên văn từ FAQ, bao gồm cả table HTML nếu có]\n\n"
-        "Câu hỏi: Quyền lợi là gì?\n"
-        "Trả lời: [Giữ nguyên các bullet points • và emoji từ FAQ]\n\n"
+        "FORMAT CHO CÂU HỎI TỔNG HỢP (nhiều sản phẩm):\n"
+        "Khi trả lời về NHIỀU sản phẩm bảo hiểm, BẮT BUỘC dùng format phân cấp rõ ràng:\n\n"
+        "🔹 TÊN SẢN PHẨM 1 (Đối tác):\n"
+        "   • Chi phí: ...\n"
+        "   • Quyền lợi: ...\n"
+        "   • Đặc điểm: ...\n\n"
+        "🔹 TÊN SẢN PHẨM 2 (Đối tác):\n"
+        "   • Chi phí: ...\n"
+        "   • Quyền lợi: ...\n"
+        "   • Đặc điểm: ...\n\n"
+        "Lưu ý: Các thông tin chi tiết PHẢI được indent với 3 SPACES và bullet point (•)\n\n"
+        "VÍ DỤ FORMAT ĐÚNG:\n\n"
+        "Câu hỏi đơn lẻ về 1 sản phẩm:\n"
+        "→ Trích nguyên văn từ FAQ, giữ nguyên format HTML table/bullets\n\n"
+        "Câu hỏi tổng hợp về nhiều sản phẩm:\n"
+        "→ Dùng format phân cấp với icon 🔹 và indent 3 spaces\n\n"
         "Lưu ý:\n"
         "- Luôn trả lời bằng tiếng Việt\n"
         "- Thân thiện, nhiệt tình, chuyên nghiệp\n"
@@ -392,22 +403,57 @@ def format_response(text: str) -> str:
     - Preserve HTML tables
     - Preserve bullet points and emojis
     - Clean up extra whitespace
+    - Auto-format multi-product responses with proper indentation
     """
     import re
     
     # Preserve existing line breaks and structure
     lines = text.split('\n')
     formatted_lines = []
+    in_product_section = False
     
-    for line in lines:
+    for i, line in enumerate(lines):
         # Skip empty lines (but keep them)
         if not line.strip():
             formatted_lines.append(line)
+            in_product_section = False
             continue
         
         # Don't modify HTML table lines
         if any(tag in line for tag in ['<table>', '</table>', '<tr>', '</tr>', '<th>', '</th>', '<td>', '</td>']):
             formatted_lines.append(line)
+            continue
+        
+        # Detect product headers (usually start with emoji or product names)
+        product_indicators = ['🔹', '💼', '🏥', '🛡️', '💳', 'Bảo hiểm', 'Gói']
+        is_product_header = any(indicator in line for indicator in product_indicators) and (
+            'VBI' in line or 'MSIG' in line or 'GIC' in line or 
+            'Cyber' in line or 'Sức khỏe' in line or 'Credit' in line
+        )
+        
+        if is_product_header:
+            # Product header - no indent
+            formatted_lines.append(line)
+            in_product_section = True
+            continue
+        
+        # If we're in a product section and line starts with bullet/dash without proper indent
+        if in_product_section and re.match(r'^[•\-\*]\s', line):
+            # Add proper indent (3 spaces) if not already indented
+            if not line.startswith('   '):
+                formatted_lines.append('   ' + line)
+            else:
+                formatted_lines.append(line)
+            continue
+        
+        # If line doesn't start with bullet but is clearly a detail line (Chi phí, Quyền lợi, etc.)
+        detail_keywords = ['Chi phí', 'Quyền lợi', 'Đặc điểm', 'Thời hạn', 'Độ tuổi', 'Phí bảo hiểm']
+        if in_product_section and any(keyword in line for keyword in detail_keywords):
+            # Convert to bullet point with indent if not already formatted
+            if not re.match(r'^\s+[•\-\*]', line):
+                formatted_lines.append('   • ' + line.strip())
+            else:
+                formatted_lines.append(line)
             continue
         
         # Don't modify lines that already have bullet points or numbered lists
