@@ -395,9 +395,12 @@
         "Gọi Zalopay số mấy?",
         "Zalopay hỗ trợ khách hàng qua kênh nào?",
         "Fanpage Zalopay ở đâu?",
-        "Liên hệ Zalopay như thế nào?"
+        "Liên hệ Zalopay như thế nào?",
+        "Gọi tổng đài Zalopay",
+        "CSKH Zalopay",
+        "Hỗ trợ khách hàng Zalopay"
       ],
-      "answer": "Tổng đài chính thức **Zalopay**: **1900 54 54 36**\n\n* **Cước phí:** 1.000 VNĐ/phút\n* **Thời gian hoạt động:** 24/7 (kể cả ngày lễ, Tết)\n\n**Các kênh hỗ trợ khác:**\n* **Email:** hotro@zalopay.vn\n* **Trên app:** Cá nhân → Trung tâm hỗ trợ → Gửi yêu cầu hỗ trợ\n* **Facebook:** [Fanpage Zalopay](https://www.facebook.com/Zalopay)\n\n*Lưu ý:* Với yêu cầu **bồi thường bảo hiểm**, hãy liên hệ hotline của công ty bảo hiểm đối tác (MSIG, VBI, GIC, Bảo Việt...). Tổng đài Zalopay hỗ trợ các vấn đề về app, thanh toán và sử dụng dịch vụ trên nền tảng.",
+      "answer": "Tổng đài chính thức **Zalopay**: **1900 54 54 36**\n\n* **Cước phí:** 1.000 VNĐ/phút\n* **Thời gian hoạt động:** 24/7 (kể cả ngày lễ, Tết)\n* **Tổng đài gọi ra (khi Zalopay liên hệ lại):** 028 7307 7068 / 028 7307 5068\n\n**Các kênh hỗ trợ khác:**\n* **Email:** hotro@zalopay.vn\n* **Trên app Zalopay:** Cá nhân → Trung tâm hỗ trợ → Gửi yêu cầu hỗ trợ\n* **Facebook:** [Fanpage Zalopay](https://www.facebook.com/Zalopay)\n* **Trung tâm trợ giúp:** [zalopay.vn/hoi-dap](https://zalopay.vn/hoi-dap)\n\n*Lưu ý:* Với yêu cầu **bồi thường bảo hiểm**, hãy liên hệ hotline của công ty bảo hiểm đối tác (MSIG, VBI, GIC, Bảo Việt...). Tổng đài Zalopay hỗ trợ các vấn đề về app, thanh toán và sử dụng dịch vụ trên nền tảng.",
       "category": "Liên hệ & Hỗ trợ",
       "tags": [
         "zalopay",
@@ -406,7 +409,7 @@
         "hỗ trợ",
         "tổng đài"
       ],
-      "priority": 8,
+      "priority": 10,
       "source": "zalopay_official_support",
       "scope": "all_partners"
     }

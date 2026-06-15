@@ -186,6 +186,16 @@ FAQ_SEARCH_TOP_K = 2
 FAQ_SEARCH_THRESHOLD = 0.5
 FAQ_ANSWER_MAX_CHARS = 600
 
+ZALOPAY_SUPPORT_CONTACT = (
+    "**Liên hệ hỗ trợ Zalopay:**\n"
+    "* **Tổng đài:** 1900 54 54 36 (cước phí 1.000 VNĐ/phút, hoạt động 24/7 kể cả ngày lễ, Tết)\n"
+    "* **Email:** hotro@zalopay.vn\n"
+    "* **Trên app Zalopay:** Cá nhân → Trung tâm hỗ trợ → Gửi yêu cầu hỗ trợ\n"
+    "* **Facebook:** https://www.facebook.com/Zalopay\n"
+    "* **Tổng đài gọi ra (khi Zalopay liên hệ lại):** 028 7307 7068 / 028 7307 5068\n\n"
+    "*Lưu ý:* Tổng đài Zalopay hỗ trợ vấn đề về app, thanh toán và dịch vụ trên nền tảng. "
+    "Với **bồi thường bảo hiểm**, hãy liên hệ hotline của công ty bảo hiểm đối tác (MSIG, VBI, GIC, Bảo Việt...)."
+)
 
 def normalize_brand_name(text: str) -> str:
     """Ensure the platform brand is spelled Zalopay in agent-facing text."""
@@ -481,7 +491,8 @@ def search_faq_docs(query: str) -> str:
             "- Bảo hiểm an ninh mạng (Cyber)\n"
             "- Bảo hiểm tài chính (Credit Topup)\n"
             "- Quyền lợi, chi phí, độ tuổi áp dụng\n"
-            "- Quy trình mua và bồi thường"
+            "- Quy trình mua và bồi thường\n\n"
+            f"{ZALOPAY_SUPPORT_CONTACT}"
         )
 
     best = results[0]
@@ -619,6 +630,11 @@ agent = create_agent(
         "- So sánh khách quan giữa các gói bảo hiểm chỉ khi được hỏi\n"
         "- Nếu không tìm thấy câu trả lời trong tài liệu, hãy nói thẳng thắn\n"
         "- Giao tiếp thân thiện, giữ ngữ cảnh xuyên suốt cuộc trò chuyện\n\n"
+        "KHI GỢI Ý LIÊN HỆ TỔNG ĐÀI / CSKH ZALOPAY:\n"
+        "- Bắt buộc đưa đầy đủ thông tin liên lạc Zalopay (tổng đài, cước phí, giờ hoạt động, email, hỗ trợ trên app, Facebook, số gọi ra)\n"
+        "- Tra FAQ bằng search_faq_docs với query 'liên hệ hỗ trợ Zalopay' nếu cần chi tiết\n"
+        "- Không chỉ nói 'liên hệ tổng đài' mà phải kèm số hotline và các kênh khác\n"
+        "- Phân biệt: Zalopay CSKH cho app/thanh toán; hotline đối tác BH cho bồi thường\n\n"
         "Quy trình trả lời:\n"
         "1. Tìm kiếm FAQ bằng 'search_faq_docs'\n"
         "2. Chỉ gọi 'recall' khi cần thông tin cá nhân hóa từ các lượt chat trước\n"
