@@ -89,8 +89,10 @@ IMAGE_URL="${REGISTRY}/${REPO_NAME}/${IMAGE_NAME}:${TAG}"
 echo "==> Logging in to AgentBase Container Registry"
 bash "$SCRIPTS/cr.sh" credentials docker-login
 
+SITE_URL="${VITE_SITE_URL:-https://endpoint-5d12d628-f18b-46d6-be03-c1da5d44770a.agentbase-runtime.aiplatform.vngcloud.vn}"
+
 echo "==> Building Docker image: $IMAGE_URL"
-docker build --platform linux/amd64 -t "$IMAGE_URL" .
+docker build --platform linux/amd64 --build-arg "VITE_SITE_URL=${SITE_URL}" -t "$IMAGE_URL" .
 
 echo "==> Pushing Docker image"
 docker push "$IMAGE_URL"

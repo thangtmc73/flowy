@@ -1,5 +1,7 @@
 # Stage 1: Build React frontend
 FROM node:24-alpine AS frontend-builder
+ARG VITE_SITE_URL=https://endpoint-5d12d628-f18b-46d6-be03-c1da5d44770a.agentbase-runtime.aiplatform.vngcloud.vn
+ENV VITE_SITE_URL=$VITE_SITE_URL
 WORKDIR /app/frontend
 COPY frontend/package*.json ./
 RUN npm ci
