@@ -1,0 +1,61 @@
+---
+description: Markdown formatting rules for knowledge base responses
+globs: knowledge/**/*.json
+alwaysApply: false
+---
+
+# Markdown Formatting for Knowledge Base
+
+When creating or updating content in knowledge base JSON files, always use proper markdown syntax for ReactMarkdown compatibility.
+
+## Lists and Bullets
+
+Use markdown syntax, NOT Unicode characters:
+
+```markdown
+❌ BAD - Unicode bullet
+• Item 1
+• Item 2
+
+✅ GOOD - Markdown bullet
+* Item 1
+* Item 2
+```
+
+## Numbered Lists
+
+Use markdown numbered lists for step-by-step instructions:
+
+```markdown
+❌ BAD - Bold text as steps
+**Bước 1:** Do something
+**Bước 2:** Do another thing
+
+✅ GOOD - Markdown numbered list
+1. Do something
+
+2. Do another thing
+```
+
+## Nested Lists
+
+Indent nested items with 3 spaces:
+
+```markdown
+✅ GOOD - Nested list
+1. Main step
+   * Sub-item A
+   * Sub-item B
+
+2. Next step
+   * Sub-item C
+```
+
+## Line Breaks
+
+Use `\n\n` (double newline) to separate:
+- Paragraphs
+- List items that need visual separation
+- Different sections
+
+Use single `\n` only within the same logical block.

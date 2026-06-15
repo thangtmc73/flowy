@@ -1,0 +1,73 @@
+---
+description: Guidelines for rendering agent responses in React frontend
+globs: frontend/src/components/MessageBubble.jsx
+alwaysApply: false
+---
+
+# Agent Response Rendering
+
+The `MessageBubble` component uses `ReactMarkdown` to render agent responses. Follow these guidelines to ensure proper rendering.
+
+## ReactMarkdown Configuration
+
+The component is configured with:
+* `remarkGfm` plugin for GitHub Flavored Markdown
+* Custom component styling for consistent UI
+* Special handling for lists, tables, code, and links
+
+## Supported Markdown Syntax
+
+### Lists
+
+```markdown
+✅ Unordered lists with *
+* Item 1
+* Item 2
+
+✅ Ordered lists with numbers
+1. Step 1
+
+2. Step 2
+   * Nested item
+
+❌ DO NOT use Unicode bullets
+• This won't render as a list
+```
+
+### Text Formatting
+
+```markdown
+✅ Bold: **text**
+✅ Italic: *text* or _text_
+✅ Inline code: `code`
+✅ Links: [text](url)
+```
+
+### Tables
+
+Tables are wrapped in scrollable div with borders. Use standard markdown table syntax.
+
+### Line Breaks
+
+* Use `\n\n` for paragraph breaks
+* ReactMarkdown will handle rendering
+* Single `\n` stays within same paragraph
+
+## Custom Styling
+
+The component applies these classes:
+* Lists: `space-y-1.5 mb-2`
+* Unordered list items: `flex gap-2 items-start` with brand-colored bullets
+* Ordered list items: `list-decimal list-inside ml-4`
+* Links: `text-brand hover:underline`
+* Strong text: `font-semibold text-slate-900`
+
+## Testing Responses
+
+When updating knowledge base answers, verify they render correctly:
+
+1. Check bullet points display as lists
+2. Verify numbered lists show sequential numbers
+3. Ensure line breaks create proper spacing
+4. Confirm emojis display correctly
+5. Test nested lists indent properly

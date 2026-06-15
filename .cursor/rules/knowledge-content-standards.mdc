@@ -1,0 +1,97 @@
+---
+description: Content quality and structure standards for knowledge base
+globs: knowledge/**/*.json
+alwaysApply: false
+---
+
+# Knowledge Base Content Standards
+
+Follow these standards when creating or updating FAQ entries in the knowledge base.
+
+## Required JSON Fields
+
+Every FAQ entry MUST include:
+
+```json
+{
+  "id": "partner_product_category_001",
+  "canonical_question": "Main question as title",
+  "user_questions": ["Question 1", "Variant 2", "..."],
+  "answer": "Detailed answer with markdown",
+  "category": "Category name",
+  "tags": ["tag1", "tag2"],
+  "priority": 5,
+  "source": "source_identifier"
+}
+```
+
+### Field Rules
+
+* **id**: Format `{partner}_{product}_{category}_{number}` (e.g., `msig_health_247_benefit_001`)
+* **canonical_question**: Clear, concise main question in Vietnamese
+* **user_questions**: Array with 5-10 variants, include typos/informal versions
+* **answer**: Use proper markdown syntax (see markdown-formatting rule)
+* **category**: Use consistent category names across files
+* **tags**: Lowercase, mix of Vietnamese and English keywords
+* **priority**: Integer 1-10 (10 = highest priority for search ranking)
+* **source**: Reference to original document or identifier
+
+## Content Quality
+
+### Tone and Language
+
+* Use friendly, professional Vietnamese tone
+* Address user as "bạn"
+* Be concise but complete
+* Avoid jargon unless necessary
+
+### Answer Structure
+
+```markdown
+✅ GOOD - Clear structure
+**Opening statement**
+
+Detailed explanation with:
+* Bullet points for lists
+* **Bold** for emphasis
+* Numbers for steps
+
+**Conclusion or call-to-action**
+```
+
+### Emoji Usage
+
+Use emojis consistently:
+* 🔹 for section headers
+* ✓ or ✅ for positive/success
+* ⚠️ for warnings
+* 💡 for tips/notes
+* ✈️ 🏥 🏠 for context-specific icons
+
+## Common Patterns
+
+### Price Information
+
+```markdown
+**Product Name**:
+* Chi phí: X - Y VNĐ/tháng
+* Quyền lợi: Details
+* Đặc biệt: Unique features
+```
+
+### Step-by-Step Instructions
+
+Always use numbered lists:
+
+```markdown
+1. First step
+
+2. Second step
+   * Sub-item if needed
+
+3. Third step
+```
+
+### Comparison Tables
+
+Format consistently for ReactMarkdown compatibility.
