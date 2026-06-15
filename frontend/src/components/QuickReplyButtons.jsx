@@ -2,22 +2,18 @@ import { useMemo } from 'react'
 import { getSuggestedQuickReplies } from '../constants/quickReplies'
 
 export default function QuickReplyButtons({ messages, onSelectReply, disabled }) {
-  // Get the last user or agent message to determine context
-  const lastMessage = useMemo(() => {
+  const conversationText = useMemo(() => {
     if (!messages || messages.length <= 1) return null
-    
-    // Find last meaningful message (skip welcome message)
+
     const meaningfulMessages = messages.filter(m => m.id !== 'welcome')
     if (meaningfulMessages.length === 0) return null
-    
-    const last = meaningfulMessages[meaningfulMessages.length - 1]
-    return last.content
+
+    return meaningfulMessages.map(m => m.content).join('\n')
   }, [messages])
 
-  // Get suggested quick replies based on context
   const quickReplies = useMemo(() => {
-    return getSuggestedQuickReplies(lastMessage, 4)
-  }, [lastMessage])
+    return getSuggestedQuickReplies(conversationText, 4)
+  }, [conversationText])
 
   // Don't show if no replies or disabled
   if (!quickReplies || quickReplies.length === 0) return null
