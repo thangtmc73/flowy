@@ -1,4 +1,4 @@
-import { SUGGESTIONS } from './Sidebar'
+import { SUGGESTIONS } from '../constants/suggestions'
 
 export default function SuggestedQuestions({ onSelectQuestion, disabled }) {
   // Show max 4 suggestions on initial load
