@@ -20,8 +20,6 @@ export default function App() {
   return (
     <div className="flex h-dvh min-h-dvh bg-slate-100 overflow-hidden">
       <Sidebar
-        onSelectQuestion={handleSend}
-        disabled={loading}
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
       />
@@ -32,8 +30,6 @@ export default function App() {
         <ChatWindow
           messages={messages}
           loading={loading}
-          onSelectQuestion={handleSend}
-          disabled={loading}
         />
 
         {showSuggestions && (

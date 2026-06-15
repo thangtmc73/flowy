@@ -36,7 +36,7 @@ export const SUGGESTIONS = [
   'Có thể mua bảo hiểm cho người thân không?',
 ]
 
-export default function Sidebar({ onSelectQuestion, disabled, isOpen, onClose }) {
+export default function Sidebar({ isOpen, onClose }) {
   useEffect(() => {
     if (!isOpen) return
     document.body.style.overflow = 'hidden'

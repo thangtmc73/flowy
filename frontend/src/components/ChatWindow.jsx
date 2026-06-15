@@ -3,7 +3,7 @@ import MessageBubble from './MessageBubble'
 import TypingIndicator from './TypingIndicator'
 import zlpLogoSquare from '../assets/zlp_logo_square.webp'
 
-export default function ChatWindow({ messages, loading, onSelectQuestion, disabled }) {
+export default function ChatWindow({ messages, loading }) {
   const bottomRef = useRef(null)
 
   useEffect(() => {
