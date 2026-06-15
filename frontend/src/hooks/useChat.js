@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef } from 'react'
 import { sendMessage, generateId, getOrCreateUserId } from '../utils/api'
-import { unlockAudioSync, playSendSound, playReceiveSound, playThinkingSound } from '../utils/chatSounds'
+import { unlockAudioSync, playSendFeedback, playReceiveFeedback, playThinkingFeedback, isChatFeedbackEnabled, setChatFeedbackEnabled, previewChatFeedback } from '../utils/chatSounds'
 
 const INITIAL_WELCOME = {
   id: 'welcome',
@@ -25,7 +25,7 @@ export function useChat() {
     if (!text.trim() || loading) return
 
     unlockAudioSync()
-    playSendSound()
+    playSendFeedback()
 
     const userMsg = {
       id: generateId(),
@@ -38,7 +38,7 @@ export function useChat() {
 
     setMessages((prev) => [...prev, userMsg])
     setLoading(true)
-    setTimeout(() => playThinkingSound(), 160)
+    setTimeout(() => playThinkingFeedback(), 160)
     setError(null)
 
     try {
@@ -56,7 +56,7 @@ export function useChat() {
         timestamp: new Date().toISOString(),
       }
       setMessages((prev) => [...prev, agentMsg])
-      playReceiveSound()
+      playReceiveFeedback()
     } catch (err) {
       setError(err.message)
       const errMsg = {
@@ -68,7 +68,7 @@ export function useChat() {
         isError: true,
       }
       setMessages((prev) => [...prev, errMsg])
-      playReceiveSound()
+      playReceiveFeedback()
     } finally {
       setLoading(false)
     }

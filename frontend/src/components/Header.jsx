@@ -1,23 +1,17 @@
 import { useCallback, useState } from 'react'
-import { unlockAudioSync, playSendSound } from '../utils/chatSounds'
-
-function getInitialSoundOn() {
-  if (typeof window === 'undefined') return true
-  return localStorage.getItem('flowy-chat-sounds') !== 'off'
-}
+import { isChatFeedbackEnabled, setChatFeedbackEnabled, previewChatFeedback } from '../utils/chatSounds'
 
 export default function Header({ onReset, onMenuClick }) {
-  const [soundOn, setSoundOn] = useState(getInitialSoundOn)
+  const [feedbackOn, setFeedbackOn] = useState(isChatFeedbackEnabled)
 
-  const toggleSound = useCallback(() => {
-    const next = !soundOn
-    setSoundOn(next)
-    localStorage.setItem('flowy-chat-sounds', next ? 'on' : 'off')
+  const toggleFeedback = useCallback(() => {
+    const next = !feedbackOn
+    setFeedbackOn(next)
+    setChatFeedbackEnabled(next)
     if (next) {
-      unlockAudioSync()
-      playSendSound()
+      previewChatFeedback()
     }
-  }, [soundOn])
+  }, [feedbackOn])
 
   return (
     <header className="bg-white px-4 sm:px-6 lg:px-8 py-3 sm:py-3.5 flex items-center justify-between gap-2 flex-shrink-0 shadow-sm">
@@ -35,15 +29,15 @@ export default function Header({ onReset, onMenuClick }) {
       <div className="ml-auto flex items-center gap-2">
         <button
           type="button"
-          onClick={toggleSound}
-          title={soundOn ? 'Tắt âm thanh' : 'Bật âm thanh'}
-          aria-label={soundOn ? 'Tắt âm thanh' : 'Bật âm thanh'}
-          aria-pressed={soundOn}
+          onClick={toggleFeedback}
+          title={feedbackOn ? 'Tắt âm thanh & rung' : 'Bật âm thanh & rung'}
+          aria-label={feedbackOn ? 'Tắt âm thanh & rung' : 'Bật âm thanh & rung'}
+          aria-pressed={feedbackOn}
           className={`cursor-pointer w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-brand/30 ${
-            soundOn ? 'bg-brand-light text-brand hover:bg-brand/15' : 'bg-slate-50 text-slate-400 hover:bg-slate-100'
+            feedbackOn ? 'bg-brand-light text-brand hover:bg-brand/15' : 'bg-slate-50 text-slate-400 hover:bg-slate-100'
           }`}
         >
-          {soundOn ? (
+          {feedbackOn ? (
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072M17.95 6.05a8 8 0 010 11.9M6 10H4a1 1 0 00-1 1v2a1 1 0 001 1h2l4 4V6L6 10z" />
             </svg>

@@ -2,6 +2,9 @@ let audioCtx = null
 let masterGain = null
 let initDone = false
 
+const STORAGE_KEY = 'flowy-chat-feedback'
+const LEGACY_STORAGE_KEY = 'flowy-chat-sounds'
+
 const SEND_TONE = { frequency: 660, duration: 0.14, type: 'sine', volume: 0.28, attack: 0.008, decay: 0.1 }
 const RECEIVE_TONE_1 = { frequency: 523, duration: 0.1, type: 'sine', volume: 0.25, attack: 0.006, decay: 0.08 }
 const RECEIVE_TONE_2 = { frequency: 784, duration: 0.2, type: 'sine', volume: 0.28, attack: 0.008, decay: 0.15 }
@@ -19,9 +22,31 @@ function getAudioContext() {
   return audioCtx
 }
 
-export function canPlayChatSounds() {
+/** Shared toggle for sound + haptic feedback. */
+export function isChatFeedbackEnabled() {
   if (typeof window === 'undefined') return false
-  return localStorage.getItem('flowy-chat-sounds') !== 'off'
+
+  const current = localStorage.getItem(STORAGE_KEY)
+  if (current !== null) return current !== 'off'
+
+  // Backward compatibility with older sound-only setting
+  return localStorage.getItem(LEGACY_STORAGE_KEY) !== 'off'
+}
+
+export function setChatFeedbackEnabled(enabled) {
+  localStorage.setItem(STORAGE_KEY, enabled ? 'on' : 'off')
+}
+
+export function canPlayChatSounds() {
+  return isChatFeedbackEnabled()
+}
+
+function canVibrate() {
+  return (
+    isChatFeedbackEnabled() &&
+    typeof navigator !== 'undefined' &&
+    typeof navigator.vibrate === 'function'
+  )
 }
 
 function playToneOnCtx(ctx, { frequency, duration, type, volume, attack, decay }) {
@@ -58,7 +83,6 @@ function runWithAudio(play) {
     }
   }
 
-  // resume() sync trong gesture, rồi phát ngay — không chờ promise
   if (ctx.state === 'suspended') {
     void ctx.resume()
   }
@@ -66,7 +90,15 @@ function runWithAudio(play) {
   start()
 }
 
-/** Unlock audio — gọi trên mọi tương tác người dùng. */
+function vibrate(pattern) {
+  if (!canVibrate()) return
+  try {
+    navigator.vibrate(pattern)
+  } catch {
+    // Some browsers block vibration outside user gestures
+  }
+}
+
 export function unlockAudioSync() {
   if (!canPlayChatSounds()) return
 
@@ -101,4 +133,35 @@ export function playReceiveSound() {
 
 export function playThinkingSound() {
   runWithAudio(THINKING_TONE)
+}
+
+export function playSendHaptic() {
+  vibrate(10)
+}
+
+export function playReceiveHaptic() {
+  vibrate([12, 40, 14])
+}
+
+/** Sound (all devices) + haptic (mobile). */
+export function playSendFeedback() {
+  playSendSound()
+  playSendHaptic()
+}
+
+/** Sound (all devices) + haptic (mobile). */
+export function playReceiveFeedback() {
+  playReceiveSound()
+  playReceiveHaptic()
+}
+
+/** Sound only — haptic while waiting feels noisy on mobile. */
+export function playThinkingFeedback() {
+  playThinkingSound()
+}
+
+/** Preview when user re-enables feedback. */
+export function previewChatFeedback() {
+  unlockAudioSync()
+  playSendFeedback()
 }
