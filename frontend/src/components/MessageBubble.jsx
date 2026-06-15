@@ -1,72 +1,6 @@
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import zlpLogoSquare from '../assets/zlp_logo_square.webp'
-
-function parseBoldText(content) {
-  const parts = []
-  let partKey = 0
-  const boldRegex = /\*\*(.*?)\*\*/g
-  let lastIndex = 0
-  let match
-
-  while ((match = boldRegex.exec(content)) !== null) {
-    if (match.index > lastIndex) {
-      parts.push(<span key={partKey++}>{content.slice(lastIndex, match.index)}</span>)
-    }
-    parts.push(<strong key={partKey++} className="font-semibold">{match[1]}</strong>)
-    lastIndex = boldRegex.lastIndex
-  }
-  
-  if (lastIndex < content.length) {
-    parts.push(<span key={partKey}>{content.slice(lastIndex)}</span>)
-  }
-
-  return parts.length > 0 ? parts : [content]
-}
-
-function formatContent(text) {
-  const lines = text.split('\n')
-  const elements = []
-  let key = 0
-
-  for (const line of lines) {
-    if (line.trim() === '') {
-      elements.push(<div key={key++} className="h-2" />)
-      continue
-    }
-
-    const headerMatch = line.match(/^(#{1,3})\s+(.+)$/)
-    if (headerMatch) {
-      const level = headerMatch[1].length
-      const text = headerMatch[2]
-      const className = level === 1 
-        ? 'text-xl font-bold text-slate-900 mt-4 mb-2'
-        : level === 2
-        ? 'text-lg font-semibold text-slate-800 mt-3 mb-1.5'
-        : 'text-base font-semibold text-slate-800 mt-2 mb-1'
-      
-      elements.push(
-        <div key={key++} className={className}>{parseBoldText(text)}</div>
-      )
-      continue
-    }
-
-    const isBullet = line.trim().startsWith('•') || line.trim().startsWith('-') || line.trim().startsWith('*')
-    const content = isBullet ? line.replace(/^[\s•\-*]+/, '') : line
-    const parts = parseBoldText(content)
-
-    if (isBullet) {
-      elements.push(
-        <div key={key++} className="flex gap-2.5 items-start">
-          <span className="text-brand mt-1 shrink-0 font-bold">•</span>
-          <span>{parts}</span>
-        </div>
-      )
-    } else {
-      elements.push(<p key={key++} className="leading-relaxed">{parts}</p>)
-    }
-  }
-
-  return elements
-}
 
 function formatTime(iso) {
   try {
@@ -108,13 +42,52 @@ export default function MessageBubble({ message }) {
 
       <div className="max-w-[88%] sm:max-w-[80%] lg:max-w-[75%] min-w-0">
         <div
-          className={`rounded-2xl rounded-tl-md px-4 sm:px-5 py-3 sm:py-4 shadow-sm text-sm sm:text-[15px] leading-relaxed space-y-1.5 wrap-break-word ${
+          className={`rounded-2xl rounded-tl-md px-4 sm:px-5 py-3 sm:py-4 shadow-sm text-sm sm:text-[15px] wrap-break-word ${
             message.isError
               ? 'bg-red-50 border border-red-200 text-red-700'
               : 'bg-white border border-slate-200 text-slate-800'
           }`}
         >
-          {formatContent(message.content)}
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            className="markdown-content"
+            components={{
+              // Custom styling for markdown elements
+              h1: ({node, ...props}) => <h1 className="text-xl font-bold text-slate-900 mt-4 mb-2 first:mt-0" {...props} />,
+              h2: ({node, ...props}) => <h2 className="text-lg font-semibold text-slate-800 mt-3 mb-1.5 first:mt-0" {...props} />,
+              h3: ({node, ...props}) => <h3 className="text-base font-semibold text-slate-800 mt-2 mb-1 first:mt-0" {...props} />,
+              p: ({node, ...props}) => <p className="leading-relaxed mb-2 last:mb-0" {...props} />,
+              ul: ({node, ...props}) => <ul className="space-y-1.5 mb-2 list-none" {...props} />,
+              ol: ({node, ...props}) => <ol className="space-y-1.5 mb-2 list-decimal list-inside" {...props} />,
+              li: ({node, ordered, ...props}) => (
+                ordered ? (
+                  <li className="ml-4" {...props} />
+                ) : (
+                  <li className="flex gap-2 items-start">
+                    <span className="text-brand shrink-0 font-bold">•</span>
+                    <span className="flex-1">{props.children}</span>
+                  </li>
+                )
+              ),
+              table: ({node, ...props}) => (
+                <div className="overflow-x-auto my-3">
+                  <table className="min-w-full divide-y divide-slate-200 border border-slate-200 rounded-lg" {...props} />
+                </div>
+              ),
+              thead: ({node, ...props}) => <thead className="bg-slate-50" {...props} />,
+              th: ({node, ...props}) => <th className="px-3 py-2 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider" {...props} />,
+              td: ({node, ...props}) => <td className="px-3 py-2 text-sm text-slate-800 border-t border-slate-200" {...props} />,
+              strong: ({node, ...props}) => <strong className="font-semibold text-slate-900" {...props} />,
+              em: ({node, ...props}) => <em className="italic" {...props} />,
+              code: ({node, inline, ...props}) => 
+                inline 
+                  ? <code className="bg-slate-100 px-1.5 py-0.5 rounded text-xs font-mono" {...props} />
+                  : <code className="block bg-slate-100 px-3 py-2 rounded-lg text-xs font-mono overflow-x-auto my-2" {...props} />,
+              a: ({node, ...props}) => <a className="text-brand hover:underline" {...props} />,
+            }}
+          >
+            {message.content}
+          </ReactMarkdown>
         </div>
         <p className="text-xs text-slate-400 mt-1.5 pl-1">{formatTime(message.timestamp)}</p>
       </div>

@@ -581,117 +581,54 @@ agent = create_agent(
         "- Sử dụng 'compare_insurance_products' để so sánh với sản phẩm trên Zalopay\n"
         "- Đưa ra nhận xét khách quan về ưu/nhược điểm\n"
         "- Gợi ý sản phẩm tương tự hoặc tốt hơn trên Zalopay\n\n"
-        "QUY TẮC FORMAT OUTPUT (RẤT QUAN TRỌNG):\n"
-        "- KHÔNG tự thêm markdown syntax (**, *, _, ~) vào nội dung từ FAQ\n"
-        "- Trả lời CHÍNH XÁC theo nội dung trong FAQ, giữ nguyên format có sẵn\n"
-        "- Nếu FAQ có HTML table (<table>), giữ nguyên không thay đổi\n"
-        "- Nếu FAQ có bullet points (•, -), giữ nguyên không thay đổi\n"
-        "- Nếu FAQ có emoji và icon, giữ nguyên không thay đổi\n"
-        "- Chỉ tóm tắt hoặc diễn giải KHI THẬT SỰ CẦN THIẾT, ưu tiên trích dẫn nguyên văn\n"
-        "- Khi cần nhấn mạnh, dùng emoji thay vì markdown (✓, ✗, 💡, ⚠️, 📌)\n\n"
+        "QUY TẮC FORMAT OUTPUT (MARKDOWN):\n"
+        "- LUÔN trả lời bằng Markdown chuẩn\n"
+        "- Dùng **bold** để nhấn mạnh thông tin quan trọng\n"
+        "- Dùng ### cho headers (tiêu đề phần)\n"
+        "- Dùng - hoặc • cho bullet lists\n"
+        "- Dùng emoji để làm nổi bật (✓, ✗, 💡, ⚠️, 📌, 🔹, 💼, 🏥, 🛡️, 💳)\n"
+        "- Dùng markdown tables khi cần so sánh:\n"
+        "  | Tiêu chí | Sản phẩm A | Sản phẩm B |\n"
+        "  |----------|------------|------------|\n"
+        "  | Chi phí  | 100K       | 150K       |\n\n"
+        "FORMAT CHO CÂU HỎI ĐƠN LẺ (1 sản phẩm):\n"
+        "- Trích dẫn nguyên văn từ FAQ nếu có HTML table, giữ nguyên HTML\n"
+        "- Hoặc convert sang markdown table để dễ đọc hơn\n"
+        "- Giữ nguyên bullets và format có sẵn\n\n"
         "FORMAT CHO CÂU HỎI TỔNG HỢP (nhiều sản phẩm):\n"
-        "Khi trả lời về NHIỀU sản phẩm bảo hiểm, BẮT BUỘC dùng format phân cấp rõ ràng:\n\n"
-        "🔹 TÊN SẢN PHẨM 1 (Đối tác):\n"
-        "   • Chi phí: ...\n"
-        "   • Quyền lợi: ...\n"
-        "   • Đặc điểm: ...\n\n"
-        "🔹 TÊN SẢN PHẨM 2 (Đối tác):\n"
-        "   • Chi phí: ...\n"
-        "   • Quyền lợi: ...\n"
-        "   • Đặc điểm: ...\n\n"
-        "Lưu ý: Các thông tin chi tiết PHẢI được indent với 3 SPACES và bullet point (•)\n\n"
+        "Dùng format phân cấp rõ ràng:\n\n"
+        "🔹 **TÊN SẢN PHẨM 1** (Đối tác)\n"
+        "- **Chi phí:** ...\n"
+        "- **Quyền lợi:** ...\n"
+        "- **Đặc điểm:** ...\n\n"
+        "🔹 **TÊN SẢN PHẨM 2** (Đối tác)\n"
+        "- **Chi phí:** ...\n"
+        "- **Quyền lợi:** ...\n"
+        "- **Đặc điểm:** ...\n\n"
         "FORMAT CHO SO SÁNH SẢN PHẨM:\n"
-        "Khi so sánh sản phẩm upload với sản phẩm Zalopay:\n"
-        "1. Tóm tắt thông tin sản phẩm upload\n"
-        "2. Liệt kê các sản phẩm tương tự trên Zalopay\n"
-        "3. So sánh chi tiết: Chi phí, Quyền lợi, Điều kiện\n"
-        "4. Đưa ra nhận xét khách quan và gợi ý\n\n"
-        "VÍ DỤ FORMAT ĐÚNG:\n\n"
-        "Câu hỏi đơn lẻ về 1 sản phẩm:\n"
-        "→ Trích nguyên văn từ FAQ, giữ nguyên format HTML table/bullets\n\n"
-        "Câu hỏi tổng hợp về nhiều sản phẩm:\n"
-        "→ Dùng format phân cấp với icon 🔹 và indent 3 spaces\n\n"
-        "So sánh sản phẩm:\n"
-        "→ Dùng format rõ ràng với sections và bullet points\n\n"
+        "### So sánh: [Tên sản phẩm]\n\n"
+        "**Sản phẩm upload:**\n"
+        "- Đối tác: ...\n"
+        "- Chi phí: ...\n"
+        "- Quyền lợi: ...\n\n"
+        "**Sản phẩm tương tự trên Zalopay:**\n\n"
+        "| Tiêu chí | Sản phẩm Upload | Zalopay - A | Zalopay - B |\n"
+        "|----|----|----|----|\n"
+        "| Chi phí | ... | ... | ... |\n"
+        "| Quyền lợi | ... | ... | ... |\n\n"
+        "**Nhận xét:**\n"
+        "- Ưu điểm: ...\n"
+        "- Nhược điểm: ...\n"
+        "- Gợi ý: ...\n\n"
         "Lưu ý:\n"
         "- Luôn trả lời bằng tiếng Việt\n"
         "- Thân thiện, nhiệt tình, chuyên nghiệp\n"
         "- Nếu người dùng chào hỏi, hãy giới thiệu bản thân và dịch vụ\n"
-        "- Khi so sánh giữa các đối tác, trình bày khách quan, không thiên vị"
+        "- Khi so sánh giữa các đối tác, trình bày khách quan, không thiên vị\n"
+        "- KHÔNG bao giờ tự thêm markdown syntax không cần thiết"
     ),
     checkpointer=checkpointer,
 )
-
-
-def format_response(text: str) -> str:
-    """
-    Post-process response to ensure consistent formatting.
-    - Preserve HTML tables
-    - Preserve bullet points and emojis
-    - Clean up extra whitespace
-    - Auto-format multi-product responses with proper indentation
-    """
-    import re
-    
-    # Preserve existing line breaks and structure
-    lines = text.split('\n')
-    formatted_lines = []
-    in_product_section = False
-    
-    for i, line in enumerate(lines):
-        # Skip empty lines (but keep them)
-        if not line.strip():
-            formatted_lines.append(line)
-            in_product_section = False
-            continue
-        
-        # Don't modify HTML table lines
-        if any(tag in line for tag in ['<table>', '</table>', '<tr>', '</tr>', '<th>', '</th>', '<td>', '</td>']):
-            formatted_lines.append(line)
-            continue
-        
-        # Detect product headers (usually start with emoji or product names)
-        product_indicators = ['🔹', '💼', '🏥', '🛡️', '💳', 'Bảo hiểm', 'Gói']
-        is_product_header = any(indicator in line for indicator in product_indicators) and (
-            'VBI' in line or 'MSIG' in line or 'GIC' in line or 
-            'Cyber' in line or 'Sức khỏe' in line or 'Credit' in line
-        )
-        
-        if is_product_header:
-            # Product header - no indent
-            formatted_lines.append(line)
-            in_product_section = True
-            continue
-        
-        # If we're in a product section and line starts with bullet/dash without proper indent
-        if in_product_section and re.match(r'^[•\-\*]\s', line):
-            # Add proper indent (3 spaces) if not already indented
-            if not line.startswith('   '):
-                formatted_lines.append('   ' + line)
-            else:
-                formatted_lines.append(line)
-            continue
-        
-        # If line doesn't start with bullet but is clearly a detail line (Chi phí, Quyền lợi, etc.)
-        detail_keywords = ['Chi phí', 'Quyền lợi', 'Đặc điểm', 'Thời hạn', 'Độ tuổi', 'Phí bảo hiểm']
-        if in_product_section and any(keyword in line for keyword in detail_keywords):
-            # Convert to bullet point with indent if not already formatted
-            if not re.match(r'^\s+[•\-\*]', line):
-                formatted_lines.append('   • ' + line.strip())
-            else:
-                formatted_lines.append(line)
-            continue
-        
-        # Don't modify lines that already have bullet points or numbered lists
-        if re.match(r'^\s*[•\-\*\d\.]\s', line):
-            formatted_lines.append(line)
-            continue
-        
-        # Clean up excessive whitespace but preserve intentional spacing
-        cleaned = re.sub(r'\s+', ' ', line).strip()
-        formatted_lines.append(cleaned)
-    
-    return '\n'.join(formatted_lines)
 
 
 @app.entrypoint
@@ -781,7 +718,7 @@ Sử dụng tool 'compare_insurance_products' để đưa ra so sánh chi tiết
 
     return {
         "status": "success",
-        "response": format_response(ai_message.content),
+        "response": ai_message.content,
         "timestamp": datetime.now().isoformat(),
     }
 
