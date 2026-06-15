@@ -111,10 +111,10 @@ export default function FileUpload({ onFileSelect, disabled }) {
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
           className={`
-            relative border-2 border-dashed rounded-xl p-4 transition-all
+            relative border-2 border-dashed rounded-2xl p-5 transition-all
             ${isDragging 
               ? 'border-brand bg-brand-light/50' 
-              : 'border-slate-300 bg-slate-50 hover:border-slate-400'
+              : 'border-slate-300 bg-white hover:border-slate-400'
             }
             ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
           `}
@@ -130,12 +130,12 @@ export default function FileUpload({ onFileSelect, disabled }) {
           />
           
           <div className="flex flex-col items-center gap-2 text-center">
-            <svg className="w-10 h-10 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-10 h-10 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
             </svg>
             <div>
               <p className="text-sm font-medium text-slate-700">
-                Kéo thả file hoặc <span className="text-brand">chọn file</span>
+                Kéo thả file hoặc <span className="text-brand font-semibold">chọn file</span>
               </p>
               <p className="text-xs text-slate-500 mt-1">
                 PDF, JSON, TXT, CSV, Excel, Word (tối đa 10MB)
@@ -144,9 +144,9 @@ export default function FileUpload({ onFileSelect, disabled }) {
           </div>
         </div>
       ) : (
-        <div className="flex items-center gap-3 p-3 bg-brand-light rounded-xl border border-brand/30">
-          <div className="shrink-0 w-10 h-10 bg-brand/10 rounded-lg flex items-center justify-center">
-            <svg className="w-5 h-5 text-brand" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div className="flex items-center gap-3 p-4 bg-brand-light rounded-2xl shadow-sm">
+          <div className="shrink-0 w-10 h-10 bg-brand/10 rounded-full flex items-center justify-center">
+            <svg className="w-5 h-5 text-brand" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
           </div>
@@ -163,10 +163,10 @@ export default function FileUpload({ onFileSelect, disabled }) {
           <button
             onClick={handleRemoveFile}
             disabled={disabled}
-            className="shrink-0 p-1.5 hover:bg-red-100 rounded-lg transition-colors group"
+            className="cursor-pointer shrink-0 p-1.5 hover:bg-red-100 rounded-lg transition-colors duration-150 group focus:outline-none focus:ring-2 focus:ring-red-300"
             aria-label="Xóa file"
           >
-            <svg className="w-4 h-4 text-slate-400 group-hover:text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-4 h-4 text-slate-400 group-hover:text-red-600 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>

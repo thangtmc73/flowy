@@ -18,7 +18,7 @@ export default function App() {
   const showSuggestions = messages.length === 1 && messages[0].id === 'welcome'
 
   return (
-    <div className="flex h-dvh min-h-dvh bg-slate-100 overflow-hidden">
+    <div className="flex h-dvh min-h-dvh bg-slate-50 overflow-hidden">
       <Sidebar
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
