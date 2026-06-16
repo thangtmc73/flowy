@@ -10,19 +10,96 @@ A multi-partner insurance advisory agent with a chat interface, file upload, and
 
 TramNTQ, ThangTM2, TranVHD
 
-## Supported LLMs (Organizer-Provided)
+## LLM Models
 
-The following models are enabled on the GreenNode AI Platform for Claw-a-thon participants. Set `LLM_MODEL` in `.env` to the model path below.
+Flowy uses **two models** from the same GreenNode AI Platform API key (`LLM_BASE_URL` + `LLM_API_KEY`). Each model handles a different part of the pipeline.
 
-| Model | Path | Notes |
-|-------|------|-------|
-| Qwen 3.5 27B | `qwen/qwen3-5-27b` | Reasoning mode; higher latency |
-| Gemma 4 31B-IT | `google/gemma-4-31b-it` | Recommended for low-latency FAQ replies |
-| MiniMax M2.5 | `minimax/minimax-m2.5` | General-purpose alternative |
+### Models in use (default config)
+
+| Role | Env variable | Default model | Path | Used for |
+|------|--------------|---------------|------|----------|
+| **Chat agent** | `LLM_MODEL` | Gemma 4 31B-IT | `google/gemma-4-31b-it` | FAQ replies, tool-calling, product comparison answers, multi-turn chat |
+| **Document analysis** | `LLM_MODEL_ANALYSIS` | MiniMax M2.5 | `minimax/minimax-m2.5` | Extract structured JSON from uploaded files and external links (when input is unstructured text) |
+
+Both models share the same OpenAI-compatible endpoint. Configure in `.env`:
+
+```env
+LLM_MODEL=google/gemma-4-31b-it
+LLM_MODEL_ANALYSIS=minimax/minimax-m2.5
+```
 
 Get your API key and base URL from the [Model Browser](https://aiplatform.console.vngcloud.vn/models).
 
-**Dual-model routing:** Flowy uses two models from the same API key — MiniMax M2.5 extracts structured data from uploaded files and external links; Gemma 4 31B-IT handles chat replies and FAQ. Configure via `LLM_MODEL` (chat) and `LLM_MODEL_ANALYSIS` (file/link parsing).
+### Platform alternatives (optional)
+
+These models are available on the GreenNode AI Platform but **not used by default** in Flowy:
+
+| Model | Path | When to consider |
+|-------|------|------------------|
+| Qwen 3.5 27B | `qwen/qwen3-5-27b` | Replace `LLM_MODEL` if you need stronger reasoning for complex FAQ (higher latency) |
+
+> **Note:** Keep MiniMax (or a similar model) as `LLM_MODEL_ANALYSIS` for document parsing. Qwen is not recommended for the extraction step.
+
+### Request flow & model interaction
+
+#### Flow 1 — FAQ chat (most requests)
+
+No analysis model involved. Gemma handles the full conversation.
+
+```mermaid
+flowchart LR
+    User([User message]) --> API[AgentBase API]
+    API --> Gemma["Gemma 4 31B-IT<br/>(LLM_MODEL)"]
+    Gemma --> Tools{Tools?}
+    Tools -->|search_faq_docs| KB[(Knowledge base)]
+    Tools -->|remember / recall| Mem[(AgentBase Memory)]
+    Tools -->|compare_insurance_products| KB
+    KB --> Gemma
+    Mem --> Gemma
+    Gemma --> Reply([Reply to user])
+```
+
+#### Flow 2 — File upload or external link
+
+Code parses the document first. MiniMax runs only when structured extraction via LLM is needed.
+
+```mermaid
+flowchart TD
+    User([User uploads file<br/>or sends URL]) --> API[AgentBase API]
+
+    API --> Parse{Parse input<br/>no LLM}
+    Parse -->|PDF| PDF[pypdf]
+    Parse -->|DOCX| DOCX[python-docx]
+    Parse -->|URL| Fetch[HTTP fetch + HTML strip]
+    Parse -->|JSON| JSON[Direct field mapping]
+
+    PDF --> Extract{Need LLM<br/>extract?}
+    DOCX --> Extract
+    Fetch --> Extract
+    JSON -->|Skip LLM| Info[(Insurance info JSON)]
+
+    Extract -->|Unstructured text| MiniMax["MiniMax M2.5<br/>(LLM_MODEL_ANALYSIS)"]
+    Extract -->|Cache hit| Info
+    MiniMax --> Info
+
+    Info --> Prompt[Build comparison prompt]
+    Prompt --> Gemma["Gemma 4 31B-IT<br/>(LLM_MODEL)"]
+    Gemma --> Tools[compare_insurance_products<br/>+ search_faq_docs]
+    Tools --> Reply([Comparison reply])
+```
+
+#### Summary
+
+| User action | Code (no LLM) | MiniMax | Gemma |
+|-------------|---------------|---------|-------|
+| Ask FAQ | — | — | ✅ |
+| Upload JSON | ✅ map fields | — | ✅ |
+| Upload PDF / DOCX / TXT | ✅ parse text | ✅ extract JSON | ✅ |
+| Send external link | ✅ fetch page | ✅ extract JSON* | ✅ |
+| Re-send same file/link (same session) | ✅ | — (cached) | ✅ |
+
+\* Skipped when the link returns JSON or cache hits.
+
 
 ## Tech Stack
 
@@ -41,7 +118,7 @@ Get your API key and base URL from the [Model Browser](https://aiplatform.consol
 - **Intelligent Search**: Combines fuzzy matching and LLM tools to find accurate answers
 - **Long-term Memory**: Remembers conversation context and user preferences per user
 - **Product Comparison**: Compare insurance packages across partners
-- **File Upload**: Upload and analyze documents (PDF, JSON, TXT, CSV, Excel, Word)
+- **File Upload**: Upload and analyze documents (PDF, JSON, TXT, CSV, Word .docx)
 - **Vietnamese Support**: Optimized for Vietnamese language queries
 
 ### UI Features
@@ -109,6 +186,7 @@ Edit `.env` with the following values:
 | `LLM_MODEL` | Chat agent model (FAQ, replies) | `google/gemma-4-31b-it` |
 | `LLM_MODEL_ANALYSIS` | File/link extraction model | `minimax/minimax-m2.5` |
 | `LLM_API_KEY` | LLM API key | `sk-xxx` |
+| `EXTRACTION_MAX_CHARS` | Max chars sent to analysis model | `10000` (default) |
 | `FAQ_DATA_PATH` | Path to knowledge base | `knowledge` (default) |
 
 > **Note:** On AgentBase Runtime, IAM and Agent Identity are injected automatically. No manual config is needed inside the container.
@@ -257,7 +335,8 @@ Go to repo **Settings → Secrets and variables → Actions** and add:
 | `MEMORY_ID` | Memory Store ID | [Memory Dashboard](https://aiplatform.console.vngcloud.vn/memory) |
 | `MEMORY_STRATEGY_ID` | Memory Strategy ID | Memory Dashboard |
 | `LLM_BASE_URL` | LLM API Base URL | GreenNode AI Platform |
-| `LLM_MODEL` | Model path | e.g. `google/gemma-4-31b-it` |
+| `LLM_MODEL` | Chat model (`LLM_MODEL`) | e.g. `google/gemma-4-31b-it` |
+| `LLM_MODEL_ANALYSIS` | Analysis model (`LLM_MODEL_ANALYSIS`) | e.g. `minimax/minimax-m2.5` |
 | `LLM_API_KEY` | LLM API Key | [Model Browser](https://aiplatform.console.vngcloud.vn/models) |
 
 ### Option 2: Manual Deployment
@@ -435,7 +514,7 @@ Check user long-term memory via the AgentBase Memory Dashboard:
 
 - **Solution**:
   - Check file size < 10MB
-  - Verify file type is supported (PDF, JSON, TXT, CSV, Excel, Word)
+  - Verify file type is supported (PDF, JSON, TXT, CSV, Word .docx)
   - Check frontend `VITE_API_URL` points to the correct backend
 
 **Issue**: Memory not working
