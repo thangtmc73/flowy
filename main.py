@@ -11,6 +11,7 @@ import ipaddress
 import socket
 from datetime import datetime
 from difflib import SequenceMatcher
+from html import unescape
 from html.parser import HTMLParser
 from io import BytesIO
 from typing import Dict, List, Any, Optional, Tuple
@@ -307,6 +308,12 @@ _INSURANCE_KEYWORDS = (
     "mức trách nhiệm",
     "hợp đồng",
     "thụ hưởng",
+    "tuổi",
+    "độ tuổi",
+    "thời gian chờ",
+    "faq",
+    "hỏi",
+    "đáp",
 )
 
 _extraction_cache: Dict[str, Dict[str, Any]] = {}
@@ -359,6 +366,216 @@ def _strip_latex_artifacts(text: str) -> str:
     cleaned = re.sub(r"[ \t]+", " ", cleaned)
     cleaned = re.sub(r"\n{3,}", "\n\n", cleaned)
     return cleaned.strip()
+
+
+_JSON_STRING_VALUE = r"((?:\\.|[^\"\\])*)"
+_EMBEDDED_QA_PAIR_RES = (
+    re.compile(
+        rf'"title"\s*:\s*"{_JSON_STRING_VALUE}"\s*,\s*"description"\s*:\s*"{_JSON_STRING_VALUE}"',
+        re.I | re.S,
+    ),
+    re.compile(
+        rf'"(?:question|name)"\s*:\s*"{_JSON_STRING_VALUE}"\s*,\s*"(?:answer|text)"\s*:\s*"{_JSON_STRING_VALUE}"',
+        re.I | re.S,
+    ),
+    re.compile(
+        rf'"(?:answer|text)"\s*:\s*"{_JSON_STRING_VALUE}"\s*,\s*"(?:question|name)"\s*:\s*"{_JSON_STRING_VALUE}"',
+        re.I | re.S,
+    ),
+)
+_COLLAPSED_PANEL_RES = (
+    re.compile(
+        r"<div[^>]*\shidden(?:=[^>\s]*)?[^>]*>(.*?)</div>",
+        re.I | re.S,
+    ),
+    re.compile(
+        r'<div[^>]*data-state="closed"[^>]*>(.*?)</div>',
+        re.I | re.S,
+    ),
+    re.compile(
+        r'<div[^>]*class="[^"]*(?:accordion|collapse|collapsed|d-none)[^"]*"[^>]*>(.*?)</div>',
+        re.I | re.S,
+    ),
+)
+_DETAILS_BLOCK_RE = re.compile(
+    r"<details[^>]*>(.*?)</details>",
+    re.I | re.S,
+)
+_DETAILS_SUMMARY_RE = re.compile(
+    r"<summary[^>]*>(.*?)</summary>",
+    re.I | re.S,
+)
+_JSON_LD_SCRIPT_RE = re.compile(
+    r'<script[^>]*type=["\']application/ld\+json["\'][^>]*>(.*?)</script>',
+    re.I | re.S,
+)
+
+
+def _decode_json_string(raw: str) -> str:
+    """Decode escaped JSON string literals found in embedded page payloads."""
+    if not raw:
+        return ""
+    try:
+        return json.loads(f'"{raw}"')
+    except json.JSONDecodeError:
+        return (
+            raw.replace("\\n", "\n")
+            .replace('\\"', '"')
+            .replace("\\/", "/")
+            .replace("\\u0026", "&")
+        )
+
+
+def _strip_html_tags(text: str) -> str:
+    """Convert HTML-ish fragments to plain text."""
+    cleaned = unescape(text or "")
+    cleaned = re.sub(r"<(script|style)[^>]*>.*?</\1>", " ", cleaned, flags=re.I | re.S)
+    cleaned = re.sub(r"<[^>]+>", " ", cleaned)
+    cleaned = re.sub(r"\s+", " ", cleaned)
+    return cleaned.strip()
+
+
+def _normalize_faq_text(text: str) -> str:
+    return _strip_html_tags(_decode_json_string(text))
+
+
+def _format_faq_block(question: str, answer: str) -> str:
+    question_text = _normalize_faq_text(question)
+    answer_text = _normalize_faq_text(answer)
+    if not question_text or not answer_text:
+        return ""
+    return f"Hỏi: {question_text}\nĐáp: {answer_text}"
+
+
+def _walk_json_for_faq_pairs(node: Any, out: List[Tuple[str, str]]) -> None:
+    """Collect FAQ-like question/answer pairs from nested JSON objects."""
+    if isinstance(node, dict):
+        question = node.get("name") or node.get("question") or node.get("title")
+        answer_node = node.get("acceptedAnswer") or node.get("answer") or node.get("description")
+        answer: Optional[str] = None
+        if isinstance(answer_node, dict):
+            answer = answer_node.get("text") or answer_node.get("description")
+        elif isinstance(answer_node, str):
+            answer = answer_node
+
+        if isinstance(question, str) and isinstance(answer, str):
+            block = _format_faq_block(question, answer)
+            if block:
+                out.append((question, answer))
+
+        for value in node.values():
+            _walk_json_for_faq_pairs(value, out)
+    elif isinstance(node, list):
+        for item in node:
+            _walk_json_for_faq_pairs(item, out)
+
+
+def _extract_json_ld_faq_blocks(html: str) -> List[str]:
+    blocks: List[str] = []
+    seen = set()
+    for match in _JSON_LD_SCRIPT_RE.finditer(html):
+        payload = match.group(1).strip()
+        if not payload:
+            continue
+        try:
+            parsed = json.loads(payload)
+        except json.JSONDecodeError:
+            continue
+
+        pairs: List[Tuple[str, str]] = []
+        _walk_json_for_faq_pairs(parsed, pairs)
+        for question, answer in pairs:
+            block = _format_faq_block(question, answer)
+            if block and block not in seen:
+                seen.add(block)
+                blocks.append(block)
+    return blocks
+
+
+def _extract_embedded_json_faq_blocks(html: str) -> List[str]:
+    """Extract FAQ pairs embedded in JS/SSR payloads (e.g. Next.js title/description)."""
+    blocks: List[str] = []
+    seen = set()
+    for question_raw, answer_raw in (
+        (m.group(1), m.group(2)) for m in _EMBEDDED_QA_PAIR_RES[0].finditer(html)
+    ):
+        block = _format_faq_block(question_raw, answer_raw)
+        if block and block not in seen:
+            seen.add(block)
+            blocks.append(block)
+
+    for question_raw, answer_raw in (
+        (m.group(1), m.group(2)) for m in _EMBEDDED_QA_PAIR_RES[1].finditer(html)
+    ):
+        block = _format_faq_block(question_raw, answer_raw)
+        if block and block not in seen:
+            seen.add(block)
+            blocks.append(block)
+
+    for answer_raw, question_raw in (
+        (m.group(1), m.group(2)) for m in _EMBEDDED_QA_PAIR_RES[2].finditer(html)
+    ):
+        block = _format_faq_block(question_raw, answer_raw)
+        if block and block not in seen:
+            seen.add(block)
+            blocks.append(block)
+    return blocks
+
+
+def _extract_details_faq_blocks(html: str) -> List[str]:
+    blocks: List[str] = []
+    seen = set()
+    for details_match in _DETAILS_BLOCK_RE.finditer(html):
+        details_html = details_match.group(1)
+        summary_match = _DETAILS_SUMMARY_RE.search(details_html)
+        if not summary_match:
+            continue
+        question = _strip_html_tags(summary_match.group(1))
+        answer_html = details_html[summary_match.end():]
+        answer = _strip_html_tags(answer_html)
+        block = _format_faq_block(question, answer)
+        if block and block not in seen:
+            seen.add(block)
+            blocks.append(block)
+    return blocks
+
+
+def _extract_collapsed_dom_faq_blocks(html: str) -> List[str]:
+    """Extract text kept in hidden/collapsed DOM nodes (non-empty panels only)."""
+    blocks: List[str] = []
+    seen = set()
+    for pattern in _COLLAPSED_PANEL_RES:
+        for match in pattern.finditer(html):
+            panel_html = match.group(1)
+            panel_text = _strip_html_tags(panel_html)
+            if len(panel_text) < 20:
+                continue
+            block = f"Nội dung accordion: {panel_text}"
+            if block not in seen:
+                seen.add(block)
+                blocks.append(block)
+    return blocks
+
+
+def _extract_supplemental_html_text(html: str) -> str:
+    """Recover FAQ text hidden in accordions, collapsed panels, or embedded JSON."""
+    sections: List[str] = []
+    seen = set()
+
+    for extractor in (
+        _extract_embedded_json_faq_blocks,
+        _extract_json_ld_faq_blocks,
+        _extract_details_faq_blocks,
+        _extract_collapsed_dom_faq_blocks,
+    ):
+        for block in extractor(html):
+            if block not in seen:
+                seen.add(block)
+                sections.append(block)
+
+    if not sections:
+        return ""
+    return "=== FAQ (trích từ accordion/JSON nhúng) ===\n" + "\n\n".join(sections)
 
 
 class _HTMLTextExtractor(HTMLParser):
@@ -461,7 +678,12 @@ def _validate_public_http_url(url: str) -> str:
 def _html_to_text(html: str) -> str:
     parser = _HTMLTextExtractor()
     parser.feed(html)
-    return _strip_latex_artifacts(parser.get_text())
+    base_text = parser.get_text()
+    supplemental = _extract_supplemental_html_text(html)
+    combined = base_text
+    if supplemental:
+        combined = f"{base_text}\n\n{supplemental}".strip()
+    return _strip_latex_artifacts(combined)
 
 
 def _decode_response_body(raw: bytes, content_type: str) -> str:
@@ -798,6 +1020,8 @@ Document content:
 Notes:
 - The source may contain LaTeX/math markup ($...$, \\rightarrow, etc.) from PDF or HTML rendering.
 - Ignore LaTeX syntax; extract plain Vietnamese meaning only. Do not copy LaTeX into JSON values.
+- FAQ answers may appear under "=== FAQ (trích từ accordion/JSON nhúng) ===" after expanding collapsed/accordion content from external pages.
+- For age_range, prefer explicit limits from FAQ (e.g. "18 đến 50 tuổi") over marketing copy.
 
 Extract the following information (in Vietnamese):
 - product_name: Tên sản phẩm bảo hiểm
