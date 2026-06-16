@@ -6,6 +6,7 @@ import ChatWindow from './components/ChatWindow'
 import SuggestedQuestions from './components/SuggestedQuestions'
 import QuickReplyButtons from './components/QuickReplyButtons'
 import InputArea from './components/InputArea'
+import Toast from './components/Toast'
 import { useChat } from './hooks/useChat'
 import KnowledgeBrowser from './pages/KnowledgeBrowser'
 import FAQList from './pages/FAQList'
@@ -16,7 +17,7 @@ function normalizePath(path) {
 }
 
 function ChatPage() {
-  const { messages, loading, send, reset } = useChat()
+  const { messages, loading, toast, send, retryLast, clearToast, reset } = useChat()
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   const handleSend = (text) => {
@@ -55,6 +56,14 @@ function ChatPage() {
         )}
 
         <InputArea onSend={handleSend} disabled={loading} />
+
+        <Toast
+          message={toast?.message}
+          type={toast?.type}
+          actionLabel={toast?.type === 'error' ? 'Thử lại' : undefined}
+          onAction={retryLast}
+          onDismiss={clearToast}
+        />
       </div>
     </div>
   )

@@ -16,18 +16,57 @@ function formatTime(iso) {
   }
 }
 
-function MessageTime({ timestamp, align }) {
+function MessageTime({ timestamp }) {
   const time = formatTime(timestamp)
   if (!time) return null
 
   return (
-    <p
-      className={`text-xs text-slate-400 mt-2 tabular-nums ${
-        align === 'right' ? 'text-right pr-2' : 'pl-2'
-      }`}
-    >
+    <span className="text-xs text-slate-500 tabular-nums">
       {time}
-    </p>
+    </span>
+  )
+}
+
+function MessageStatus({ status }) {
+  if (status === 'failed') {
+    return (
+      <span className="message-status-enter text-red-600" title="Gửi thất bại" aria-label="Gửi thất bại">
+        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </span>
+    )
+  }
+
+  if (status === 'delivered') {
+    return (
+      <span className="message-status-enter text-brand" title="Đã nhận phản hồi" aria-label="Đã nhận phản hồi">
+        <svg className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path
+            fillRule="evenodd"
+            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+            clipRule="evenodd"
+          />
+        </svg>
+      </span>
+    )
+  }
+
+  return (
+    <span className="message-status-enter text-brand-muted" title="Đã gửi" aria-label="Đã gửi">
+      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5} aria-hidden="true">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+      </svg>
+    </span>
+  )
+}
+
+function UserMessageMeta({ message }) {
+  return (
+    <div className="flex items-center justify-end gap-1.5 mt-2 pr-1 message-time-enter">
+      <MessageTime timestamp={message.timestamp} />
+      <MessageStatus status={message.status} />
+    </div>
   )
 }
 
@@ -49,7 +88,7 @@ export default function MessageBubble({ message }) {
             )}
             <p className="text-[15px] leading-relaxed whitespace-pre-wrap wrap-break-word">{message.content}</p>
           </div>
-          <MessageTime timestamp={message.timestamp} align="right" />
+          <UserMessageMeta message={message} />
         </div>
       </div>
     )
@@ -65,7 +104,7 @@ export default function MessageBubble({ message }) {
         <div
           className={`rounded-3xl rounded-tl-lg px-5 sm:px-6 py-3.5 sm:py-4 text-[15px] wrap-break-word ${
             message.isError
-              ? 'bg-red-50 text-red-800'
+              ? 'bg-red-50 text-red-800 border border-red-100'
               : 'bg-white text-slate-800 agent-bubble'
           }`}
         >
@@ -109,7 +148,11 @@ export default function MessageBubble({ message }) {
             {message.content}
           </ReactMarkdown>
         </div>
-        <MessageTime timestamp={message.timestamp} align="left" />
+        {formatTime(message.timestamp) && (
+          <p className="text-xs text-slate-400 mt-2 pl-2 tabular-nums message-time-enter">
+            {formatTime(message.timestamp)}
+          </p>
+        )}
       </div>
     </div>
   )

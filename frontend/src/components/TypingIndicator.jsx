@@ -47,7 +47,7 @@ export default function TypingIndicator() {
         aria-live="polite"
         aria-label={`${phrase}...`}
       >
-        <span className="text-sm font-medium text-brand-muted typing-phrase-line">
+        <span className="text-sm font-medium text-brand-muted typing-phrase-line ai-streaming">
           <span
             className={`typing-phrase typing-phrase-shimmer ${fading ? 'typing-phrase-hidden' : 'typing-phrase-visible'}`}
             onTransitionEnd={handlePhraseTransitionEnd}
