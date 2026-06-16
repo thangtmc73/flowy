@@ -42,14 +42,14 @@ export default function TypingIndicator() {
       </div>
 
       <div
-        className="bg-white rounded-3xl rounded-tl-lg px-5 sm:px-6 py-3.5 sm:py-4 thinking-bubble border border-slate-200/80"
+        className="bg-brand-light/70 rounded-3xl rounded-tl-lg px-5 sm:px-6 py-3.5 sm:py-4 thinking-bubble border border-brand/20"
         role="status"
         aria-live="polite"
         aria-label={`${phrase}...`}
       >
-        <span className="text-sm font-medium text-slate-400 typing-phrase-line">
+        <span className="text-sm font-medium text-brand-muted typing-phrase-line">
           <span
-            className={`typing-phrase ${fading ? 'typing-phrase-hidden' : 'typing-phrase-visible'}`}
+            className={`typing-phrase typing-phrase-shimmer ${fading ? 'typing-phrase-hidden' : 'typing-phrase-visible'}`}
             onTransitionEnd={handlePhraseTransitionEnd}
           >
             {phrase}

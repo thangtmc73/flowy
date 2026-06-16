@@ -34,7 +34,7 @@ function ChatPage() {
         onClose={() => setSidebarOpen(false)}
       />
 
-      <div className="flex flex-col flex-1 min-w-0 min-h-0 bg-slate-50">
+      <div className="flex flex-col flex-1 min-w-0 min-h-0 chat-bg">
         <Header onReset={reset} onMenuClick={() => setSidebarOpen(true)} />
 
         <ChatWindow
