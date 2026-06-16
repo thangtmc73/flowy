@@ -1,7 +1,10 @@
 # Stage 1: Build React frontend
 FROM node:24-alpine AS frontend-builder
 ARG VITE_SITE_URL=https://endpoint-5d12d628-f18b-46d6-be03-c1da5d44770a.agentbase-runtime.aiplatform.vngcloud.vn
+# Same-origin production: call /invocations directly (not /api, which is Vite dev-only)
+ARG VITE_API_BASE_URL=
 ENV VITE_SITE_URL=$VITE_SITE_URL
+ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
 WORKDIR /app/frontend
 COPY frontend/package*.json ./
 RUN npm ci
