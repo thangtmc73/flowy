@@ -158,6 +158,30 @@ def similarity_score(str1: str, str2: str) -> float:
     """Calculate similarity between two strings (0-1)"""
     return SequenceMatcher(None, str1.lower(), str2.lower()).ratio()
 
+
+def _tag_match_score(query: str, tags: list) -> float:
+    """Return 0–1 how well query matches any FAQ tag."""
+    q = query.lower().strip()
+    if not q or not tags:
+        return 0.0
+    q_tokens = set(re.findall(r"[\w]+", q, flags=re.UNICODE))
+    best = 0.0
+    for tag in tags:
+        tl = (tag or "").lower().strip()
+        if not tl:
+            continue
+        if tl in q:
+            best = max(best, 1.0)
+        elif tl in q_tokens:
+            best = max(best, 0.95)
+        else:
+            best = max(best, similarity_score(q, tl))
+    return best
+
+
+FAQ_TAG_MATCH_BOOST = 0.2
+
+
 def search_faq_fuzzy(query, threshold=0.4, top_k=3, partner_filter=None, category_filter=None):
     """
     Search FAQ using fuzzy matching with multi-partner support.
@@ -181,7 +205,9 @@ def search_faq_fuzzy(query, threshold=0.4, top_k=3, partner_filter=None, categor
         if category_filter and entry.get("product_category") != category_filter:
             continue
         
-        score = similarity_score(query, entry["question"])
+        text_score = similarity_score(query, entry["question"])
+        tag_score = _tag_match_score(query, entry.get("tags") or [])
+        score = min(1.0, text_score + FAQ_TAG_MATCH_BOOST * tag_score)
         if score >= threshold:
             results.append({
                 **entry,
