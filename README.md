@@ -22,6 +22,8 @@ The following models are enabled on the GreenNode AI Platform for Claw-a-thon pa
 
 Get your API key and base URL from the [Model Browser](https://aiplatform.console.vngcloud.vn/models).
 
+**Dual-model routing:** Flowy uses two models from the same API key — MiniMax M2.5 extracts structured data from uploaded files and external links; Gemma 4 31B-IT handles chat replies and FAQ. Configure via `LLM_MODEL` (chat) and `LLM_MODEL_ANALYSIS` (file/link parsing).
+
 ## Tech Stack
 
 - **Backend**: Python 3.13 + LangChain + LangGraph
@@ -104,7 +106,8 @@ Edit `.env` with the following values:
 | `MEMORY_ID` | Memory store ID on AgentBase | `mem_xxx` |
 | `MEMORY_STRATEGY_ID` | Strategy ID for long-term memory | `strat_xxx` |
 | `LLM_BASE_URL` | OpenAI-compatible base URL | `https://api.example.com/v1` |
-| `LLM_MODEL` | Model path (see table above) | `google/gemma-4-31b-it` |
+| `LLM_MODEL` | Chat agent model (FAQ, replies) | `google/gemma-4-31b-it` |
+| `LLM_MODEL_ANALYSIS` | File/link extraction model | `minimax/minimax-m2.5` |
 | `LLM_API_KEY` | LLM API key | `sk-xxx` |
 | `FAQ_DATA_PATH` | Path to knowledge base | `knowledge` (default) |
 

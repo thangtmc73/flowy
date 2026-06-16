@@ -570,7 +570,12 @@ memory_client = MemoryClient()
 # For GreenNode AIP: use /agentbase-llm to manage API keys and browse models.
 # For other providers: set the appropriate base URL and API key.
 # Production: use /agentbase-identity to store API key, inject via @requires_api_key
+#
+# Dual-model routing (same API key / base URL):
+# - LLM_MODEL: chat agent (FAQ replies, comparison answers) — default Gemma for low latency
+# - LLM_MODEL_ANALYSIS: file upload / external link extraction — default MiniMax for document parsing
 LLM_MODEL = os.environ.get("LLM_MODEL", "")
+LLM_MODEL_ANALYSIS = os.environ.get("LLM_MODEL_ANALYSIS", "minimax/minimax-m2.5")
 LLM_BASE_URL = os.environ.get("LLM_BASE_URL", "")
 LLM_API_KEY = os.environ.get("LLM_API_KEY", "")
 if not LLM_MODEL or not LLM_BASE_URL or not LLM_API_KEY:
@@ -579,10 +584,22 @@ if not LLM_MODEL or not LLM_BASE_URL or not LLM_API_KEY:
         "Set them in your .env file or use /agentbase-llm to get a platform API key."
     )
 
-llm = ChatOpenAI(
-    model=LLM_MODEL,
-    base_url=LLM_BASE_URL,
-    api_key=LLM_API_KEY,
+
+def _create_llm(model: str) -> ChatOpenAI:
+    return ChatOpenAI(
+        model=model,
+        base_url=LLM_BASE_URL,
+        api_key=LLM_API_KEY,
+    )
+
+
+llm_chat = _create_llm(LLM_MODEL)
+llm_analysis = _create_llm(LLM_MODEL_ANALYSIS)
+logger.info(
+    "[llm] chat=%s analysis=%s base_url=%s",
+    LLM_MODEL,
+    LLM_MODEL_ANALYSIS,
+    LLM_BASE_URL,
 )
 
 
@@ -829,7 +846,7 @@ async def compare_insurance_products(uploaded_info: str) -> str:
 # checkpointer: persists conversation state via AgentBase Memory (short-term)
 # Long-term memory is handled by remember/recall tools via MemoryClient SDK
 agent = create_agent(
-    llm,
+    llm_chat,
     tools=[remember, recall, search_faq_docs, compare_insurance_products],
     system_prompt=(
         "Bạn là trợ lý tư vấn bảo hiểm trên nền tảng Zalopay.\n\n"
@@ -946,7 +963,8 @@ async def handler(payload: dict, context: RequestContext) -> dict:
             logger.info("[handler] processing uploaded file: %s", file_data.get("name", "unknown"))
 
             file_content = parse_uploaded_file(file_data)
-            insurance_info = extract_insurance_features(file_content, llm)
+            logger.info("[handler] extracting features with analysis model: %s", LLM_MODEL_ANALYSIS)
+            insurance_info = extract_insurance_features(file_content, llm_analysis)
             enhanced_message = build_insurance_comparison_message(
                 source_type="file bảo hiểm",
                 source_name=file_data.get("name", "unknown"),
@@ -971,7 +989,8 @@ async def handler(payload: dict, context: RequestContext) -> dict:
                 logger.info("[handler] processing external link: %s", source_url)
 
                 page_content = await fetch_url_content_async(source_url)
-                insurance_info = extract_insurance_features(page_content, llm)
+                logger.info("[handler] extracting features with analysis model: %s", LLM_MODEL_ANALYSIS)
+                insurance_info = extract_insurance_features(page_content, llm_analysis)
                 insurance_info["source_url"] = source_url
                 enhanced_message = build_insurance_comparison_message(
                     source_type="link bảo hiểm",
