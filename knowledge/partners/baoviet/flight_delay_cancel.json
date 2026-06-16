@@ -155,7 +155,7 @@
         "Phi bao hiem tre huy chuyen bay bao nhieu?",
         "Bảo hiểm vé một chiều giá bao nhiêu?"
       ],
-      "answer": "* **50.000 VNĐ**/vé một chiều\n* **100.000 VNĐ**/vé khứ hồi\n\n*(Phí bảo hiểm nêu trên không chịu thuế VAT.)*",
+      "answer": "* **50.000 VNĐ**/vé một chiều\n* **100.000 VNĐ**/vé khứ hồi\n\n*(Phí bảo hiểm nêu trên **miễn thuế VAT** — tức là không chịu thuế VAT, **không phải** mức giá chưa bao gồm VAT.)*",
       "category": "Chi phí",
       "tags": [
         "baoviet",
