@@ -6,12 +6,14 @@ import time
 import base64
 import asyncio
 import contextvars
+import hashlib
 import ipaddress
 import socket
 from datetime import datetime
 from difflib import SequenceMatcher
 from html.parser import HTMLParser
-from typing import Dict, List, Any, Optional
+from io import BytesIO
+from typing import Dict, List, Any, Optional, Tuple
 from pathlib import Path
 from urllib.parse import urlparse
 from urllib.request import Request, urlopen
@@ -266,6 +268,48 @@ URL_PATTERN = re.compile(r"https?://[^\s<>\"')\]]+", re.IGNORECASE)
 URL_FETCH_TIMEOUT_SEC = 15
 URL_MAX_BYTES = 512_000
 URL_MAX_TEXT_CHARS = 12_000
+EXTRACTION_MAX_CHARS = int(os.environ.get("EXTRACTION_MAX_CHARS", "10000"))
+EXTRACTION_CACHE_MAX_ENTRIES = int(os.environ.get("EXTRACTION_CACHE_MAX_ENTRIES", "128"))
+
+INSURANCE_INFO_FIELDS = (
+    "product_name",
+    "partner",
+    "category",
+    "coverage",
+    "cost",
+    "age_range",
+    "benefits",
+    "exclusions",
+    "highlights",
+)
+
+_JSON_FIELD_ALIASES: Dict[str, Tuple[str, ...]] = {
+    "product_name": ("product_name", "ten_san_pham", "san_pham", "product", "name", "title"),
+    "partner": ("partner", "partner_name", "insurer", "company", "doi_tac", "cong_ty", "provider"),
+    "category": ("category", "loai", "type", "product_type", "insurance_type"),
+    "coverage": ("coverage", "quyen_loi", "quyền_lợi", "main_coverage", "sum_insured"),
+    "cost": ("cost", "price", "premium", "phi", "phí", "fee"),
+    "age_range": ("age_range", "age", "do_tuoi", "độ_tuổi"),
+    "benefits": ("benefits", "benefit", "quyen_loi_chi_tiet", "benefit_list"),
+    "exclusions": ("exclusions", "exclusion", "loai_tru", "loại_trừ"),
+    "highlights": ("highlights", "highlight", "diem_noi_bat", "điểm_nổi_bật", "features"),
+}
+
+_INSURANCE_KEYWORDS = (
+    "bảo hiểm",
+    "quyền lợi",
+    "phí",
+    "premium",
+    "coverage",
+    "insurance",
+    "điều kiện",
+    "loại trừ",
+    "mức trách nhiệm",
+    "hợp đồng",
+    "thụ hưởng",
+)
+
+_extraction_cache: Dict[str, Dict[str, Any]] = {}
 
 
 class _HTMLTextExtractor(HTMLParser):
@@ -424,38 +468,329 @@ Sử dụng tool 'compare_insurance_products' để đưa ra so sánh chi tiết
 
 # --- File Processing Functions ---
 
+def _normalize_insurance_info(data: Dict[str, Any]) -> Dict[str, Any]:
+    """Ensure extracted insurance info has the expected schema."""
+    normalized = {field: data.get(field) for field in INSURANCE_INFO_FIELDS}
+    for field, value in normalized.items():
+        if value is None:
+            normalized[field] = "N/A" if field in ("exclusions", "highlights") else ""
+        elif isinstance(value, (list, dict)):
+            normalized[field] = json.dumps(value, ensure_ascii=False)
+        else:
+            normalized[field] = str(value).strip()
+    if not normalized["product_name"]:
+        normalized["product_name"] = "Unknown"
+    return normalized
+
+
+def _pick_json_value(data: Dict[str, Any], aliases: Tuple[str, ...]) -> Any:
+    """Find the first matching value from common JSON field names."""
+    lowered = {str(k).lower(): v for k, v in data.items()}
+    for alias in aliases:
+        if alias in data and data[alias] not in (None, ""):
+            return data[alias]
+        if alias.lower() in lowered and lowered[alias.lower()] not in (None, ""):
+            return lowered[alias.lower()]
+    return None
+
+
+def extract_insurance_from_json(data: Dict[str, Any]) -> Dict[str, Any]:
+    """Map structured JSON upload/API response to insurance info without LLM."""
+    if all(field in data for field in INSURANCE_INFO_FIELDS):
+        return _normalize_insurance_info(data)
+
+    mapped = {
+        field: _pick_json_value(data, aliases)
+        for field, aliases in _JSON_FIELD_ALIASES.items()
+    }
+
+    # Nested product_summary blocks (knowledge-base style)
+    summary = data.get("product_summary")
+    if isinstance(summary, dict):
+        for field, aliases in _JSON_FIELD_ALIASES.items():
+            if not mapped.get(field):
+                mapped[field] = _pick_json_value(summary, aliases)
+
+    return _normalize_insurance_info(mapped)
+
+
+def _extract_pdf_text(content: Dict[str, Any]) -> str:
+    """Extract plain text from a base64-encoded PDF payload."""
+    from pypdf import PdfReader
+
+    pdf_b64 = content.get("data", "")
+    if not pdf_b64:
+        raise ValueError("PDF không có dữ liệu.")
+
+    try:
+        raw = base64.b64decode(pdf_b64)
+    except (ValueError, TypeError) as exc:
+        raise ValueError("PDF không hợp lệ.") from exc
+
+    reader = PdfReader(BytesIO(raw))
+    parts = []
+    for page in reader.pages:
+        page_text = page.extract_text() or ""
+        if page_text.strip():
+            parts.append(page_text.strip())
+
+    text = "\n\n".join(parts).strip()
+    if not text:
+        raise ValueError(
+            "Không trích xuất được nội dung text từ PDF (có thể là file scan/ảnh)."
+        )
+    return text
+
+
+DOCX_MIME = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+LEGACY_DOC_MIME = "application/msword"
+
+
+def _is_pdf_upload(file_type: str, content: Any) -> bool:
+    return file_type == "application/pdf" or (
+        isinstance(content, dict) and content.get("type") == "pdf"
+    )
+
+
+def _is_docx_upload(file_type: str, content: Any, file_name: str = "") -> bool:
+    if file_type == DOCX_MIME:
+        return True
+    if isinstance(content, dict) and content.get("type") == "docx":
+        return True
+    return file_name.lower().endswith(".docx")
+
+
+def _is_legacy_doc_upload(file_type: str, file_name: str = "") -> bool:
+    lowered_name = file_name.lower()
+    if lowered_name.endswith(".docx"):
+        return False
+    return file_type == LEGACY_DOC_MIME or lowered_name.endswith(".doc")
+
+
+def _is_json_upload(file_type: str, content: Any) -> bool:
+    if file_type == "application/json":
+        return True
+    if not isinstance(content, dict):
+        return False
+    return content.get("type") not in ("pdf", "docx")
+
+
+def _extract_docx_text(content: Dict[str, Any]) -> str:
+    """Extract plain text from a base64-encoded DOCX payload."""
+    from docx import Document
+
+    docx_b64 = content.get("data", "")
+    if not docx_b64:
+        raise ValueError("DOCX không có dữ liệu.")
+
+    try:
+        raw = base64.b64decode(docx_b64)
+    except (ValueError, TypeError) as exc:
+        raise ValueError("DOCX không hợp lệ.") from exc
+
+    document = Document(BytesIO(raw))
+    parts: List[str] = []
+
+    for paragraph in document.paragraphs:
+        text = paragraph.text.strip()
+        if text:
+            parts.append(text)
+
+    for table in document.tables:
+        for row in table.rows:
+            cells = [cell.text.strip() for cell in row.cells if cell.text.strip()]
+            if cells:
+                parts.append(" | ".join(cells))
+
+    text = "\n\n".join(parts).strip()
+    if not text:
+        raise ValueError("Không trích xuất được nội dung text từ DOCX.")
+    return text
+
+
 def parse_uploaded_file(file_data: Dict[str, Any]) -> str:
-    """Parse uploaded file content based on file type.
-    
-    Args:
-        file_data: Dict with keys: name, type, size, content
-    
-    Returns:
-        Parsed text content
-    """
+    """Parse uploaded file content based on file type."""
     file_type = file_data.get("type", "")
+    file_name = file_data.get("name", "")
     content = file_data.get("content", "")
-    
-    # JSON file - already parsed
-    if file_type == "application/json" or isinstance(content, dict):
-        return json.dumps(content, ensure_ascii=False, indent=2)
-    
-    # PDF file - base64 encoded
-    if file_type == "application/pdf" and isinstance(content, dict):
-        pdf_data = content.get("data", "")
-        # For now, return metadata. Full PDF parsing requires pypdf2/pdfplumber
-        return f"[PDF File: {file_data.get('name')}]\nSize: {file_data.get('size')} bytes\nNote: PDF text extraction requires additional processing."
-    
-    # Text-based files
+
+    if _is_legacy_doc_upload(file_type, file_name):
+        raise ValueError(
+            "Chỉ hỗ trợ file Word .docx. Vui lòng lưu lại file dạng .docx."
+        )
+
+    if _is_json_upload(file_type, content):
+        if isinstance(content, dict):
+            return json.dumps(content, ensure_ascii=False, indent=2)
+        return str(content)
+
+    if _is_pdf_upload(file_type, content):
+        pdf_payload = content if isinstance(content, dict) else {"data": content}
+        return _extract_pdf_text(pdf_payload)
+
+    if _is_docx_upload(file_type, content, file_name):
+        docx_payload = content if isinstance(content, dict) else {"data": content}
+        return _extract_docx_text(docx_payload)
+
     if isinstance(content, str):
         return content
-    
+
     return str(content)
+
+
+def _select_text_for_extraction(text: str, max_chars: int) -> str:
+    """Prefer paragraphs with insurance-related keywords over raw leading text."""
+    text = text.strip()
+    if len(text) <= max_chars:
+        return text
+
+    paragraphs = [p.strip() for p in re.split(r"\n\s*\n", text) if p.strip()]
+    if not paragraphs:
+        return text[:max_chars]
+
+    scored: List[Tuple[int, int, str]] = []
+    for index, paragraph in enumerate(paragraphs):
+        lowered = paragraph.lower()
+        score = sum(1 for keyword in _INSURANCE_KEYWORDS if keyword in lowered)
+        scored.append((score, index, paragraph))
+
+    scored.sort(key=lambda item: (-item[0], item[1]))
+
+    selected: List[Tuple[int, str]] = []
+    total_len = 0
+    for score, index, paragraph in scored:
+        if score == 0 and selected:
+            continue
+        addition = len(paragraph) + (2 if selected else 0)
+        if total_len + addition > max_chars:
+            if not selected:
+                return text[:max_chars]
+            break
+        selected.append((index, paragraph))
+        total_len += addition
+
+    if not selected:
+        return text[:max_chars]
+
+    selected.sort(key=lambda item: item[0])
+    combined = "\n\n".join(paragraph for _, paragraph in selected)
+    if len(combined) > max_chars:
+        return combined[:max_chars]
+    return combined
+
+
+def _parse_llm_json_content(content: str) -> Dict[str, Any]:
+    """Parse JSON from LLM response, stripping markdown fences if present."""
+    content = content.strip()
+    if "```json" in content:
+        content = content.split("```json", 1)[1].split("```", 1)[0].strip()
+    elif "```" in content:
+        content = content.split("```", 1)[1].split("```", 1)[0].strip()
+    parsed = json.loads(content)
+    if not isinstance(parsed, dict):
+        raise ValueError("LLM response is not a JSON object")
+    return parsed
+
+
+def _build_extraction_cache_key(user_id: str, session_id: str, source_key: str) -> str:
+    digest = hashlib.sha256(source_key.encode("utf-8")).hexdigest()[:16]
+    return f"{user_id}:{session_id}:{digest}"
+
+
+def _get_cached_extraction(cache_key: Optional[str]) -> Optional[Dict[str, Any]]:
+    if not cache_key:
+        return None
+    return _extraction_cache.get(cache_key)
+
+
+def _set_cached_extraction(cache_key: Optional[str], data: Dict[str, Any]) -> None:
+    if not cache_key:
+        return
+    if len(_extraction_cache) >= EXTRACTION_CACHE_MAX_ENTRIES:
+        oldest_key = next(iter(_extraction_cache))
+        _extraction_cache.pop(oldest_key, None)
+    _extraction_cache[cache_key] = data
+
+
+def extract_insurance_features(
+    text_content: str,
+    llm: ChatOpenAI,
+    cache_key: Optional[str] = None,
+) -> Dict[str, Any]:
+    """Use analysis LLM to extract insurance features from unstructured text."""
+    cached = _get_cached_extraction(cache_key)
+    if cached is not None:
+        logger.info("[extract] cache hit key=%s", cache_key)
+        return cached
+
+    selected_text = _select_text_for_extraction(text_content, EXTRACTION_MAX_CHARS)
+    extraction_prompt = f"""Analyze this insurance document and extract key information in JSON format.
+
+Document content:
+{selected_text}
+
+Extract the following information (in Vietnamese):
+- product_name: Tên sản phẩm bảo hiểm
+- partner: Công ty bảo hiểm/đối tác
+- category: Loại bảo hiểm (sức khỏe, xe, du lịch, cyber, v.v.)
+- coverage: Quyền lợi bảo hiểm chính
+- cost: Chi phí/phí bảo hiểm
+- age_range: Độ tuổi áp dụng
+- benefits: Các quyền lợi cụ thể
+- exclusions: Điều khoản loại trừ (nếu có)
+- highlights: Điểm nổi bật
+
+Return ONLY valid JSON, no additional text."""
+
+    try:
+        response = llm.invoke(extraction_prompt)
+        parsed = _parse_llm_json_content(response.content)
+        result = _normalize_insurance_info(parsed)
+        _set_cached_extraction(cache_key, result)
+        return result
+    except Exception as e:
+        logger.error("Error extracting features with LLM: %s", e)
+        return {
+            "product_name": "Unknown",
+            "error": str(e),
+            "raw_content": text_content[:500],
+        }
+
+
+def resolve_insurance_info(
+    *,
+    llm: ChatOpenAI,
+    text_content: Optional[str] = None,
+    json_data: Optional[Dict[str, Any]] = None,
+    cache_key: Optional[str] = None,
+) -> Dict[str, Any]:
+    """Resolve insurance info from JSON (no LLM) or unstructured text (analysis LLM)."""
+    if json_data is not None:
+        logger.info("[extract] using structured JSON mapping (skip analysis LLM)")
+        return extract_insurance_from_json(json_data)
+
+    if not text_content or not text_content.strip():
+        raise ValueError("Không có nội dung để phân tích.")
+
+    try:
+        parsed = json.loads(text_content)
+        if isinstance(parsed, dict):
+            logger.info("[extract] detected JSON text payload (skip analysis LLM)")
+            return extract_insurance_from_json(parsed)
+    except json.JSONDecodeError:
+        pass
+
+    logger.info(
+        "[extract] using analysis LLM chars=%d (selected from %d)",
+        min(len(text_content), EXTRACTION_MAX_CHARS),
+        len(text_content),
+    )
+    return extract_insurance_features(text_content, llm, cache_key=cache_key)
 
 
 def load_all_products() -> List[Dict[str, Any]]:
     """Load all insurance products from knowledge base.
-    
+
     Returns:
         List of product dicts with partner info
     """
@@ -496,53 +831,6 @@ def load_all_products() -> List[Dict[str, Any]]:
         logger.error(f"Error loading products: {e}")
         return products
 
-
-def extract_insurance_features(text_content: str, llm: ChatOpenAI) -> Dict[str, Any]:
-    """Use LLM to extract insurance features from text.
-    
-    Args:
-        text_content: Raw text from uploaded file
-        llm: ChatOpenAI instance
-    
-    Returns:
-        Dict with extracted features
-    """
-    extraction_prompt = f"""Analyze this insurance document and extract key information in JSON format.
-
-Document content:
-{text_content[:3000]}
-
-Extract the following information (in Vietnamese):
-- product_name: Tên sản phẩm bảo hiểm
-- partner: Công ty bảo hiểm/đối tác
-- category: Loại bảo hiểm (sức khỏe, xe, du lịch, cyber, v.v.)
-- coverage: Quyền lợi bảo hiểm chính
-- cost: Chi phí/phí bảo hiểm
-- age_range: Độ tuổi áp dụng
-- benefits: Các quyền lợi cụ thể
-- exclusions: Điều khoản loại trừ (nếu có)
-- highlights: Điểm nổi bật
-
-Return ONLY valid JSON, no additional text."""
-
-    try:
-        response = llm.invoke(extraction_prompt)
-        content = response.content.strip()
-        
-        # Extract JSON from markdown code blocks if present
-        if "```json" in content:
-            content = content.split("```json")[1].split("```")[0].strip()
-        elif "```" in content:
-            content = content.split("```")[1].split("```")[0].strip()
-        
-        return json.loads(content)
-    except Exception as e:
-        logger.error(f"Error extracting features with LLM: {e}")
-        return {
-            "product_name": "Unknown",
-            "error": str(e),
-            "raw_content": text_content[:500]
-        }
 
 # Load FAQ data on startup
 load_knowledge_base()
@@ -1065,14 +1353,34 @@ async def handler(payload: dict, context: RequestContext) -> dict:
 
     if file_data:
         try:
-            logger.info("[handler] processing uploaded file: %s", file_data.get("name", "unknown"))
+            file_name = file_data.get("name", "unknown")
+            logger.info("[handler] processing uploaded file: %s", file_name)
 
-            file_content = parse_uploaded_file(file_data)
-            logger.info("[handler] extracting features with analysis model: %s", LLM_MODEL_ANALYSIS)
-            insurance_info = extract_insurance_features(file_content, llm_analysis)
+            file_type = file_data.get("type", "")
+            raw_content = file_data.get("content")
+            cache_key = _build_extraction_cache_key(
+                context.user_id,
+                context.session_id,
+                f"file:{file_name}:{file_data.get('size', 0)}",
+            )
+
+            if _is_json_upload(file_type, raw_content):
+                json_obj = raw_content if isinstance(raw_content, dict) else json.loads(raw_content)
+                insurance_info = resolve_insurance_info(
+                    llm=llm_analysis,
+                    json_data=json_obj,
+                )
+            else:
+                file_content = parse_uploaded_file(file_data)
+                insurance_info = resolve_insurance_info(
+                    llm=llm_analysis,
+                    text_content=file_content,
+                    cache_key=cache_key,
+                )
+
             enhanced_message = build_insurance_comparison_message(
                 source_type="file bảo hiểm",
-                source_name=file_data.get("name", "unknown"),
+                source_name=file_name,
                 insurance_info=insurance_info,
                 user_message=comparison_question,
             )
@@ -1094,8 +1402,16 @@ async def handler(payload: dict, context: RequestContext) -> dict:
                 logger.info("[handler] processing external link: %s", source_url)
 
                 page_content = await fetch_url_content_async(source_url)
-                logger.info("[handler] extracting features with analysis model: %s", LLM_MODEL_ANALYSIS)
-                insurance_info = extract_insurance_features(page_content, llm_analysis)
+                cache_key = _build_extraction_cache_key(
+                    context.user_id,
+                    context.session_id,
+                    f"url:{source_url}",
+                )
+                insurance_info = resolve_insurance_info(
+                    llm=llm_analysis,
+                    text_content=page_content,
+                    cache_key=cache_key,
+                )
                 insurance_info["source_url"] = source_url
                 enhanced_message = build_insurance_comparison_message(
                     source_type="link bảo hiểm",

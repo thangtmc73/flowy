@@ -14,19 +14,21 @@ export default function FileUpload({ onFileSelect, disabled }) {
       return
     }
 
+    if (/\.doc$/i.test(file.name) && !/\.docx$/i.test(file.name)) {
+      alert('Chỉ hỗ trợ Word .docx. Vui lòng lưu file dạng .docx.')
+      return
+    }
+
     const allowedTypes = [
       'application/pdf',
       'application/json',
       'text/plain',
       'text/csv',
-      'application/vnd.ms-excel',
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      'application/msword',
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
     ]
 
-    if (!allowedTypes.includes(file.type) && !file.name.match(/\.(pdf|json|txt|csv|xls|xlsx|doc|docx)$/i)) {
-      alert('File không hợp lệ! Chỉ chấp nhận: PDF, JSON, TXT, CSV, Excel, Word')
+    if (!allowedTypes.includes(file.type) && !file.name.match(/\.(pdf|json|txt|csv|docx)$/i)) {
+      alert('File không hợp lệ! Chỉ chấp nhận: PDF, JSON, TXT, CSV, Word (.docx)')
       return
     }
 
@@ -41,6 +43,13 @@ export default function FileUpload({ onFileSelect, disabled }) {
     }
   }
 
+  const isDocxFile = (file) =>
+    file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    || /\.docx$/i.test(file.name)
+
+  const isBinaryUpload = (file) =>
+    file.type === 'application/pdf' || isDocxFile(file)
+
   const readFileContent = (file) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader()
@@ -51,6 +60,8 @@ export default function FileUpload({ onFileSelect, disabled }) {
             resolve(JSON.parse(e.target.result))
           } else if (file.type === 'application/pdf') {
             resolve({ type: 'pdf', data: e.target.result.split(',')[1] })
+          } else if (isDocxFile(file)) {
+            resolve({ type: 'docx', data: e.target.result.split(',')[1] })
           } else {
             resolve(e.target.result)
           }
@@ -61,7 +72,7 @@ export default function FileUpload({ onFileSelect, disabled }) {
       
       reader.onerror = () => reject(new Error('Lỗi đọc file'))
       
-      if (file.type === 'application/pdf') {
+      if (isBinaryUpload(file)) {
         reader.readAsDataURL(file)
       } else {
         reader.readAsText(file)
@@ -123,7 +134,7 @@ export default function FileUpload({ onFileSelect, disabled }) {
           <input
             ref={fileInputRef}
             type="file"
-            accept=".pdf,.json,.txt,.csv,.xls,.xlsx,.doc,.docx"
+            accept=".pdf,.json,.txt,.csv,.docx"
             onChange={(e) => handleFileChange(e.target.files[0])}
             disabled={disabled}
             className="hidden"
@@ -138,7 +149,7 @@ export default function FileUpload({ onFileSelect, disabled }) {
                 Kéo thả file hoặc <span className="text-brand font-semibold">chọn file</span>
               </p>
               <p className="text-xs text-slate-500 mt-1">
-                PDF, JSON, TXT, CSV, Excel, Word (tối đa 10MB)
+                PDF, JSON, TXT, CSV, Word .docx (tối đa 10MB)
               </p>
             </div>
           </div>
