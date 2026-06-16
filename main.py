@@ -905,6 +905,7 @@ agent = create_agent(
         "QUY TẮC FORMAT OUTPUT (MARKDOWN):\n"
         "- Trả lời bằng Markdown; câu hỏi đơn giản thường chỉ cần 1 đoạn hoặc vài bullet ngắn\n"
         "- Dùng **bold** cho thông tin then chốt\n"
+        "- KHÔNG dùng LaTeX/math ($...$, \\rightarrow, v.v.). Khi mô tả luồng bước, dùng ký tự → hoặc dấu gạch ngang\n"
         "- Dùng ###, emoji, bảng CHỈ khi user hỏi so sánh, liệt kê nhiều mục, hoặc yêu cầu chi tiết\n"
         "- Dùng markdown tables khi so sánh:\n"
         "  | Tiêu chí | Sản phẩm A | Sản phẩm B |\n"
