@@ -5,6 +5,7 @@ import logging
 import time
 import base64
 import asyncio
+import contextvars
 import ipaddress
 import socket
 from datetime import datetime
@@ -585,11 +586,25 @@ if not LLM_MODEL or not LLM_BASE_URL or not LLM_API_KEY:
     )
 
 
+LLM_REQUEST_TIMEOUT_SEC = float(os.environ.get("LLM_REQUEST_TIMEOUT_SEC", "90"))
+AGENT_INVOKE_TIMEOUT_SEC = float(os.environ.get("AGENT_INVOKE_TIMEOUT_SEC", "110"))
+AGENT_INVOKE_WARN_INTERVAL_SEC = float(os.environ.get("AGENT_INVOKE_WARN_INTERVAL_SEC", "30"))
+
+_invoke_last_tool: contextvars.ContextVar[Optional[str]] = contextvars.ContextVar(
+    "invoke_last_tool", default=None
+)
+
+
+def _mark_tool_started(tool_name: str) -> None:
+    _invoke_last_tool.set(tool_name)
+
+
 def _create_llm(model: str) -> ChatOpenAI:
     return ChatOpenAI(
         model=model,
         base_url=LLM_BASE_URL,
         api_key=LLM_API_KEY,
+        timeout=LLM_REQUEST_TIMEOUT_SEC,
     )
 
 
@@ -631,6 +646,7 @@ async def remember(fact: str) -> str:
     Args:
         fact: The fact or information to remember.
     """
+    _mark_tool_started("remember")
     actor_id = _get_actor_id()
     namespace = _build_namespace(actor_id)
     logger.info("[tool:remember] actor=%s fact=%r", actor_id, fact[:80])
@@ -650,6 +666,7 @@ async def recall(query: str) -> str:
     Args:
         query: Natural language search query.
     """
+    _mark_tool_started("recall")
     actor_id = _get_actor_id()
     namespace = _build_namespace(actor_id)
     logger.info("[tool:recall] actor=%s query=%r", actor_id, query[:80])
@@ -678,6 +695,7 @@ def search_faq_docs(query: str) -> str:
     Args:
         query: The user's question or topic to search for in the FAQ docs.
     """
+    _mark_tool_started("search_faq_docs")
     logger.info("[tool:search_faq] query=%r", query[:80])
     if not FAQ_ALL_ENTRIES:
         return f"FAQ database is not loaded. Please check if {FAQ_DATA_PATH} exists."
@@ -765,6 +783,7 @@ async def compare_insurance_products(uploaded_info: str) -> str:
     Args:
         uploaded_info: Extracted insurance information in JSON string format
     """
+    _mark_tool_started("compare_insurance_products")
     logger.info("[tool:compare_insurance] starting comparison")
     
     try:
@@ -929,6 +948,91 @@ agent = create_agent(
 )
 
 
+async def _invoke_agent_with_timeout_logging(
+    input_state: dict,
+    config: dict,
+    *,
+    user_id: str,
+    session_id: str,
+    message_preview: str,
+) -> dict:
+    """Run agent.ainvoke with periodic slow-path warnings and a hard timeout."""
+    _invoke_last_tool.set(None)
+    logger.info(
+        "[handler] agent.ainvoke start user=%s session=%s chat_model=%s "
+        "timeout=%.0fs llm_timeout=%.0fs msg=%r",
+        user_id,
+        session_id,
+        LLM_MODEL,
+        AGENT_INVOKE_TIMEOUT_SEC,
+        LLM_REQUEST_TIMEOUT_SEC,
+        message_preview[:100],
+    )
+
+    task = asyncio.create_task(agent.ainvoke(input_state, config=config))
+    t0 = time.monotonic()
+
+    try:
+        while True:
+            elapsed = time.monotonic() - t0
+            remaining = AGENT_INVOKE_TIMEOUT_SEC - elapsed
+            if remaining <= 0:
+                task.cancel()
+                try:
+                    await task
+                except asyncio.CancelledError:
+                    pass
+                last_tool = _invoke_last_tool.get()
+                logger.error(
+                    "[handler] TIMEOUT agent.ainvoke elapsed=%.2fs limit=%.0fs user=%s "
+                    "session=%s last_tool=%s chat_model=%s msg=%r",
+                    elapsed,
+                    AGENT_INVOKE_TIMEOUT_SEC,
+                    user_id,
+                    session_id,
+                    last_tool or "none",
+                    LLM_MODEL,
+                    message_preview[:100],
+                )
+                raise asyncio.TimeoutError(
+                    f"agent.ainvoke exceeded {AGENT_INVOKE_TIMEOUT_SEC:.0f}s "
+                    f"(last_tool={last_tool or 'none'})"
+                )
+
+            wait_for = min(AGENT_INVOKE_WARN_INTERVAL_SEC, remaining)
+            done, _ = await asyncio.wait({task}, timeout=wait_for)
+            if task in done:
+                result = task.result()
+                elapsed = time.monotonic() - t0
+                logger.info(
+                    "[handler] agent.ainvoke finished elapsed=%.2fs user=%s session=%s last_tool=%s",
+                    elapsed,
+                    user_id,
+                    session_id,
+                    _invoke_last_tool.get() or "none",
+                )
+                return result
+
+            last_tool = _invoke_last_tool.get()
+            logger.warning(
+                "[handler] agent.ainvoke slow elapsed=%.2fs user=%s session=%s "
+                "last_tool=%s chat_model=%s (likely waiting on LLM after tool)",
+                elapsed,
+                user_id,
+                session_id,
+                last_tool or "none",
+                LLM_MODEL,
+            )
+    except Exception:
+        if not task.done():
+            task.cancel()
+            try:
+                await task
+            except asyncio.CancelledError:
+                pass
+        raise
+
+
 @app.entrypoint
 async def handler(payload: dict, context: RequestContext) -> dict:
     """Main agent entrypoint with LangChain + Memory support.
@@ -1021,10 +1125,28 @@ async def handler(payload: dict, context: RequestContext) -> dict:
     }
 
     # ainvoke is required when using async tools (remember, recall)
-    result = await agent.ainvoke(
-        {"messages": [{"role": "user", "content": enhanced_message}]},
-        config=config,
-    )
+    try:
+        result = await _invoke_agent_with_timeout_logging(
+            {"messages": [{"role": "user", "content": enhanced_message}]},
+            config,
+            user_id=context.user_id,
+            session_id=context.session_id,
+            message_preview=message,
+        )
+    except asyncio.TimeoutError:
+        elapsed = time.monotonic() - t_start
+        logger.error(
+            "[handler] TIMEOUT returning error user=%s session=%s elapsed=%.2fs last_tool=%s",
+            context.user_id,
+            context.session_id,
+            elapsed,
+            _invoke_last_tool.get() or "none",
+        )
+        return {
+            "status": "error",
+            "error": "Agent phản hồi quá chậm. Vui lòng thử lại sau.",
+            "timestamp": datetime.now().isoformat(),
+        }
     ai_message = result["messages"][-1]
 
     # Count tool calls made during this invocation for observability
