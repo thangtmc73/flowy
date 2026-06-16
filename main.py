@@ -4,10 +4,16 @@ import json
 import logging
 import time
 import base64
+import asyncio
+import ipaddress
+import socket
 from datetime import datetime
 from difflib import SequenceMatcher
+from html.parser import HTMLParser
 from typing import Dict, List, Any, Optional
 from pathlib import Path
+from urllib.parse import urlparse
+from urllib.request import Request, urlopen
 
 from dotenv import load_dotenv
 from greennode_agentbase.core.logging import configure_logger
@@ -251,6 +257,168 @@ def _truncate_faq_answer(answer: str, max_chars: int = FAQ_ANSWER_MAX_CHARS) -> 
     if len(answer) <= max_chars:
         return answer
     return answer[:max_chars].rstrip() + "..."
+
+
+# --- URL Processing Functions ---
+
+URL_PATTERN = re.compile(r"https?://[^\s<>\"')\]]+", re.IGNORECASE)
+URL_FETCH_TIMEOUT_SEC = 15
+URL_MAX_BYTES = 512_000
+URL_MAX_TEXT_CHARS = 12_000
+
+
+class _HTMLTextExtractor(HTMLParser):
+    """Strip HTML tags and keep readable text."""
+
+    def __init__(self):
+        super().__init__()
+        self._parts: List[str] = []
+        self._skip = False
+
+    def handle_starttag(self, tag, attrs):
+        if tag in ("script", "style", "noscript"):
+            self._skip = True
+        elif tag in ("p", "div", "br", "li", "h1", "h2", "h3", "h4", "tr", "section"):
+            self._parts.append("\n")
+
+    def handle_endtag(self, tag):
+        if tag in ("script", "style", "noscript"):
+            self._skip = False
+
+    def handle_data(self, data):
+        if not self._skip and data.strip():
+            self._parts.append(data)
+
+    def get_text(self) -> str:
+        text = "".join(self._parts)
+        text = re.sub(r"[ \t]+", " ", text)
+        text = re.sub(r"\n{3,}", "\n\n", text)
+        return text.strip()
+
+
+def extract_urls_from_message(message: str) -> List[str]:
+    """Return unique HTTP(S) URLs found in a user message."""
+    seen = set()
+    urls = []
+    for match in URL_PATTERN.findall(message or ""):
+        url = match.rstrip(".,;:!?)")
+        if url not in seen:
+            seen.add(url)
+            urls.append(url)
+    return urls
+
+
+def _is_private_ip(ip_str: str) -> bool:
+    try:
+        ip = ipaddress.ip_address(ip_str)
+    except ValueError:
+        return True
+    return (
+        ip.is_private
+        or ip.is_loopback
+        or ip.is_link_local
+        or ip.is_reserved
+        or ip.is_multicast
+    )
+
+
+def _validate_public_http_url(url: str) -> str:
+    parsed = urlparse(url)
+    if parsed.scheme not in ("http", "https"):
+        raise ValueError("Chỉ hỗ trợ link http hoặc https.")
+
+    hostname = parsed.hostname
+    if not hostname:
+        raise ValueError("Link không hợp lệ.")
+
+    if hostname.lower() in ("localhost", "127.0.0.1", "0.0.0.0", "::1"):
+        raise ValueError("Không thể truy cập link nội bộ.")
+
+    try:
+        addr_info = socket.getaddrinfo(hostname, None)
+    except socket.gaierror as exc:
+        raise ValueError(f"Không thể phân giải tên miền: {hostname}") from exc
+
+    for info in addr_info:
+        ip_str = info[4][0]
+        if _is_private_ip(ip_str):
+            raise ValueError("Không thể truy cập link nội bộ hoặc mạng riêng.")
+
+    return url
+
+
+def _html_to_text(html: str) -> str:
+    parser = _HTMLTextExtractor()
+    parser.feed(html)
+    return parser.get_text()
+
+
+def _decode_response_body(raw: bytes, content_type: str) -> str:
+    charset = "utf-8"
+    if "charset=" in content_type.lower():
+        charset = content_type.lower().split("charset=", 1)[1].split(";", 1)[0].strip() or "utf-8"
+
+    try:
+        text = raw.decode(charset, errors="replace")
+    except LookupError:
+        text = raw.decode("utf-8", errors="replace")
+
+    content_type = content_type.lower()
+    if "html" in content_type:
+        return _html_to_text(text)
+    if "json" in content_type:
+        try:
+            return json.dumps(json.loads(text), ensure_ascii=False, indent=2)
+        except json.JSONDecodeError:
+            return text
+    return text
+
+
+def fetch_url_content(url: str) -> str:
+    """Fetch and normalize text content from a public HTTP(S) URL."""
+    safe_url = _validate_public_http_url(url)
+    request = Request(
+        safe_url,
+        headers={
+            "User-Agent": "FlowyInsuranceBot/1.0 (+https://zalopay.vn)",
+            "Accept": "text/html,application/json,text/plain,*/*",
+        },
+    )
+
+    with urlopen(request, timeout=URL_FETCH_TIMEOUT_SEC) as response:
+        content_type = response.headers.get("Content-Type", "")
+        raw = response.read(URL_MAX_BYTES + 1)
+
+    if len(raw) > URL_MAX_BYTES:
+        raise ValueError("Nội dung link quá lớn để xử lý.")
+
+    text = _decode_response_body(raw, content_type)
+    if not text.strip():
+        raise ValueError("Không đọc được nội dung hữu ích từ link.")
+
+    return text[:URL_MAX_TEXT_CHARS]
+
+
+async def fetch_url_content_async(url: str) -> str:
+    return await asyncio.to_thread(fetch_url_content, url)
+
+
+def build_insurance_comparison_message(
+    source_type: str,
+    source_name: str,
+    insurance_info: Dict[str, Any],
+    user_message: str,
+) -> str:
+    """Build a prompt that asks the agent to compare extracted insurance info."""
+    return f"""Người dùng đã cung cấp {source_type}: {source_name}
+
+Thông tin trích xuất:
+{json.dumps(insurance_info, ensure_ascii=False, indent=2)}
+
+Câu hỏi của người dùng: {user_message}
+
+Hãy phân tích nội dung này và so sánh với các sản phẩm bảo hiểm trên Zalopay.
+Sử dụng tool 'compare_insurance_products' để đưa ra so sánh chi tiết."""
 
 
 # --- File Processing Functions ---
@@ -572,9 +740,9 @@ def search_faq_docs(query: str) -> str:
 
 @tool
 async def compare_insurance_products(uploaded_info: str) -> str:
-    """Compare uploaded insurance document with existing products on Zalopay.
+    """Compare insurance info from uploaded files or external links with existing products on Zalopay.
     
-    This tool analyzes insurance information from uploaded files and compares
+    This tool analyzes insurance information extracted from user-provided content and compares
     it with products available on the Zalopay platform.
     
     Args:
@@ -677,7 +845,7 @@ agent = create_agent(
         "- Tối đa ~150 từ cho câu hỏi đơn giản; kết thúc bằng 1 gợi ý ngắn thay vì liệt kê mọi chủ đề liên quan.\n\n"
         "Vai trò của bạn:\n"
         "- Trả lời câu hỏi về các sản phẩm bảo hiểm từ nhiều đối tác bằng cách tìm kiếm trong FAQ với tool 'search_faq_docs'\n"
-        "- So sánh sản phẩm bảo hiểm từ file upload với các gói hiện có trên Zalopay bằng tool 'compare_insurance_products'\n"
+        "- So sánh sản phẩm bảo hiểm từ file upload hoặc link ngoài với các gói hiện có trên Zalopay bằng tool 'compare_insurance_products'\n"
         "- Nhớ thông tin quan trọng về người dùng với tool 'remember'\n"
         "- Tra cứu lại các tương tác và thông tin đã học với tool 'recall' khi cần cá nhân hóa\n"
         "- Cung cấp câu trả lời chính xác, ngắn gọn, dựa trên tài liệu FAQ\n"
@@ -693,8 +861,8 @@ agent = create_agent(
         "1. Tìm kiếm FAQ bằng 'search_faq_docs'\n"
         "2. Chỉ gọi 'recall' khi cần thông tin cá nhân hóa từ các lượt chat trước\n"
         "3. Trả lời súc tích theo nguyên tắc trên; gọi 'remember' khi user chia sẻ nhu cầu/sở thích quan trọng\n\n"
-        "XỬ LÝ FILE UPLOAD:\n"
-        "- Khi người dùng upload file bảo hiểm, phân tích thông tin trong file\n"
+        "XỬ LÝ FILE UPLOAD / LINK NGOÀI:\n"
+        "- Khi người dùng upload file hoặc gửi link bảo hiểm, phân tích thông tin trong nội dung đó\n"
         "- Sử dụng 'compare_insurance_products' để so sánh với sản phẩm trên Zalopay\n"
         "- Đưa ra nhận xét khách quan về ưu/nhược điểm\n"
         "- Gợi ý sản phẩm tương tự hoặc tốt hơn trên Zalopay\n\n"
@@ -769,31 +937,25 @@ async def handler(payload: dict, context: RequestContext) -> dict:
         context.user_id, context.session_id, message[:100], bool(file_data),
     )
 
-    # Handle file upload if present
+    # Handle file upload or external insurance links
     enhanced_message = message
+    comparison_question = message.strip() or "So sánh sản phẩm bảo hiểm này với các gói hiện có trên Zalopay"
+
     if file_data:
         try:
             logger.info("[handler] processing uploaded file: %s", file_data.get("name", "unknown"))
-            
-            # Parse file content
+
             file_content = parse_uploaded_file(file_data)
-            
-            # Extract insurance info using LLM
             insurance_info = extract_insurance_features(file_content, llm)
-            
-            # Enhance message with file context
-            enhanced_message = f"""Người dùng đã upload file bảo hiểm: {file_data.get('name')}
+            enhanced_message = build_insurance_comparison_message(
+                source_type="file bảo hiểm",
+                source_name=file_data.get("name", "unknown"),
+                insurance_info=insurance_info,
+                user_message=comparison_question,
+            )
 
-Thông tin trích xuất từ file:
-{json.dumps(insurance_info, ensure_ascii=False, indent=2)}
-
-Câu hỏi của người dùng: {message}
-
-Hãy phân tích file này và so sánh với các sản phẩm bảo hiểm trên Zalopay. 
-Sử dụng tool 'compare_insurance_products' để đưa ra so sánh chi tiết."""
-            
             logger.info("[handler] extracted insurance info: %s", insurance_info.get("product_name", "N/A"))
-            
+
         except Exception as e:
             logger.error(f"[handler] error processing file: {e}")
             return {
@@ -801,6 +963,34 @@ Sử dụng tool 'compare_insurance_products' để đưa ra so sánh chi tiết
                 "error": f"Không thể xử lý file upload: {str(e)}",
                 "timestamp": datetime.now().isoformat(),
             }
+    else:
+        urls = extract_urls_from_message(message)
+        if urls:
+            source_url = urls[0]
+            try:
+                logger.info("[handler] processing external link: %s", source_url)
+
+                page_content = await fetch_url_content_async(source_url)
+                insurance_info = extract_insurance_features(page_content, llm)
+                insurance_info["source_url"] = source_url
+                enhanced_message = build_insurance_comparison_message(
+                    source_type="link bảo hiểm",
+                    source_name=source_url,
+                    insurance_info=insurance_info,
+                    user_message=comparison_question,
+                )
+
+                logger.info(
+                    "[handler] extracted insurance info from url: %s",
+                    insurance_info.get("product_name", "N/A"),
+                )
+            except Exception as e:
+                logger.error(f"[handler] error processing url: {e}")
+                return {
+                    "status": "error",
+                    "error": f"Không thể đọc link ngoài: {str(e)}",
+                    "timestamp": datetime.now().isoformat(),
+                }
 
     # Map AgentBase context to LangGraph config
     # thread_id -> session persistence, actor_id -> per-user memory
@@ -825,8 +1015,12 @@ Sử dụng tool 'compare_insurance_products' để đưa ra so sánh chi tiết
     )
     elapsed = time.monotonic() - t_start
     logger.info(
-        "[handler] done user=%s tool_calls=%d elapsed=%.2fs has_file=%s",
-        context.user_id, tool_calls, elapsed, bool(file_data),
+        "[handler] done user=%s tool_calls=%d elapsed=%.2fs has_file=%s has_url=%s",
+        context.user_id,
+        tool_calls,
+        elapsed,
+        bool(file_data),
+        bool(not file_data and extract_urls_from_message(message)),
     )
 
     return {

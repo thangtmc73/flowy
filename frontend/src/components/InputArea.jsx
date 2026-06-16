@@ -82,7 +82,7 @@ export default function InputArea({ onSend, disabled }) {
             onKeyDown={handleKeyDown}
             onFocus={() => unlockAudioSync()}
             disabled={disabled}
-            placeholder={uploadedFile ? "Nhập câu hỏi về file (hoặc để trống để so sánh)..." : "Nhập câu hỏi về bảo hiểm..."}
+            placeholder={uploadedFile ? "Nhập câu hỏi về file (hoặc để trống để so sánh)..." : "Nhập câu hỏi hoặc dán link bảo hiểm để so sánh..."}
             rows={1}
             className="flex-1 min-w-0 min-h-10 py-2.5 bg-transparent resize-none outline-none text-[15px] text-slate-800 placeholder-slate-400 leading-6 disabled:opacity-50"
             style={{ maxHeight: '160px' }}
