@@ -1,6 +1,33 @@
 {
   "faqs": [
     {
+      "id": "general_products_001",
+      "canonical_question": "Có những gói bảo hiểm nào trên Zalopay?",
+      "user_questions": [
+        "Có những gói bảo hiểm nào?",
+        "Có những gói bảo hiểm nào trên Zalopay?",
+        "Zalopay có những gói bảo hiểm gì?",
+        "Liệt kê các gói bảo hiểm trên Zalopay",
+        "Danh sách gói bảo hiểm trên Zalopay",
+        "Zalopay đang có những sản phẩm bảo hiểm nào?",
+        "Có những loại bảo hiểm nào trên Zalopay?",
+        "Co nhung goi bao hiem nao?",
+        "Zalopay phân phối những gói bảo hiểm gì?"
+      ],
+      "answer": "Zalopay hiện phân phối **4 sản phẩm bảo hiểm** từ các đối tác sau:\n\n🔹 **Bảo hiểm An ninh mạng (Cyber)** — **VBI**\n* Phạm vi bảo vệ: Tài khoản thanh toán và giao dịch online\n\n🔹 **Bảo hiểm Sức khỏe 24/7** — **MSIG Việt Nam**\n* Phạm vi bảo vệ: Chi phí điều trị nội trú, ngoại trú và khám từ xa\n\n🔹 **Bảo hiểm Sống tự tin (Credit Topup)** — **GIC**\n* Phạm vi bảo vệ: Tai nạn cá nhân và trợ cấp thất nghiệp\n\n🔹 **Bảo hiểm trễ và hủy chuyến bay** — **Bảo Việt**\n* Phạm vi bảo vệ: Rủi ro trễ chuyến bay và hủy chuyến bay\n\n💡 Bạn muốn tìm hiểu thêm về gói nào? Hãy hỏi thêm về **chi phí**, **quyền lợi chi tiết**, **cách mua** hoặc **quy trình bồi thường** của sản phẩm bạn quan tâm.",
+      "category": "Thông tin chung",
+      "tags": [
+        "liệt kê",
+        "danh sách",
+        "gói bảo hiểm",
+        "all",
+        "zalopay"
+      ],
+      "priority": 10,
+      "source": "cross_product_generated",
+      "scope": "all_partners"
+    },
+    {
       "id": "general_cost_001",
       "canonical_question": "Chi phí bảo hiểm trên Zalopay là bao nhiêu?",
       "user_questions": [

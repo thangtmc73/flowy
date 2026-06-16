@@ -108,6 +108,7 @@ def load_knowledge_base():
                                 "category": faq.get("category", "So sánh / Chung"),
                                 "partner": "Zalopay",
                                 "product": "Cross-product",
+                                "tags": faq.get("tags", []),
                                 "priority": faq.get("priority", 8),
                                 "id": faq.get("id", "")
                             })
@@ -177,14 +178,52 @@ def search_faq_fuzzy(query, threshold=0.4, top_k=3, partner_filter=None, categor
                 "score": score
             })
     
-    # Rank by: score * priority
-    results.sort(key=lambda x: (x["score"] * x.get("priority", 5)), reverse=True)
+    # Rank by similarity first; priority only breaks ties
+    results.sort(key=lambda x: (x["score"], x.get("priority", 5)), reverse=True)
     return results[:top_k]
 
 
 FAQ_SEARCH_TOP_K = 2
 FAQ_SEARCH_THRESHOLD = 0.5
 FAQ_ANSWER_MAX_CHARS = 600
+FAQ_LIST_ANSWER_MAX_CHARS = 800
+CATALOG_FAQ_IDS = {"general_products_001", "compare_003", "compare_002"}
+PRODUCT_LIST_KEYWORDS = (
+    "những gói",
+    "các gói",
+    "gói nào",
+    "gói gì",
+    "liệt kê",
+    "danh sách",
+    "có những",
+    "phân phối những",
+    "sản phẩm bảo hiểm nào",
+    "loại bảo hiểm nào",
+)
+
+
+def _is_product_list_query(query: str) -> bool:
+    q = query.lower()
+    return "bảo hiểm" in q and any(kw in q for kw in PRODUCT_LIST_KEYWORDS)
+
+
+def _find_catalog_faq_results(query: str) -> List[Dict[str, Any]]:
+    """Return catalog FAQ entries for product-listing questions."""
+    best_by_id: Dict[str, Dict[str, Any]] = {}
+    for entry in FAQ_ALL_ENTRIES:
+        if entry.get("id") not in CATALOG_FAQ_IDS:
+            continue
+        score = similarity_score(query, entry["question"])
+        faq_id = entry["id"]
+        if faq_id not in best_by_id or score > best_by_id[faq_id]["score"]:
+            best_by_id[faq_id] = {**entry, "score": score}
+
+    if not best_by_id:
+        return []
+
+    results = list(best_by_id.values())
+    results.sort(key=lambda x: (x["score"], x.get("priority", 5)), reverse=True)
+    return results
 
 ZALOPAY_SUPPORT_CONTACT = (
     "**Liên hệ hỗ trợ Zalopay:**\n"
@@ -465,8 +504,9 @@ def search_faq_docs(query: str) -> str:
     # Detect specific partner mentions in query
     partner_patterns = {
         "msig": ["msig", "sức khỏe 24/7"],
-        "gic": ["gic", "credit topup"],
+        "gic": ["gic", "credit topup", "sống tự tin"],
         "vbi": ["vbi", "cyber"],
+        "baoviet": ["bảo việt", "baoviet", "chuyến bay", "trễ chuyến", "hủy chuyến", "saladin"],
     }
     
     for partner_id, patterns in partner_patterns.items():
@@ -474,13 +514,24 @@ def search_faq_docs(query: str) -> str:
             partner_filter = partner_id
             break
 
+    is_product_list = _is_product_list_query(query)
     t0 = time.monotonic()
-    results = search_faq_fuzzy(
-        query,
-        threshold=FAQ_SEARCH_THRESHOLD,
-        top_k=FAQ_SEARCH_TOP_K,
-        partner_filter=partner_filter,
-    )
+    if is_product_list and not partner_filter:
+        results = _find_catalog_faq_results(query)[:FAQ_SEARCH_TOP_K]
+        if not results:
+            results = search_faq_fuzzy(
+                query,
+                threshold=FAQ_SEARCH_THRESHOLD,
+                top_k=FAQ_SEARCH_TOP_K,
+                partner_filter=partner_filter,
+            )
+    else:
+        results = search_faq_fuzzy(
+            query,
+            threshold=FAQ_SEARCH_THRESHOLD,
+            top_k=FAQ_SEARCH_TOP_K,
+            partner_filter=partner_filter,
+        )
     logger.info("[tool:search_faq] matched %d results (%.2fs)", len(results), time.monotonic() - t0)
 
     if not results:
@@ -490,6 +541,7 @@ def search_faq_docs(query: str) -> str:
             "- Các gói bảo hiểm sức khỏe\n"
             "- Bảo hiểm an ninh mạng (Cyber)\n"
             "- Bảo hiểm tài chính (Credit Topup)\n"
+            "- Bảo hiểm trễ và hủy chuyến bay (Bảo Việt)\n"
             "- Quyền lợi, chi phí, độ tuổi áp dụng\n"
             "- Quy trình mua và bồi thường\n\n"
             f"{ZALOPAY_SUPPORT_CONTACT}"
@@ -497,12 +549,13 @@ def search_faq_docs(query: str) -> str:
 
     best = results[0]
     confidence_pct = int(best["score"] * 100)
+    answer_max_chars = FAQ_LIST_ANSWER_MAX_CHARS if is_product_list else FAQ_ANSWER_MAX_CHARS
     response = (
         f"Kết quả phù hợp nhất ({confidence_pct}%):\n"
         f"Sản phẩm: {best['partner']} - {best['product']}\n"
         f"Câu hỏi: {best['canonical']}\n"
         f"Danh mục: {best['category']}\n"
-        f"Trả lời: {_truncate_faq_answer(best['answer'])}\n"
+        f"Trả lời: {_truncate_faq_answer(best['answer'], answer_max_chars)}\n"
     )
 
     if len(results) > 1:
@@ -620,6 +673,7 @@ agent = create_agent(
         "- Câu hỏi yes/no hoặc một con số → trả lời trực tiếp trong 1–3 câu trước; chi tiết chỉ thêm khi cần.\n"
         "- Tóm tắt từ FAQ thành 2–4 câu; không copy nguyên văn trừ khi user hỏi chi tiết hoặc cần giữ bảng/HTML.\n"
         "- Dùng kết quả FAQ phù hợp nhất; bỏ qua kết quả phụ trừ khi user hỏi 'tất cả', 'so sánh', 'liệt kê'.\n"
+        "- Khi user hỏi liệt kê/có những gói bảo hiểm nào → bắt buộc nêu đủ 4 sản phẩm: Cyber (VBI), Sức khỏe 24/7 (MSIG), Sống tự tin (GIC), trễ/hủy chuyến bay (Bảo Việt).\n"
         "- Tối đa ~150 từ cho câu hỏi đơn giản; kết thúc bằng 1 gợi ý ngắn thay vì liệt kê mọi chủ đề liên quan.\n\n"
         "Vai trò của bạn:\n"
         "- Trả lời câu hỏi về các sản phẩm bảo hiểm từ nhiều đối tác bằng cách tìm kiếm trong FAQ với tool 'search_faq_docs'\n"
