@@ -311,27 +311,93 @@ _INSURANCE_KEYWORDS = (
 
 _extraction_cache: Dict[str, Dict[str, Any]] = {}
 
+_LATEX_INLINE_RE = re.compile(r"\$([^$\n]+)\$")
+_LATEX_DISPLAY_RE = re.compile(r"\$\$(.+?)\$\$|\\\[(.+?)\\\]", re.DOTALL)
+_LATEX_PAREN_RE = re.compile(r"\\\((.+?)\\\)", re.DOTALL)
+_LATEX_ENV_RE = re.compile(r"\\begin\{[^}]+\}(.*?)\\end\{[^}]+\}", re.DOTALL)
+_LATEX_CMD_RE = re.compile(r"\\[a-zA-Z]+\*?(?:\{[^{}]*\})*")
+_LATEX_SIMPLE_REPLACEMENTS = (
+    (re.compile(r"\\rightarrow|\\to\b"), "→"),
+    (re.compile(r"\\leq|\\le\b"), "≤"),
+    (re.compile(r"\\geq|\\ge\b"), "≥"),
+    (re.compile(r"\\times\b"), "×"),
+    (re.compile(r"\\text\{([^{}]*)\}"), r"\1"),
+    (re.compile(r"\\textbf\{([^{}]*)\}"), r"\1"),
+    (re.compile(r"\\emph\{([^{}]*)\}"), r"\1"),
+    (re.compile(r"\\frac\{([^{}]*)\}\{([^{}]*)\}"), r"\1/\2"),
+)
+
+
+def _clean_latex_commands(text: str) -> str:
+    """Convert or drop LaTeX commands while keeping plain text/numbers."""
+    cleaned = text
+    for pattern, replacement in _LATEX_SIMPLE_REPLACEMENTS:
+        cleaned = pattern.sub(replacement, cleaned)
+    return _LATEX_CMD_RE.sub(" ", cleaned)
+
+
+def _strip_latex_artifacts(text: str) -> str:
+    """Unwrap LaTeX/math delimiters from PDF and HTML sources, keep inner content."""
+    if not text:
+        return text
+
+    def unwrap_inline(match: re.Match) -> str:
+        return _clean_latex_commands(match.group(1).strip())
+
+    def unwrap_display(match: re.Match) -> str:
+        content = (match.group(1) or match.group(2) or "").strip()
+        return _clean_latex_commands(content)
+
+    def unwrap_env(match: re.Match) -> str:
+        return _clean_latex_commands(match.group(1).strip())
+
+    cleaned = _LATEX_DISPLAY_RE.sub(unwrap_display, text)
+    cleaned = _LATEX_INLINE_RE.sub(unwrap_inline, cleaned)
+    cleaned = _LATEX_PAREN_RE.sub(unwrap_inline, cleaned)
+    cleaned = _LATEX_ENV_RE.sub(unwrap_env, cleaned)
+    cleaned = _clean_latex_commands(cleaned)
+    cleaned = re.sub(r"[ \t]+", " ", cleaned)
+    cleaned = re.sub(r"\n{3,}", "\n\n", cleaned)
+    return cleaned.strip()
+
 
 class _HTMLTextExtractor(HTMLParser):
     """Strip HTML tags and keep readable text."""
 
+    _SKIP_TAGS = frozenset(
+        ("script", "style", "noscript", "math", "svg", "annotation", "semantics")
+    )
+
     def __init__(self):
         super().__init__()
         self._parts: List[str] = []
-        self._skip = False
+        self._skip_stack: List[str] = []
 
     def handle_starttag(self, tag, attrs):
-        if tag in ("script", "style", "noscript"):
-            self._skip = True
-        elif tag in ("p", "div", "br", "li", "h1", "h2", "h3", "h4", "tr", "section"):
+        if tag in self._SKIP_TAGS:
+            self._skip_stack.append(tag)
+            return
+
+        attr_map = {name.lower(): value for name, value in attrs}
+        class_value = (attr_map.get("class") or "").lower()
+        if any(token in class_value for token in ("katex", "mathjax", "math-inline", "math-display")):
+            self._skip_stack.append("math")
+            return
+
+        if tag in ("p", "div", "br", "li", "h1", "h2", "h3", "h4", "tr", "section"):
             self._parts.append("\n")
 
     def handle_endtag(self, tag):
-        if tag in ("script", "style", "noscript"):
-            self._skip = False
+        if not self._skip_stack:
+            return
+        top = self._skip_stack[-1]
+        if (tag in self._SKIP_TAGS and top == tag) or (
+            tag in ("span", "div") and top == "math"
+        ):
+            self._skip_stack.pop()
 
     def handle_data(self, data):
-        if not self._skip and data.strip():
+        if not self._skip_stack and data.strip():
             self._parts.append(data)
 
     def get_text(self) -> str:
@@ -395,7 +461,7 @@ def _validate_public_http_url(url: str) -> str:
 def _html_to_text(html: str) -> str:
     parser = _HTMLTextExtractor()
     parser.feed(html)
-    return parser.get_text()
+    return _strip_latex_artifacts(parser.get_text())
 
 
 def _decode_response_body(raw: bytes, content_type: str) -> str:
@@ -477,7 +543,7 @@ def _normalize_insurance_info(data: Dict[str, Any]) -> Dict[str, Any]:
         elif isinstance(value, (list, dict)):
             normalized[field] = json.dumps(value, ensure_ascii=False)
         else:
-            normalized[field] = str(value).strip()
+            normalized[field] = _strip_latex_artifacts(str(value).strip())
     if not normalized["product_name"]:
         normalized["product_name"] = "Unknown"
     return normalized
@@ -539,7 +605,7 @@ def _extract_pdf_text(content: Dict[str, Any]) -> str:
         raise ValueError(
             "Không trích xuất được nội dung text từ PDF (có thể là file scan/ảnh)."
         )
-    return text
+    return _strip_latex_artifacts(text)
 
 
 DOCX_MIME = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
@@ -605,7 +671,7 @@ def _extract_docx_text(content: Dict[str, Any]) -> str:
     text = "\n\n".join(parts).strip()
     if not text:
         raise ValueError("Không trích xuất được nội dung text từ DOCX.")
-    return text
+    return _strip_latex_artifacts(text)
 
 
 def parse_uploaded_file(file_data: Dict[str, Any]) -> str:
@@ -640,7 +706,7 @@ def parse_uploaded_file(file_data: Dict[str, Any]) -> str:
 
 def _select_text_for_extraction(text: str, max_chars: int) -> str:
     """Prefer paragraphs with insurance-related keywords over raw leading text."""
-    text = text.strip()
+    text = _strip_latex_artifacts(text.strip())
     if len(text) <= max_chars:
         return text
 
@@ -728,6 +794,10 @@ def extract_insurance_features(
 
 Document content:
 {selected_text}
+
+Notes:
+- The source may contain LaTeX/math markup ($...$, \\rightarrow, etc.) from PDF or HTML rendering.
+- Ignore LaTeX syntax; extract plain Vietnamese meaning only. Do not copy LaTeX into JSON values.
 
 Extract the following information (in Vietnamese):
 - product_name: Tên sản phẩm bảo hiểm
@@ -1187,6 +1257,7 @@ agent = create_agent(
         "3. Trả lời súc tích theo nguyên tắc trên; gọi 'remember' khi user chia sẻ nhu cầu/sở thích quan trọng\n\n"
         "XỬ LÝ FILE UPLOAD / LINK NGOÀI:\n"
         "- Khi người dùng upload file hoặc gửi link bảo hiểm, phân tích thông tin trong nội dung đó\n"
+        "- Tài liệu PDF/HTML đôi khi còn sót cú pháp LaTeX/math ($...$, \\rightarrow, v.v.) — bỏ qua, không copy vào câu trả lời\n"
         "- Sử dụng 'compare_insurance_products' để so sánh với sản phẩm trên Zalopay\n"
         "- Đưa ra nhận xét khách quan về ưu/nhược điểm\n"
         "- Gợi ý sản phẩm tương tự hoặc tốt hơn trên Zalopay\n\n"
