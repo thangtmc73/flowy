@@ -61,7 +61,7 @@ python3 scripts/import_partner_docs.py \
 Script tạo / ghi đè file tại:
 
 ```
-knowledge/partners/{partner_id}/{product_id}.json
+knowledge/partners/{partner_id}_{product_id}.json
 ```
 
 Đồng thời **tự cập nhật** `knowledge/_index.json` — thêm partner hoặc product mới nếu chưa có. Không cần sửa index thủ công trừ khi muốn chỉnh `keywords`, `priority`, hoặc metadata khác.
@@ -449,7 +449,7 @@ python3 scripts/import_partner_docs.py \
   --use-llm
 ```
 
-**Output** (`knowledge/partners/gic/credit_topup.json`):
+**Output** (`knowledge/partners/gic_credit_topup.json`):
 
 ```json
 {

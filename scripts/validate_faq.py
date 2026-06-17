@@ -84,7 +84,7 @@ def validate_new_faq_entry(faq: dict, index: int) -> list[str]:
 
 
 def validate_product_file(data: dict) -> list[str]:
-    """Validate product knowledge file (partners/*/product.json)."""
+    """Validate product knowledge file (partners/{partner_id}_{product_id}.json)."""
     errors: list[str] = []
 
     required_top_fields = ("product_id", "partner_id", "product_name", "partner_name", "faqs")

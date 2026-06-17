@@ -275,7 +275,7 @@ def update_index_file(knowledge_dir, partner_id, partner_name, product_id, produ
             "product_id": product_id,
             "product_name": product_name,
             "category": category,
-            "file": f"partners/{partner_id}/{product_id}.json",
+            "file": f"partners/{partner_id}_{product_id}.json",
             "priority": 8,
             "keywords": [partner_id, category, "imported"]
         })
@@ -354,9 +354,9 @@ def main():
     )
     
     # Write product file
-    output_dir = Path(args.output_dir) / "partners" / args.partner_id
+    output_dir = Path(args.output_dir) / "partners"
     output_dir.mkdir(parents=True, exist_ok=True)
-    output_file = output_dir / f"{args.product_id}.json"
+    output_file = output_dir / f"{args.partner_id}_{args.product_id}.json"
     
     with open(output_file, "w", encoding="utf-8") as f:
         json.dump(product_json, f, ensure_ascii=False, indent=2)

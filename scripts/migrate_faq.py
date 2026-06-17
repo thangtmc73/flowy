@@ -17,7 +17,7 @@ def migrate_old_to_new(input_file, output_dir):
     
     Args:
         input_file: Path to old faq.json
-        output_dir: Directory for new structure (e.g., knowledge/partners/msig)
+        output_dir: Directory for new structure (e.g., knowledge/partners)
     """
     print(f"Loading old FAQ data from {input_file}...")
     with open(input_file, "r", encoding="utf-8") as f:
@@ -82,7 +82,7 @@ def migrate_old_to_new(input_file, output_dir):
     }
     
     # Write to new location
-    output_path = Path(output_dir) / "health_247.json"
+    output_path = Path(output_dir) / "msig_health_247.json"
     output_path.parent.mkdir(parents=True, exist_ok=True)
     
     with open(output_path, "w", encoding="utf-8") as f:
@@ -111,7 +111,7 @@ def create_index_file(knowledge_base_dir):
                         "product_id": "health_247",
                         "product_name": "Bảo hiểm Sức khỏe 24/7",
                         "category": "health",
-                        "file": "partners/msig/health_247.json",
+                        "file": "partners/msig_health_247.json",
                         "priority": 10,
                         "keywords": ["sức khỏe", "nội trú", "ngoại trú", "telemed", "pharmacity", "whitecoat"]
                     }
@@ -141,7 +141,7 @@ if __name__ == "__main__":
     project_dir = script_dir.parent
     
     old_faq_path = project_dir / "knowledge" / "faq.json"
-    new_output_dir = project_dir / "knowledge" / "partners" / "msig"
+    new_output_dir = project_dir / "knowledge" / "partners"
     
     if not old_faq_path.exists():
         print(f"Error: Old FAQ file not found at {old_faq_path}")
@@ -156,10 +156,10 @@ if __name__ == "__main__":
     print("\n" + "=" * 60)
     print(f"✓ Migration completed successfully!")
     print(f"  Migrated: {count} FAQ entries")
-    print(f"  Output: {new_output_dir}/health_247.json")
+    print(f"  Output: {new_output_dir}/msig_health_247.json")
     print(f"  Index: {new_output_dir.parent.parent}/_index.json")
     print("=" * 60)
     print("\nNext steps:")
-    print("1. Review the migrated files in knowledge/partners/msig/")
+    print("1. Review the migrated files in knowledge/partners/")
     print("2. Update main.py to use the new loader")
     print("3. Test with: python main.py")

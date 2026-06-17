@@ -63,7 +63,7 @@ Thêm partner mới vào `knowledge/_index.json`:
           "product_id": "health_premium",
           "product_name": "PVI Care",
           "category": "health",
-          "file": "partners/pvi/health_premium.json",
+          "file": "partners/pvi_health_premium.json",
           "priority": 8,
           "keywords": ["pvi", "sức khỏe", "premium"]
         }
@@ -114,7 +114,7 @@ python main.py
 
 ## Checklist khi thêm partner
 
-- [ ] Tạo folder `knowledge/partners/{partner_id}/`
+- [ ] Tạo file `knowledge/partners/{partner_id}_{product_id}.json`
 - [ ] Tạo file product JSON với >= 5 FAQs
 - [ ] Mỗi FAQ có >= 3 user_questions variants
 - [ ] Update `knowledge/_index.json` với partner mới
@@ -128,7 +128,7 @@ python main.py
 ## Troubleshooting
 
 **FAQ không load?**
-- Kiểm tra JSON syntax: `python -m json.tool knowledge/partners/pvi/health_premium.json`
+- Kiểm tra JSON syntax: `python -m json.tool knowledge/partners/pvi_health_premium.json`
 - Kiểm tra path trong `_index.json` đúng chưa
 - Kiểm tra `active: true` cho partner
 
@@ -139,4 +139,4 @@ python main.py
 
 **Cần help?**
 - Xem docs: `knowledge/README.md`
-- Xem example: `knowledge/partners/msig/health_247.json`
+- Xem example: `knowledge/partners/msig_health_247.json`

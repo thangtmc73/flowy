@@ -24,12 +24,9 @@ This project has been upgraded from a single-partner (MSIG only) to a **multi-pa
 knowledge/
 ├── _index.json                           # Metadata: partners, products, categories
 ├── partners/
-│   ├── msig/
-│   │   └── health_247.json               # 34 FAQs, 283 user questions
-│   ├── gic/
-│   │   └── credit_topup.json             # 12 FAQs, 96 user questions
-│   ├── vbi/
-│   │   └── cyber.json                    # 6 FAQs, 78 user questions
+│   ├── msig_health_247.json              # 34 FAQs, 283 user questions
+│   ├── gic_credit_topup.json             # 12 FAQs, 96 user questions
+│   ├── vbi_cyber.json                    # 6 FAQs, 78 user questions
 │   └── TEMPLATE.json                     # Template for new partners
 ├── cross_product/
 │   ├── comparisons.json                  # Cross-partner comparisons
@@ -210,7 +207,7 @@ python scripts/import_partner_docs.py \
 **Documentation**: See `docs/IMPORT_FROM_DOCS.md` for detailed guide
 
 ### Manual Method
-1. Create product JSON: `knowledge/partners/{partner_id}/{product_id}.json`
+1. Create product JSON: `knowledge/partners/{partner_id}_{product_id}.json`
 2. Follow schema in `knowledge/partners/TEMPLATE.json`
 3. Update `knowledge/_index.json`
 4. **Important**: Add partner-branded user question variants:
@@ -291,7 +288,7 @@ user_questions = [
 ### Core
 - ✅ `main.py` - Multi-partner loading + search logic
 - ✅ `knowledge/_index.json` - Partner metadata
-- ✅ `knowledge/partners/*/` - Partner-specific FAQs
+- ✅ `knowledge/partners/*_{product_id}.json` - Partner-specific FAQs
 
 ### UI
 - ✅ `frontend/src/App.jsx` - Conditional suggestions

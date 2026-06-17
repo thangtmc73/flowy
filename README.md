@@ -252,14 +252,11 @@ The knowledge base uses a multi-partner layout:
 knowledge/
 ├── _index.json                         # Partner & product metadata
 ├── partners/
-│   ├── msig/
-│   │   └── health_247.json             # MSIG Health 24/7
-│   ├── gic/
-│   │   └── credit_topup.json           # GIC Credit Topup
-│   ├── vbi/
-│   │   └── cyber.json                  # VBI Cyber Insurance
-│   └── baoviet/
-│       └── flight_delay_cancel.json    # Bảo Việt Flight Delay/Cancel
+│   ├── msig_health_247.json            # MSIG Health 24/7
+│   ├── gic_credit_topup.json           # GIC Credit Topup
+│   ├── vbi_cyber.json                  # VBI Cyber Insurance
+│   ├── baoviet_flight_delay_cancel.json # Bảo Việt Flight Delay/Cancel
+│   └── TEMPLATE.json                   # Template for new partners
 └── cross_product/
     ├── comparisons.json                # Cross-partner comparisons
     └── general_faqs.json               # General Zalopay / platform FAQs
@@ -269,7 +266,7 @@ knowledge/
 
 **Option 1: Manual (see `knowledge/README.md`)**
 
-1. Create a JSON file under `knowledge/partners/{partner_id}/{product_id}.json`
+1. Create a JSON file under `knowledge/partners/{partner_id}_{product_id}.json`
 2. Update `knowledge/_index.json`
 3. Validate with the script below
 

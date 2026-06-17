@@ -11,7 +11,7 @@
           "product_id": "health_247",
           "product_name": "Bảo hiểm Sức khỏe 24/7",
           "category": "health",
-          "file": "partners/msig/health_247.json",
+          "file": "partners/msig_health_247.json",
           "priority": 10,
           "keywords": [
             "sức khỏe",
@@ -33,7 +33,7 @@
           "product_id": "credit_topup",
           "product_name": "Credit Topup Insurance",
           "category": "financial",
-          "file": "partners/gic/credit_topup.json",
+          "file": "partners/gic_credit_topup.json",
           "priority": 8,
           "keywords": [
             "gic",
@@ -52,7 +52,7 @@
           "product_id": "cyber",
           "product_name": "Bảo hiểm Cyber",
           "category": "cyber",
-          "file": "partners/vbi/cyber.json",
+          "file": "partners/vbi_cyber.json",
           "priority": 8,
           "keywords": [
             "vbi",
@@ -71,7 +71,7 @@
           "product_id": "flight_delay_cancel",
           "product_name": "Bảo hiểm trễ và hủy chuyến bay",
           "category": "travel",
-          "file": "partners/baoviet/flight_delay_cancel.json",
+          "file": "partners/baoviet_flight_delay_cancel.json",
           "priority": 9,
           "keywords": [
             "baoviet",
