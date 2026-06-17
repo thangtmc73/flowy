@@ -4,6 +4,8 @@
 
 A multi-partner insurance advisory agent with a chat interface, file upload, and product comparison. Built on the [GreenNode AgentBase](https://docs.vngcloud.vn/agentbase) platform for Zalopay insurance products.
 
+> **Knowledge preparation:** Need to import FAQ from PDF/DOCX into this repo? Use **[Flowy Prepare](https://github.com/thangtmc73/flowy-prepare)** — a companion web app (experimental) that uses AI to extract, review, and export structured JSON for Flowy's `knowledge/` folder. Flowy Prepare handles authoring; **this repo** runs the chatbot agent.
+
 > **Disclaimer:** This project was developed for the [GreenNode Claw-a-thon](https://greennode.ai/events/greennode-claw-a-thon) hackathon. Platform resources (LLM access, AgentBase runtime, memory, container registry, etc.) are provided for the event and **may be revoked after the hackathon ends**. Insurance product details, benefits, premiums, and policies in the knowledge base **may become outdated over time** and are for reference only — always verify with the official insurer or Zalopay before making decisions.
 
 ## Team
