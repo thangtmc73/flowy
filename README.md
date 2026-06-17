@@ -270,7 +270,7 @@ knowledge/
 2. Update `knowledge/_index.json`
 3. Validate with the script below
 
-**Option 2: Import from document (recommended)**
+**Option 2: Import from document (CLI)**
 
 ```bash
 pip install -r requirements-import.txt
@@ -281,6 +281,16 @@ python3 scripts/import_partner_docs.py path/to/document.pdf \
   --product-id product_id \
   --product-name "Product Name"
 ```
+
+See also: [`docs/IMPORT_FROM_DOCS.md`](docs/IMPORT_FROM_DOCS.md)
+
+**Option 3: Flowy Prepare — experimental AI import (recommended for long docs)**
+
+[**Flowy Prepare**](https://github.com/thangtmc73/flowy-prepare) is a separate companion repo with a web UI that uses an **AI agent (LLM)** to parse PDF/DOCX (or edit existing JSON), review FAQ drafts, and download formatted product JSON plus optional shared catalog updates (`_index.json`, cross-product files). Output is designed for this repo's `knowledge/` layout.
+
+> **Experimental:** LLM-generated FAQs need human review before merge. Flowy Prepare does not replace validation — always run `validate_faq.py` and `sync_knowledge.sh` after import.
+
+Workflow: upload document in Flowy Prepare → review/edit → download `{partner_id}_{product_id}.json` → copy into `knowledge/partners/` here → update index if needed → validate & sync below.
 
 Sync knowledge to the frontend after changes:
 
@@ -553,6 +563,11 @@ Check user long-term memory via the AgentBase Memory Dashboard:
 - [AgentBase Documentation](https://docs.vngcloud.vn/agentbase)
 - [LangChain Docs](https://python.langchain.com/)
 - [React + Vite](https://vite.dev/)
+
+### Related projects
+
+- **[Flowy Prepare](https://github.com/thangtmc73/flowy-prepare)** — experimental web tool to parse and prepare knowledge (PDF/DOCX → FAQ JSON) for this repo using AI-assisted extraction and review UI
+- **[Flowy on GitHub](https://github.com/thangtmc73/flowy)** — canonical public repository for this agent
 
 ## License
 
